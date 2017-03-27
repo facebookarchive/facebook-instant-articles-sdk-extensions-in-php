@@ -43,7 +43,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         $doctype = is_null($doctype) ? '<!doctype html>' : $doctype;
         $rendered = parent::render($doctype, $format);
 
+        // TODO fix the workaround just like on Element.php class
         $rendered = str_replace('amp=""', 'amp', $rendered);
+        $rendered = str_replace('amp-custom=""', 'amp-custom', $rendered);
 
         return $rendered;
     }
@@ -75,6 +77,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         $link = $document->createElement('link');
         $link->setAttribute('rel', 'canonical');
         $link->setAttribute('href', $this->instantArticle->getCanonicalURL());
+
+        $ampCustomCSS = $this->buildCustomCSS($document);
+        $head->appendChild($ampCustomCSS);
         $head->appendChild($link);
 
         // $this->addMetaProperty('op:markup_version', $this->instantArticle->getMarkupVersion());
@@ -130,5 +135,13 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         return $html;
+    }
+
+    private function buildCustomCSS($document) {
+      $ampCustomCSS = $document->createElement('style');
+      $ampCustomCSS->setAttribute('amp-custom','');
+      $cssTextContent = $document->createTextNode('h1 { color: #000; }' /**/ );
+      $ampCustomCSS->appendChild($cssTextContent);
+      return $ampCustomCSS;
     }
 }

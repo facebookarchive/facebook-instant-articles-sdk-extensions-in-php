@@ -66,6 +66,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         libxml_use_internal_errors(false);
 
         //$this->assertEquals($amp_expected, $amp_rendered);
-        //  var_dump($amp_rendered);
+          var_dump($amp_rendered);
     }
 }
