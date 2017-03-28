@@ -265,9 +265,25 @@ class AMPArticle extends Element implements InstantArticleInterface
             'color' => 'color',
             'background-color' => 'background_color',
             'text-align' => 'text_alignment',
+            'display' => 'display',
             // TODO: Implement
         );
         $filteredMappings = AMPArticle::filterMappings($mappings, $textStyles);
+        
+        $filteredMappings['font-size'] = ($textStyles['text_size_scale'] * 100) . '%';
+        $filteredMappings['line-height'] = ($textStyles['line_height_scale'] * 100) . '%';
+
+        $textTransformMappings = array(
+            'ALL_CAPS' => 'uppercase',
+            'ALL_LOWER_CASE' => 'lowercase',
+            'NONE' => 'none',
+        );
+        $filteredMappings['text-transform'] = $textTransformMappings[$textStyles['capitalization']];
+
+        if (array_key_exists('underline', $textStyles) && $textStyles['underline'] != 'NONE') {
+            $filteredMappings['text-decoration'] = 'underline';
+        }
+
         $cssDeclarations = array();
         foreach ($filteredMappings as $filteredKey => $cssValue) {
             $cssDeclarations[] = AMPArticle::buildCSSDeclaration($filteredKey, $cssValue);
