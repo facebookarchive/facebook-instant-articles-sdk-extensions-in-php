@@ -21,6 +21,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     /*
        'lang' => 'en-US',
        'css-selector-prefix' => 'ia2amp-',
+       'header-logo-image-url' => 'http://domain.com/someimage.png',
      */
     private $properties = array();
 
@@ -130,6 +131,28 @@ class AMPArticle extends Element implements InstantArticleInterface
         $body = $document->createElement('body');
         $html->appendChild($body);
         $body->setAttribute('class', $this->buildClassName('body'));
+
+        // Builds the content Header, with proper colors and image, adding to body
+        $header = $document->createElement('header');
+        $body->appendChild($header);
+        $body->setAttribute('class', $this->buildClassName('header'));
+        if (isset($this->properties['header-logo-image-url'])) {
+            $imageURL = $this->properties['header-logo-image-url'];
+            $imageDimmensions = getimagesize($imageURL);
+            $imageWidth = $imageDimmensions[0];
+            $imageHeight = $imageDimmensions[1];
+
+            // Creates the Logo image and appends to header
+            $imageContainer = $document->createElement('div');
+            $header->appendChild($imageContainer);
+            $imageContainer->setAttribute('class', $this->buildClassName('header-img'));
+            $ampImage = $document->createElement('amp-img');
+            $imageContainer->appendChild($ampImage);
+            $ampImage->setAttribute('src', $imageURL);
+            $ampImage->setAttribute('width', $imageWidth);
+            $ampImage->setAttribute('height', $imageHeight);
+        }
+
         // $article = $document->createElement('article');
         // $body->appendChild($article);
 
