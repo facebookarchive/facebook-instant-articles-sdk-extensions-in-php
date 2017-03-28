@@ -57,15 +57,15 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $html_file = file_get_contents(__DIR__ . '/instant-article-example.html');
 
         $renderer = AMPArticle::create($html_file, array('lang' => 'en-US'));
-        $amp_rendered = $renderer->render(null, true);
+        $amp_rendered = $renderer->render(null, true)."\n";
 
-        $amp_expected = file_get_contents(__DIR__ . '/amp-example.html');
+        $amp_expected = file_get_contents(__DIR__ . '/amp-converted.html');
         libxml_use_internal_errors(true);
         $document = new \DOMDocument();
         $document->loadHTML($amp_expected);
         libxml_use_internal_errors(false);
 
-        //$this->assertEquals($amp_expected, $amp_rendered);
-        //  var_dump($amp_rendered);
+        $this->assertEquals($amp_expected, $amp_rendered);
+        // var_dump($amp_rendered);
     }
 }

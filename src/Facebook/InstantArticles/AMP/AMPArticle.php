@@ -46,6 +46,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         // TODO fix the workaround just like on Element.php class
         $rendered = str_replace('amp=""', 'amp', $rendered);
         $rendered = str_replace('amp-custom=""', 'amp-custom', $rendered);
+        $rendered = str_replace('amp-boilerplate=""', 'amp-boilerplate', $rendered);
 
         return $rendered;
     }
@@ -65,74 +66,90 @@ class AMPArticle extends Element implements InstantArticleInterface
         if (isset($this->properties['lang'])) {
             $html->setAttribute('lang', $this->properties['lang']);
         }
+
+        // Builds the Head
         $head = $document->createElement('head');
+        $html->appendChild($head);
+
+        // Builds meta charset and append to head
         if ($this->instantArticle->getCharset()) {
             $charset = $document->createElement('meta');
             $charset->setAttribute('charset', $this->instantArticle->getCharset());
             $head->appendChild($charset);
         }
 
-        $html->appendChild($head);
+        // Builds meta viewport and append to head
+        $viewport = $document->createElement('meta');
+        $head->appendChild($viewport);
+        $viewport->setAttribute('name', 'viewport');
+        $viewport->setAttribute('content', 'width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no');
 
+        // Builds ampjs script and append to head
+        $ampjs = $document->createElement('script');
+        $head->appendChild($ampjs);
+        $ampjs->setAttribute('src', 'https://cdn.ampproject.org/v0.js');
+        $ampjs->setAttribute('async','');
+
+        // Builds boilerplate css style and append to head
+        $boilerplate = $document->createElement('style');
+        $head->appendChild($boilerplate);
+        $boilerplate->setAttribute('amp-boilerplate','');
+        $boilerplateContent = $document->createTextNode('body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}');
+        $boilerplate->appendChild($boilerplateContent);
+
+        // Builds noscript css style and append to head
+        $noscript = $document->createElement('noscript');
+        $head->appendChild($noscript);
+        $noscriptBoilerplate = $document->createElement('style');
+        $noscript->appendChild($noscriptBoilerplate);
+        $noscriptBoilerplate->setAttribute('amp-boilerplate','');
+        $noscriptBoilerplateContent = $document->createTextNode('body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}');
+        $noscriptBoilerplate->appendChild($noscriptBoilerplateContent);
+
+        // Builds canonical link and append to head
         $link = $document->createElement('link');
         $link->setAttribute('rel', 'canonical');
         $link->setAttribute('href', $this->instantArticle->getCanonicalURL());
 
+        // Builds custon css style and append to head
         $ampCustomCSS = $this->buildCustomCSS($document);
         $head->appendChild($ampCustomCSS);
         $head->appendChild($link);
 
-        // $this->addMetaProperty('op:markup_version', $this->instantArticle->getMarkupVersion());
-        // if ($this->header && count($this->instantArticle->getHeader()->getAds()) > 0) {
-        //     $this->addMetaProperty(
-        //         'fb:use_automatic_ad_placement',
-        //         $this->instantArticle->isAutomaticAdPlaced() ? 'true' : 'false'
-        //     );
-        // }
-
-        // if ($this->instantArticle->getStyle()) {
-        //     $this->addMetaProperty('fb:article_style', $this->instantArticle->getStyle());
-        // }
-
-        // Adds all meta properties
-        // foreach ($this->instantArticle->getMetaProperties() as $property_name => $property_content) {
-        //     $head->appendChild(
-        //         $this->createMetaElement(
-        //             $document,
-        //             $property_name,
-        //             $property_content
-        //         )
-        //     );
-        // }
+        // Builds title and append to head
+        $title = $document->createElement('title');
+        $head->appendChild($title);
+        $titleText = $this->instantArticle->getHeader()->getTitle()->textToDOMDocumentFragment($document);
+        $title->appendChild($titleText);
 
         // Build and append body and article tags to the HTML document
-        $body = $document->createElement('body');
-        $article = $document->createElement('article');
-        $body->appendChild($article);
-        $html->appendChild($body);
-        if ($this->instantArticle->getHeader() && $this->instantArticle->getHeader()->isValid()) {
-            $article->appendChild($this->instantArticle->getHeader()->toDOMElement($document));
-        }
-        if ($this->instantArticle->getChildren()) {
-            foreach ($this->instantArticle->getChildren() as $child) {
-                if (Type::is($child, TextContainer::getClassName())) {
-                    if (count($child->getTextChildren()) === 0) {
-                        continue;
-                    } elseif (count($child->getTextChildren()) === 1) {
-                        if (Type::is($child->getTextChildren()[0], Type::STRING) &&
-                            trim($child->getTextChildren()[0]) === '') {
-                            continue;
-                        }
-                    }
-                }
-                $article->appendChild($child->toDOMElement($document));
-            }
-            if ($this->instantArticle->getFooter() && $this->instantArticle->getFooter()->isValid()) {
-                $article->appendChild($this->instantArticle->getFooter()->toDOMElement($document));
-            }
-        } else {
-            $article->appendChild($document->createTextNode(''));
-        }
+        // $body = $document->createElement('body');
+        // $article = $document->createElement('article');
+        // $body->appendChild($article);
+        // $html->appendChild($body);
+        // if ($this->instantArticle->getHeader() && $this->instantArticle->getHeader()->isValid()) {
+        //     $article->appendChild($this->instantArticle->getHeader()->toDOMElement($document));
+        // }
+        // if ($this->instantArticle->getChildren()) {
+        //     foreach ($this->instantArticle->getChildren() as $child) {
+        //         if (Type::is($child, TextContainer::getClassName())) {
+        //             if (count($child->getTextChildren()) === 0) {
+        //                 continue;
+        //             } elseif (count($child->getTextChildren()) === 1) {
+        //                 if (Type::is($child->getTextChildren()[0], Type::STRING) &&
+        //                     trim($child->getTextChildren()[0]) === '') {
+        //                     continue;
+        //                 }
+        //             }
+        //         }
+        //         $article->appendChild($child->toDOMElement($document));
+        //     }
+        //     if ($this->instantArticle->getFooter() && $this->instantArticle->getFooter()->isValid()) {
+        //         $article->appendChild($this->instantArticle->getFooter()->toDOMElement($document));
+        //     }
+        // } else {
+        //     $article->appendChild($document->createTextNode(''));
+        // }
 
         return $html;
     }
