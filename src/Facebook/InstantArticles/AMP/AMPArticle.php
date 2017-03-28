@@ -157,8 +157,8 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function buildCustomCSS($document) {
       $ampCustomCSS = $document->createElement('style');
       $ampCustomCSS->setAttribute('amp-custom','');
-      $cssRules = $this->getCustomCSS();
-      $cssTextContent = $document->createTextNode($cssRules);
+      $cssDeclarationss = $this->getCustomCSS();
+      $cssTextContent = $document->createTextNode($cssDeclarationss);
       $ampCustomCSS->appendChild($cssTextContent);
       return $ampCustomCSS;
     }
@@ -184,25 +184,31 @@ class AMPArticle extends Element implements InstantArticleInterface
     private static function articleColorsStyles($styles)
     {
       $backgroundColor = $styles['background_color'];
-      return "html {background-color: $backgroundColor}";
+      return "html {background-color: $backgroundColor;}";
     }
 
     private static function articleHeadStyles($styles)
     {
-      // TODO: Logo
-      // TODO: Kicker --> header h3.op-kicker
-      return 'header h1 {' . AMPArticle::textStyles($styles['title']) . '} ' .
-        'header h2 {' . AMPArticle::textStyles($styles['subtitle']) . '}';
-      // TODO: Byline --> header address
-      // TODO: Date --> header time
+        $mappings = array(
+            // TODO: Logo
+            // TODO: Kicker --> header h3.op-kicker
+            'header h1' => 'title',
+            'header h2' => 'subtitle',
+            // TODO: Byline --> header address
+            // TODO: Date --> header time
+        );
+        return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
     }
 
     private static function articleBodyStyles($styles)
     {
-        return 'h1 {' . AMPArticle::textStyles($styles['primary_heading']) . '} ' .
-            'h2 {' . AMPArticle::textStyles($styles['secondary_heading']) . '} ' .
-            'p {' . AMPArticle::textStyles($styles['body_text']) . '} ' .
-            'a {' . AMPArticle::textStyles($styles['inline_link']) . '}';
+        $mappings = array(
+            'h1' => 'primary_heading',
+            'h2' => 'secondary_heading',
+            'p' => 'body_text',
+            'a' => 'inline_link',
+        );
+        return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
     }
 
     private static function articleFooterStyles($styles)
@@ -211,7 +217,7 @@ class AMPArticle extends Element implements InstantArticleInterface
       return '';
     }
 
-    private static function textStyles($textStyles)
+    private static function buildTextCSSDeclarationBlock($textStyles)
     {
         $mappings = array(
             'font-family' => 'font',
@@ -220,26 +226,49 @@ class AMPArticle extends Element implements InstantArticleInterface
             'text-align' => 'text_alignment',
             // TODO: Implement
         );
-        $cssMappings = AMPArticle::arrayFromStyles($mappings, $textStyles);
-        $cssRule = '';
-        foreach ($cssMappings as $cssKey => $cssValue)
-        {
-            $cssRule = $cssRule . "$cssKey: $cssValue;";
+        $filteredMappings = AMPArticle::filterMappings($mappings, $textStyles);
+        $cssDeclarations = array();
+        foreach ($filteredMappings as $filteredKey => $cssValue) {
+            $cssDeclarations[] = AMPArticle::buildCSSDeclaration($filteredKey, $cssValue);
         }
-        return $cssRule;
+        return AMPArticle::buildCSSDeclarationBlock($cssDeclarations);
     }
 
-    private static function arrayFromStyles($mappings, $styles)
+    private static function filterMappings($mappings, $styles)
     {
         $result = array();
-        foreach ($mappings as $cssKey => $styleKey)
-        {
-            if (array_key_exists($styleKey, $styles))
-            {
-                $result[$cssKey] = $styles[$styleKey];
+        foreach ($mappings as $filteredKey => $propertyKey) {
+            if (array_key_exists($propertyKey, $styles)) {
+                $result[$filteredKey] = $styles[$propertyKey];
             }
         }
-
         return $result;
+    }
+
+    private static function buildCSSDeclaration($filteredKey, $cssValue)
+    {
+        return "$filteredKey: $cssValue;";
+    }
+
+    private static function buildCSSDeclarationBlock($cssDeclarations)
+    {
+        return '{' . implode(' ', $cssDeclarations) . '}';
+    }
+
+    private static function buildCSSRule($cssSelector, $cssDeclarationBlock)
+    {
+        return "$cssSelector $cssDeclarationBlock";
+    }
+
+    private static function buildCSSRulesFromMappings($mappings, $styles)
+    {
+        $rule = '';
+        foreach ($mappings as $selector => $objectKey) {
+            if (array_key_exists($objectKey, $styles)) {
+                $declarationBlock = AMPArticle::buildTextCSSDeclarationBlock($styles[$objectKey]);
+                $rule = $rule . AMPArticle::buildCssRule($selector, $declarationBlock);
+            }
+        }
+        return $rule;
     }
 }
