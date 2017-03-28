@@ -157,8 +157,89 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function buildCustomCSS($document) {
       $ampCustomCSS = $document->createElement('style');
       $ampCustomCSS->setAttribute('amp-custom','');
-      $cssTextContent = $document->createTextNode('h1 { color: #000; }' /**/ );
+      $cssRules = $this->getCustomCSS();
+      $cssTextContent = $document->createTextNode($cssRules);
       $ampCustomCSS->appendChild($cssTextContent);
       return $ampCustomCSS;
+    }
+
+    private function getCustomCSS()
+    {
+        // TODO: Move to settings
+        $stylesFolder = __DIR__ . '/../../../Facebook/InstantArticles/AMP/';
+
+        $styleName = $this->instantArticle->getStyle();
+        $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
+        $styles = json_decode($stylesFile, true);
+
+        return AMPArticle::articleColorsStyles($styles) .
+            AMPArticle::articleHeadStyles($styles) .
+            AMPArticle::articleBodyStyles($styles) .
+            // TODO: Quotes
+            // TODO: Captions
+            // TODO: Additional Caption Sizes
+            AMPArticle::articleFooterStyles($styles);
+    }
+
+    private static function articleColorsStyles($styles)
+    {
+      $backgroundColor = $styles['background_color'];
+      return "html {background-color: $backgroundColor}";
+    }
+
+    private static function articleHeadStyles($styles)
+    {
+      // TODO: Logo
+      // TODO: Kicker --> header h3.op-kicker
+      return 'header h1 {' . AMPArticle::textStyles($styles['title']) . '} ' .
+        'header h2 {' . AMPArticle::textStyles($styles['subtitle']) . '}';
+      // TODO: Byline --> header address
+      // TODO: Date --> header time
+    }
+
+    private static function articleBodyStyles($styles)
+    {
+        return 'h1 {' . AMPArticle::textStyles($styles['primary_heading']) . '} ' .
+            'h2 {' . AMPArticle::textStyles($styles['secondary_heading']) . '} ' .
+            'p {' . AMPArticle::textStyles($styles['body_text']) . '} ' .
+            'a {' . AMPArticle::textStyles($styles['inline_link']) . '}';
+    }
+
+    private static function articleFooterStyles($styles)
+    {
+      // TODO: Implement
+      return '';
+    }
+
+    private static function textStyles($textStyles)
+    {
+        $mappings = array(
+            'font-family' => 'font',
+            'color' => 'color',
+            'background-color' => 'background_color',
+            'text-align' => 'text_alignment',
+            // TODO: Implement
+        );
+        $cssMappings = AMPArticle::arrayFromStyles($mappings, $textStyles);
+        $cssRule = '';
+        foreach ($cssMappings as $cssKey => $cssValue)
+        {
+            $cssRule = $cssRule . "$cssKey: $cssValue;";
+        }
+        return $cssRule;
+    }
+
+    private static function arrayFromStyles($mappings, $styles)
+    {
+        $result = array();
+        foreach ($mappings as $cssKey => $styleKey)
+        {
+            if (array_key_exists($styleKey, $styles))
+            {
+                $result[$cssKey] = $styles[$styleKey];
+            }
+        }
+
+        return $result;
     }
 }
