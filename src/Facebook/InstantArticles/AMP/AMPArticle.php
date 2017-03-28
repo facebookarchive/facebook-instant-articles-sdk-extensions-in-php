@@ -18,6 +18,10 @@ use Facebook\InstantArticles\Validators\Type;
 class AMPArticle extends Element implements InstantArticleInterface
 {
     private $instantArticle;
+    /*
+       'lang' => 'en-US',
+       'css-selector-prefix' => 'ia2amp-',
+     */
     private $properties = array();
 
     public function __construct($instantArticle, $properties = array())
@@ -232,10 +236,8 @@ class AMPArticle extends Element implements InstantArticleInterface
     private static function arrayFromStyles($mappings, $styles)
     {
         $result = array();
-        foreach ($mappings as $cssKey => $styleKey)
-        {
-            if (array_key_exists($styleKey, $styles))
-            {
+        foreach ($mappings as $cssKey => $styleKey) {
+            if (array_key_exists($styleKey, $styles)) {
                 $result[$cssKey] = $styles[$styleKey];
             }
         }
