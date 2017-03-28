@@ -18,6 +18,10 @@ use Facebook\InstantArticles\Validators\Type;
 class AMPArticle extends Element implements InstantArticleInterface
 {
     private $instantArticle;
+    /*
+       'lang' => 'en-US',
+       'css-selector-prefix' => 'ia2amp-',
+     */
     private $properties = array();
 
     public function __construct($instantArticle, $properties = array())
@@ -123,10 +127,12 @@ class AMPArticle extends Element implements InstantArticleInterface
         $title->appendChild($titleText);
 
         // Build and append body and article tags to the HTML document
-        // $body = $document->createElement('body');
+        $body = $document->createElement('body');
+        $html->appendChild($body);
+        $body->setAttribute('class', $this->buildClassName('body'));
         // $article = $document->createElement('article');
         // $body->appendChild($article);
-        // $html->appendChild($body);
+
         // if ($this->instantArticle->getHeader() && $this->instantArticle->getHeader()->isValid()) {
         //     $article->appendChild($this->instantArticle->getHeader()->toDOMElement($document));
         // }
@@ -152,6 +158,18 @@ class AMPArticle extends Element implements InstantArticleInterface
         // }
 
         return $html;
+    }
+
+    private function buildClassName($selectorName, $prefix = null) {
+        if (isset($prefix) || !$prefix) {
+            if (isset($this->properties['css-selector-prefix'])) {
+                $prefix = $this->properties['css-selector-prefix'];
+            }
+            else {
+                $prefix = 'ia2amp-';
+            }
+        }
+        return $prefix.$selectorName;
     }
 
     private function buildCustomCSS($document) {
@@ -237,9 +255,9 @@ class AMPArticle extends Element implements InstantArticleInterface
     private static function filterMappings($mappings, $styles)
     {
         $result = array();
-        foreach ($mappings as $filteredKey => $propertyKey) {
-            if (array_key_exists($propertyKey, $styles)) {
-                $result[$filteredKey] = $styles[$propertyKey];
+        foreach ($mappings as $cssKey => $styleKey) {
+            if (array_key_exists($styleKey, $styles)) {
+                $result[$cssKey] = $styles[$styleKey];
             }
         }
         return $result;
