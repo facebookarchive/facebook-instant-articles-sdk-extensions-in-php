@@ -56,7 +56,14 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $html_file = file_get_contents(__DIR__ . '/instant-article-example.html');
 
-        $renderer = AMPArticle::create($html_file, array('lang' => 'en-US', 'header-logo-image-url' => 'https://scontent.xx.fbcdn.net/v/t39.5687-6/16685642_1354057641326734_3025298852186947584_n.png?_nc_log=1&oh=d1182aec9d7615eb9bf49b4d9833d52c&oe=59689087'));
+        $renderer = AMPArticle::create(
+            $html_file,
+            array(
+                'lang' => 'en-US',
+                'header-logo-image-url' => 'https://scontent.xx.fbcdn.net/v/t39.5687-6/16685642_1354057641326734_3025298852186947584_n.png?_nc_log=1&oh=d1182aec9d7615eb9bf49b4d9833d52c&oe=59689087',
+                'header-logo-image-width' => '132',
+                'header-logo-image-height' => '26'
+            ));
         $amp_rendered = $renderer->render(null, true)."\n";
 
         $amp_expected = file_get_contents(__DIR__ . '/amp-converted.html');

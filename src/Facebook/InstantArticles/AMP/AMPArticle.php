@@ -138,9 +138,15 @@ class AMPArticle extends Element implements InstantArticleInterface
         $body->setAttribute('class', $this->buildClassName('header'));
         if (isset($this->properties['header-logo-image-url'])) {
             $imageURL = $this->properties['header-logo-image-url'];
-            $imageDimmensions = getimagesize($imageURL);
-            $imageWidth = $imageDimmensions[0];
-            $imageHeight = $imageDimmensions[1];
+            if (isset($this->properties['header-logo-image-width']) && isset($this->properties['header-logo-image-height'])) {
+                $imageWidth = $this->properties['header-logo-image-width'];
+                $imageHeight = $this->properties['header-logo-image-height'];
+            }
+            else {
+                $imageDimmensions = getimagesize($imageURL);
+                $imageWidth = $imageDimmensions[0];
+                $imageHeight = $imageDimmensions[1];
+            }
 
             // Creates the Logo image and appends to header
             $imageContainer = $document->createElement('div');
@@ -269,7 +275,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             // TODO: Implement
         );
         $filteredMappings = AMPArticle::filterMappings($mappings, $textStyles);
-        
+
         $filteredMappings['font-size'] = ($textStyles['text_size_scale'] * 100) . '%';
         $filteredMappings['line-height'] = ($textStyles['line_height_scale'] * 100) . '%';
 
