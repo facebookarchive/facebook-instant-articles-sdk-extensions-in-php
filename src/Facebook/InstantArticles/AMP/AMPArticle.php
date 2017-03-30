@@ -552,10 +552,10 @@ class AMPArticle extends Element implements InstantArticleInterface
     private static function getSpacingDeclarationBlocks($spacingMappings, $spacingType, $textStyles)
     {
         $directions = array(
-            'left',
             'top',
             'right',
             'bottom',
+            'left',
         );
         $spacingStyles = $textStyles[$spacingType];
         $spacings = array();
@@ -595,10 +595,10 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         // TODO: Move to constant
         $directions = array(
-            'left',
             'top',
             'right',
             'bottom',
+            'left',
         );
         $borderStyles = $textStyles['border'];
         $declarationBlocks = array();
