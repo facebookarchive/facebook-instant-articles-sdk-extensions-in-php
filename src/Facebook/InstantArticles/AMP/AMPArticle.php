@@ -337,6 +337,17 @@ class AMPArticle extends Element implements InstantArticleInterface
       foreach ($slideshow->getArticleImages() as $image) {
           $ampImage = $this->buildImage($image, $document, 'slideshow-image', false);
           $ampCarousel->appendChild($ampImage);
+
+          if (!isset($imageWidth) && !isset($imageHeight)) {
+              $imageUrl = $image->getUrl();
+              $imageDimensions = getimagesize($imageUrl);
+              $imageWidth = $imageDimensions[0];
+              $imageHeight = $imageDimensions[1];
+          }
+      }
+      if (isset($imageWidth) && isset($imageHeight)) {
+          $ampCarousel->setAttribute('width', $imageWidth);
+          $ampCarousel->setAttribute('height', $imageHeight);
       }
 
       return $ampCarouselContainer;
