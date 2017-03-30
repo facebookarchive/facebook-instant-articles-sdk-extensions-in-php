@@ -68,6 +68,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $rendered = str_replace('amp=""', 'amp', $rendered);
         $rendered = str_replace('amp-custom=""', 'amp-custom', $rendered);
         $rendered = str_replace('amp-boilerplate=""', 'amp-boilerplate', $rendered);
+        $rendered = str_replace('async=""', 'async', $rendered);
 
         return $rendered;
     }
@@ -605,7 +606,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $opacity = round(hexdec(substr($color, 0, 2)) / 255, 2);
             $color = substr($color, 2);
         }
-        
+
         $hex = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
         $rgb = array_map('hexdec', $hex);
 
