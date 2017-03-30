@@ -615,6 +615,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             }
         }
         $declarationBlocks['border-width'] = implode(' ', $borderWidths);
+        $declarationBlocks['border-style'] = 'solid';
         return $declarationBlocks;
     }
 
