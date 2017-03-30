@@ -191,6 +191,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $containsIframe = false;
         $containsSlideshow = false;
+        $containsAudio = false;
 
         if ($this->instantArticle->getChildren()) {
             foreach ($this->instantArticle->getChildren() as $child) {
@@ -226,28 +227,27 @@ class AMPArticle extends Element implements InstantArticleInterface
                 else if (Type::is($child, Image::getClassName()) || Type::is($child, AnimatedGIF::getClassName())) {
                     $childElement = $this->buildImage($child, $document, 'image');
                 }
-                else if (Type::is($child, Video::getClassName()) || Type::is($child, Audio::getClassName())) {
+                else if (Type::is($child, Video::getClassName())) {
                     $childElement = $this->buildVideo($child, $document, 'video');
+                }
+                else if (Type::is($child, Audio::getClassName())) {
+                    if (!$containsAudio) {
+                        $containsAudio = true;
+                        $head->appendChild($this->buildCustomElementScriptEntry('amp-audio', 'https://cdn.ampproject.org/v0/amp-audio-0.1.js', $document));
+                    }
+                    $childElement = $this->buildAudio($child, $document, 'audio');
                 }
                 else if (Type::is($child, Slideshow::getClassName())) {
                     if (!$containsSlideshow) {
                         $containsSlideshow = true;
-                        $ampCarouselScript = $document->createElement('script');
-                        $ampCarouselScript->setAttribute('async', '');
-                        $ampCarouselScript->setAttribute('custom-element', 'amp-carousel');
-                        $ampCarouselScript->setAttribute('src', 'https://cdn.ampproject.org/v0/amp-carousel-0.1.js');
-                        $head->appendChild($ampCarouselScript);
+                        $head->appendChild($this->buildCustomElementScriptEntry('amp-carousel', 'https://cdn.ampproject.org/v0/amp-carousel-0.1.js', $document));
                     }
                     $childElement = $this->buildSlideshow($child, $document, 'slideshow');
                 }
                 else if (Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
-                        $ampIframeScript = $document->createElement('script');
-                        $ampIframeScript->setAttribute('async', '');
-                        $ampIframeScript->setAttribute('custom-element', 'amp-iframe');
-                        $ampIframeScript->setAttribute('src', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js');
-                        $head->appendChild($ampIframeScript);
+                        $head->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $document));
                     }
                     $childElement = $this->buildIframe($child, $document, 'interactive');
                 }
@@ -283,6 +283,15 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
     }
 
+    public function buildCustomElementScriptEntry($customElementName, $src, $document)
+    {
+        $script = $document->createElement('script');
+        $script->setAttribute('async', '');
+        $script->setAttribute('custom-element', $customElementName);
+        $script->setAttribute('src', $src);
+        return $script;
+    }
+
     private function buildImage($image, $document, $cssClass, $withContainer = true)
     {
         if ($withContainer) {
@@ -309,6 +318,26 @@ class AMPArticle extends Element implements InstantArticleInterface
     }
 
     private function buildVideo($video, $document, $cssClass)
+    {
+        $ampVideoContainer = $document->createElement('div');
+        $ampVideoContainer->setAttribute('class', $this->buildClassName($cssClass));
+
+        $ampVideo = $document->createElement('amp-video');
+        $ampVideoContainer->appendChild($ampVideo);
+        $videoUrl = $video->getUrl();
+
+        $videoDimensions = getimagesize($videoUrl);
+        $videoWidth = $videoDimensions[0];
+        $videoHeight = $videoDimensions[1];
+
+        $ampVideo->setAttribute('src', $videoUrl);
+        $ampVideo->setAttribute('width', $videoWidth);
+        $ampVideo->setAttribute('height', $videoHeight);
+
+        return $ampVideoContainer;
+    }
+
+    private function buildAudio($video, $document, $cssClass)
     {
         $ampVideoContainer = $document->createElement('div');
         $ampVideoContainer->setAttribute('class', $this->buildClassName($cssClass));
@@ -357,12 +386,15 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function buildIframe($interactive, $document, $cssClass)
     {
+        $srcUrl = $interactive->getSource();
+
+
         $iframeContainer = $document->createElement('div');
         $iframeContainer->setAttribute('class', $this->buildClassName($cssClass));
 
         $ampIframe = $document->createElement('amp-iframe');
         $iframeContainer->appendChild($ampIframe);
-        $ampIframe->setAttribute('src', $interactive->getSource());
+        $ampIframe->setAttribute('src', $srcUrl);
         $ampIframe->setAttribute('width', $interactive->getWidth());
         $ampIframe->setAttribute('height', $interactive->getHeight());
         $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
