@@ -396,7 +396,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             AMPArticle::articleHeadStyles($styles) .
             AMPArticle::articleBodyStyles($styles) .
             AMPArticle::articleQuoteStyles($styles) .
-            // TODO: Captions
+            AMPArticle::articleCaptionStyles($styles) .
             // TODO: Additional Caption Sizes
             AMPArticle::articleFooterStyles($styles) .
             $customCSSFile;
@@ -438,6 +438,17 @@ class AMPArticle extends Element implements InstantArticleInterface
             'blockquote' => 'block_quote',
             'aside' => 'pull_quote',
             'cite' => 'pull_quote_attribution',
+        );
+        return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
+    }
+
+    private static function articleCaptionStyles($styles)
+    {
+        $mappings = array(
+            // TODO: Validate selectors
+            'figcaption h1' => 'caption_title_small',
+            'figcaption h2' => 'caption_description_small',
+            'figcaption cite' => 'caption_credit',
         );
         return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
     }
