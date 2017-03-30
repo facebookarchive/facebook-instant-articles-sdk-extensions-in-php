@@ -9,12 +9,25 @@
 namespace Facebook\InstantArticles\AMP;
 
 use Facebook\InstantArticles\Elements\Element;
+use Facebook\InstantArticles\Elements\Paragraph;
+use Facebook\InstantArticles\Elements\Blockquote;
+use Facebook\InstantArticles\Elements\H1;
+use Facebook\InstantArticles\Elements\H2;
+use Facebook\InstantArticles\Elements\ListElement;
+use Facebook\InstantArticles\Elements\Pullquote;
 use Facebook\InstantArticles\Elements\Image;
-use Facebook\InstantArticles\Elements\Slideshow;
+use Facebook\InstantArticles\Elements\AnimatedGIF;
 use Facebook\InstantArticles\Elements\Video;
+use Facebook\InstantArticles\Elements\Audio;
+use Facebook\InstantArticles\Elements\Slideshow;
+use Facebook\InstantArticles\Elements\Interactive;
+use Facebook\InstantArticles\Elements\SocialEmbed;
+use Facebook\InstantArticles\Elements\Map;
+use Facebook\InstantArticles\Elements\RelatedArticles;
 use Facebook\InstantArticles\Elements\Container;
 use Facebook\InstantArticles\Elements\TextContainer;
 use Facebook\InstantArticles\Elements\InstantArticleInterface;
+
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
 
@@ -173,29 +186,89 @@ class AMPArticle extends Element implements InstantArticleInterface
         $body->appendChild($article);
         $article->setAttribute('class', $this->buildClassName('article'));
 
-        // if ($this->instantArticle->getChildren()) {
-        //     foreach ($this->instantArticle->getChildren() as $child) {
-        //         if (Type::is($child, TextContainer::getClassName())) {
-        //             if (count($child->getTextChildren()) === 0) {
-        //                 continue;
-        //             } elseif (count($child->getTextChildren()) === 1) {
-        //                 if (Type::is($child->getTextChildren()[0], Type::STRING) &&
-        //                     trim($child->getTextChildren()[0]) === '') {
-        //                     continue;
-        //                 }
-        //             }
-        //         }
-        //         $article->appendChild($child->toDOMElement($document));
-        //     }
-        //     if ($this->instantArticle->getFooter() && $this->instantArticle->getFooter()->isValid()) {
-        //         $article->appendChild($this->instantArticle->getFooter()->toDOMElement($document));
-        //     }
-        // }
+        $containsIframe = false;
+        $containsSlideshow = false;
+
+        if ($this->instantArticle->getChildren()) {
+            foreach ($this->instantArticle->getChildren() as $child) {
+                if (Type::is($child, TextContainer::getClassName())) {
+                    if (count($child->getTextChildren()) === 0) {
+                        continue;
+                    } elseif (count($child->getTextChildren()) === 1) {
+                        if (Type::is($child->getTextChildren()[0], Type::STRING) &&
+                            trim($child->getTextChildren()[0]) === '') {
+                            continue;
+                        }
+                    }
+                }
+                $childElement = $child->toDOMElement($document);
+                if (Type::is($child, Paragraph::getClassName())) {
+                    $childElement->setAttribute('class', $this->buildClassName('p'));
+                }
+                else if (Type::is($child, Blockquote::getClassName())) {
+                    $childElement->setAttribute('class', $this->buildClassName('blockquote'));
+                }
+                else if (Type::is($child, H1::getClassName())) {
+                    $childElement->setAttribute('class', $this->buildClassName('h1'));
+                }
+                else if (Type::is($child, H2::getClassName())) {
+                    $childElement->setAttribute('class', $this->buildClassName('h2'));
+                }
+                else if (Type::is($child, ListElement::getClassName())) {
+                    $childElement->setAttribute('class', $this->buildClassName('list'));
+                }
+                else if (Type::is($child, Pullquote::getClassName())) {
+                    $childElement->setAttribute('class', $this->buildClassName('pullquote'));
+                }
+                else if (Type::is($child, Image::getClassName()) || Type::is($child, AnimatedGIF::getClassName())) {
+                    $childElement = $this->buildImage($child, $document, 'image');
+                }
+                else if (Type::is($child, Video::getClassName()) || Type::is($child, Audio::getClassName())) {
+                    $childElement = $this->buildVideo($child, $document, 'video');
+                }
+                else if (Type::is($child, Slideshow::getClassName())) {
+                    if (!$containsSlideshow) {
+                        $containsSlideshow = true;
+                        $ampCarouselScript = $document->createElement('script');
+                        $ampCarouselScript->setAttribute('async', '');
+                        $ampCarouselScript->setAttribute('custom-element', 'amp-carousel');
+                        $ampCarouselScript->setAttribute('src', 'https://cdn.ampproject.org/v0/amp-carousel-0.1.js');
+                        $head->appendChild($ampCarouselScript);
+                    }
+                    $childElement = $this->buildSlideshow($child, $document, 'slideshow');
+                }
+                else if (Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName())) {
+                    if (!$containsIframe) {
+                        $containsIframe = true;
+                        $ampIframeScript = $document->createElement('script');
+                        $ampIframeScript->setAttribute('async', '');
+                        $ampIframeScript->setAttribute('custom-element', 'amp-iframe');
+                        $ampIframeScript->setAttribute('src', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js');
+                        $head->appendChild($ampIframeScript);
+                    }
+                    $childElement = $this->buildIframe($child, $document, 'interactive');
+                }
+                else if (Type::is($child, Map::getClassName())) {
+                    $childElement->setAttribute('class', $this->buildClassName('map'));
+                    // TODO Map
+                }
+                else if (Type::is($child, RelatedArticles::getClassName())) {
+                    $childElement->setAttribute('class', $this->buildClassName('related-articles'));
+                    // TODO RelatedArticles
+                }
+
+                $article->appendChild($childElement);
+            }
+            // if ($this->instantArticle->getFooter() && $this->instantArticle->getFooter()->isValid()) {
+            //     $article->appendChild($this->instantArticle->getFooter()->toDOMElement($document));
+            // }
+        }
 
         return $html;
     }
 
-    private function buildCover($media, $document) {
+    private function buildCover($media, $document)
+    {
         if (Type::is($media, Image::getClassName())) {
             return $this->buildImage($media, $document, 'cover-image');
         }
@@ -207,12 +280,17 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
     }
 
-    private function buildImage($image, $document, $cssClass) {
-        $ampImgContainer = $document->createElement('div');
-        $ampImgContainer->setAttribute('class', $this->buildClassName($cssClass));
+    private function buildImage($image, $document, $cssClass, $withContainer = true)
+    {
+        if ($withContainer) {
+            $ampImgContainer = $document->createElement('div');
+            $ampImgContainer->setAttribute('class', $this->buildClassName($cssClass));
+        }
 
         $ampImg = $document->createElement('amp-img');
-        $ampImgContainer->appendChild($ampImg);
+        if ($withContainer) {
+            $ampImgContainer->appendChild($ampImg);
+        }
         $imageURL = $image->getUrl();
 
         $imageDimmensions = getimagesize($imageURL);
@@ -223,31 +301,61 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampImg->setAttribute('width', $imageWidth);
         $ampImg->setAttribute('height', $imageHeight);
 
-        return $ampImgContainer;
+
+        return ($withContainer) ? $ampImgContainer : $ampImg;
     }
 
-    private function buildVideo($video, $document, $cssClass) {
-      $ampVideoContainer = $document->createElement('div');
-      $ampVideoContainer->setAttribute('class', $this->buildClassName($cssClass));
+    private function buildVideo($video, $document, $cssClass)
+    {
+        $ampVideoContainer = $document->createElement('div');
+        $ampVideoContainer->setAttribute('class', $this->buildClassName($cssClass));
 
-      $ampVideo = $document->createElement('amp-video');
-      $ampVideoContainer->appendChild($ampVideo);
-      $videoUrl = $video->getUrl();
+        $ampVideo = $document->createElement('amp-video');
+        $ampVideoContainer->appendChild($ampVideo);
+        $videoUrl = $video->getUrl();
 
-      $videoDimensions = getimagesize($videoUrl);
-      $videoWidth = $videoDimensions[0];
-      $videoHeight = $videoDimensions[1];
+        $videoDimensions = getimagesize($videoUrl);
+        $videoWidth = $videoDimensions[0];
+        $videoHeight = $videoDimensions[1];
 
-      $ampVideo->setAttribute('src', $videoUrl);
-      $ampVideo->setAttribute('width', $videoWidth);
-      $ampVideo->setAttribute('height', $videoHeight);
+        $ampVideo->setAttribute('src', $videoUrl);
+        $ampVideo->setAttribute('width', $videoWidth);
+        $ampVideo->setAttribute('height', $videoHeight);
 
-      return $ampVideoContainer;
+        return $ampVideoContainer;
     }
 
-    private function buildSlideshow($slideshow, $document) {
-      $slideshow = $document->createElement('amp-img');
-      return $slideshow;
+    private function buildSlideshow($slideshow, $document, $cssClass)
+    {
+      $ampCarouselContainer = $document->createElement('div');
+      $ampCarouselContainer->setAttribute('class', $this->buildClassName($cssClass));
+
+      $ampCarousel = $document->createElement('amp-carousel');
+      $ampCarouselContainer->appendChild($ampCarousel);
+
+      foreach ($slideshow->getArticleImages() as $image) {
+          $ampImage = $this->buildImage($image, $document, 'slideshow-image', false);
+          $ampCarousel->appendChild($ampImage);
+      }
+
+      return $ampCarouselContainer;
+    }
+
+    private function buildIframe($interactive, $document, $cssClass)
+    {
+        $iframeContainer = $document->createElement('div');
+        $iframeContainer->setAttribute('class', $this->buildClassName($cssClass));
+
+        $ampIframe = $document->createElement('amp-iframe');
+        $iframeContainer->appendChild($ampIframe);
+        $ampIframe->setAttribute('src', $interactive->getSource());
+        $ampIframe->setAttribute('width', $interactive->getWidth());
+        $ampIframe->setAttribute('height', $interactive->getHeight());
+        $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
+        $ampIframe->setAttribute('layout', 'responsive');
+        $ampIframe->setAttribute('frameborder', '0');
+
+        return $iframeContainer;
     }
 
     private function buildClassName($selectorName, $prefix = null) {
