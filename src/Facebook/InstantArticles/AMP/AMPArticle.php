@@ -503,7 +503,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $spacingMappings = array(
             'NONE' => 0,
-            'DOCUMENT_MARGIN' => DEFAULT_MARGIN,
+            'DOCUMENT_MARGIN' => AMPArticle::DEFAULT_MARGIN,
             'EXTRA_SMALL' => 16,
             'SMALL' => 32,
             'MEDIUM' => 46,
