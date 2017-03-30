@@ -224,8 +224,11 @@ class AMPArticle extends Element implements InstantArticleInterface
                 else if (Type::is($child, Pullquote::getClassName())) {
                     $childElement->setAttribute('class', $this->buildClassName('pullquote'));
                 }
-                else if (Type::is($child, Image::getClassName()) || Type::is($child, AnimatedGIF::getClassName())) {
+                else if (Type::is($child, Image::getClassName())) {
                     $childElement = $this->buildImage($child, $document, 'image');
+                }
+                else if (Type::is($child, AnimatedGIF::getClassName())) {
+                    $childElement = $this->buildGIF($child, $document, 'gif');
                 }
                 else if (Type::is($child, Video::getClassName())) {
                     $childElement = $this->buildVideo($child, $document, 'video');
@@ -317,6 +320,30 @@ class AMPArticle extends Element implements InstantArticleInterface
         return ($withContainer) ? $ampImgContainer : $ampImg;
     }
 
+    private function buildGIF($image, $document, $cssClass, $withContainer = true)
+    {
+        if ($withContainer) {
+            $ampImgContainer = $document->createElement('div');
+            $ampImgContainer->setAttribute('class', $this->buildClassName($cssClass));
+        }
+
+        $ampImg = $document->createElement('amp-anim');
+        if ($withContainer) {
+            $ampImgContainer->appendChild($ampImg);
+        }
+        $imageURL = $image->getUrl();
+
+        $imageDimmensions = getimagesize($imageURL);
+        $imageWidth = $imageDimmensions[0];
+        $imageHeight = $imageDimmensions[1];
+
+        $ampImg->setAttribute('src', $imageURL);
+        $ampImg->setAttribute('width', $imageWidth);
+        $ampImg->setAttribute('height', $imageHeight);
+
+        return ($withContainer) ? $ampImgContainer : $ampImg;
+    }
+
     private function buildVideo($video, $document, $cssClass)
     {
         $ampVideoContainer = $document->createElement('div');
@@ -388,6 +415,15 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         $srcUrl = $interactive->getSource();
 
+        // Based on $srcUrl build:
+        // TODO check URLs for youtube
+        // TODO check URLs for Facebook
+        // TODO check URLs for Twitter
+        // TODO check URLs for Instagram
+        // TODO check URLs for Vimeo
+        // TODO check URLs for Vine
+        // TODO check URLs for playbuzz
+        // TODO check URLs for soundcloud
 
         $iframeContainer = $document->createElement('div');
         $iframeContainer->setAttribute('class', $this->buildClassName($cssClass));
