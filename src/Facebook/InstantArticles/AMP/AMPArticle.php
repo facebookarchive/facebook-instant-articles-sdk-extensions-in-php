@@ -9,6 +9,9 @@
 namespace Facebook\InstantArticles\AMP;
 
 use Facebook\InstantArticles\Elements\Element;
+use Facebook\InstantArticles\Elements\Image;
+use Facebook\InstantArticles\Elements\Slideshow;
+use Facebook\InstantArticles\Elements\Video;
 use Facebook\InstantArticles\Elements\Container;
 use Facebook\InstantArticles\Elements\TextContainer;
 use Facebook\InstantArticles\Elements\InstantArticleInterface;
@@ -148,23 +151,28 @@ class AMPArticle extends Element implements InstantArticleInterface
                 $imageHeight = $imageDimmensions[1];
             }
 
-            // Creates the Logo image and appends to header
-            $imageContainer = $document->createElement('div');
-            $header->appendChild($imageContainer);
-            $imageContainer->setAttribute('class', $this->buildClassName('header-img'));
+            // Creates the cover content for the header and appends to the header
+            if ($this->instantArticle->getHeader()->getCover()) {
+                $headerCover = $this->buildCover($this->instantArticle->getHeader()->getCover(), $document);
+                $header->appendChild($headerCover);
+            }
+
+            // Creates the header bar with image (maybe fb like?) and appends to header
+            $headerBar = $document->createElement('div');
+            $header->appendChild($headerBar);
+            $headerBar->setAttribute('class', $this->buildClassName('header-bar'));
             $ampImage = $document->createElement('amp-img');
-            $imageContainer->appendChild($ampImage);
+            $headerBar->appendChild($ampImage);
             $ampImage->setAttribute('src', $imageURL);
             $ampImage->setAttribute('width', $imageWidth);
             $ampImage->setAttribute('height', $imageHeight);
+
         }
 
-        // $article = $document->createElement('article');
-        // $body->appendChild($article);
+        $article = $document->createElement('article');
+        $body->appendChild($article);
+        $article->setAttribute('class', $this->buildClassName('article'));
 
-        // if ($this->instantArticle->getHeader() && $this->instantArticle->getHeader()->isValid()) {
-        //     $article->appendChild($this->instantArticle->getHeader()->toDOMElement($document));
-        // }
         // if ($this->instantArticle->getChildren()) {
         //     foreach ($this->instantArticle->getChildren() as $child) {
         //         if (Type::is($child, TextContainer::getClassName())) {
@@ -182,11 +190,64 @@ class AMPArticle extends Element implements InstantArticleInterface
         //     if ($this->instantArticle->getFooter() && $this->instantArticle->getFooter()->isValid()) {
         //         $article->appendChild($this->instantArticle->getFooter()->toDOMElement($document));
         //     }
-        // } else {
-        //     $article->appendChild($document->createTextNode(''));
         // }
 
         return $html;
+    }
+
+    private function buildCover($media, $document) {
+        if (Type::is($media, Image::getClassName())) {
+            return $this->buildImage($media, $document, 'cover-image');
+        }
+        else if (Type::is($media, Slideshow::getClassName())) {
+            return $this->buildSlideshow($media, $document, 'cover-slideshow');
+        }
+        else if (Type::is($media, Video::getClassName())) {
+            return $this->buildVideo($media, $document, 'cover-video');
+        }
+    }
+
+    private function buildImage($image, $document, $cssClass) {
+        $ampImgContainer = $document->createElement('div');
+        $ampImgContainer->setAttribute('class', $this->buildClassName($cssClass));
+
+        $ampImg = $document->createElement('amp-img');
+        $ampImgContainer->appendChild($ampImg);
+        $imageURL = $image->getUrl();
+
+        $imageDimmensions = getimagesize($imageURL);
+        $imageWidth = $imageDimmensions[0];
+        $imageHeight = $imageDimmensions[1];
+
+        $ampImg->setAttribute('src', $imageURL);
+        $ampImg->setAttribute('width', $imageWidth);
+        $ampImg->setAttribute('height', $imageHeight);
+
+        return $ampImgContainer;
+    }
+
+    private function buildVideo($video, $document, $cssClass) {
+      $ampVideoContainer = $document->createElement('div');
+      $ampVideoContainer->setAttribute('class', $this->buildClassName($cssClass));
+
+      $ampVideo = $document->createElement('amp-video');
+      $ampVideoContainer->appendChild($ampVideo);
+      $videoUrl = $video->getUrl();
+
+      $videoDimensions = getimagesize($videoUrl);
+      $videoWidth = $videoDimensions[0];
+      $videoHeight = $videoDimensions[1];
+
+      $ampVideo->setAttribute('src', $videoUrl);
+      $ampVideo->setAttribute('width', $videoWidth);
+      $ampVideo->setAttribute('height', $videoHeight);
+
+      return $ampVideoContainer;
+    }
+
+    private function buildSlideshow($slideshow, $document) {
+      $slideshow = $document->createElement('amp-img');
+      return $slideshow;
     }
 
     private function buildClassName($selectorName, $prefix = null) {
