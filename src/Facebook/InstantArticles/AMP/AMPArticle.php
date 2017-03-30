@@ -369,6 +369,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         $paddingMappings = AMPArticle::getSpacingDeclarationBlocks($spacingMappings, 'padding', $textStyles);
         $filteredMappings = array_merge($filteredMappings, $paddingMappings);
 
+        $borderMappings = AMPArticle::getBorderDeclarationBlocks($textStyles);
+        $filteredMappings = array_merge($filteredMappings, $borderMappings);
+
         $cssDeclarations = array();
         foreach ($filteredMappings as $filteredKey => $cssValue) {
             $cssDeclarations[] = AMPArticle::buildCSSDeclaration($filteredKey, $cssValue);
@@ -442,5 +445,32 @@ class AMPArticle extends Element implements InstantArticleInterface
         $size = $spacingDirectionStyles['size'];
         $scalingFactor = $spacingDirectionStyles['scaling_factor'];
         return $spacingMappings[$size] * $scalingFactor;
+    }
+
+    private static function getBorderDeclarationBlocks($textStyles)
+    {
+        // TODO: Move to constant
+        $directions = array(
+            'left',
+            'top',
+            'right',
+            'bottom',
+        );
+        $borderStyles = $textStyles['border'];
+        $declarationBlocks = array();
+        $borderWidths = array();
+        foreach ($directions as $direction) {
+            if (!array_key_exists($direction, $borderStyles)) {
+                continue;
+            }
+            $borderDirectionStyles = $borderStyles[$direction];
+            $borderWidth = $borderDirectionStyles['width'];
+            $borderWidths[] = $borderWidth != 0 ? $borderWidth . 'px' : '0';
+            if (array_key_exists('color', $borderDirectionStyles)) {
+                $declarationBlocks["border-$direction-color"] = $borderDirectionStyles['color'];
+            }
+        }
+        $declarationBlocks['border-width'] = implode(' ', $borderWidths);
+        return $declarationBlocks;
     }
 }
