@@ -33,6 +33,8 @@ use Facebook\InstantArticles\Validators\Type;
 
 class AMPArticle extends Element implements InstantArticleInterface
 {
+    const DEFAULT_MARGIN = 15;
+
     private $instantArticle;
     /*
        'lang' => 'en-US',
@@ -501,7 +503,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $spacingMappings = array(
             'NONE' => 0,
-            'DOCUMENT_MARGIN' => 0,
+            'DOCUMENT_MARGIN' => DEFAULT_MARGIN,
             'EXTRA_SMALL' => 16,
             'SMALL' => 32,
             'MEDIUM' => 46,
