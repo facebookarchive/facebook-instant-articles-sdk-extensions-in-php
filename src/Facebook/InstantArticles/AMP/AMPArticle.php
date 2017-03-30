@@ -290,6 +290,20 @@ class AMPArticle extends Element implements InstantArticleInterface
             $filteredMappings['text-decoration'] = 'underline';
         }
 
+        $spacingMappings = array(
+            'NONE' => 0,
+            'DOCUMENT_MARGIN' => 0,
+            'EXTRA_SMALL' => 16,
+            'SMALL' => 32,
+            'MEDIUM' => 46,
+            'LARGE' => 64,
+            'EXTRA_LARGE' => 96,
+        );
+        $marginMappings = AMPArticle::getSpacingDeclarationBlocks($spacingMappings, 'margin', $textStyles);
+        $filteredMappings = array_merge($filteredMappings, $marginMappings);
+        $paddingMappings = AMPArticle::getSpacingDeclarationBlocks($spacingMappings, 'padding', $textStyles);
+        $filteredMappings = array_merge($filteredMappings, $paddingMappings);
+
         $cssDeclarations = array();
         foreach ($filteredMappings as $filteredKey => $cssValue) {
             $cssDeclarations[] = AMPArticle::buildCSSDeclaration($filteredKey, $cssValue);
@@ -308,9 +322,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $result;
     }
 
-    private static function buildCSSDeclaration($filteredKey, $cssValue)
+    private static function buildCSSDeclaration($cssKey, $cssValue)
     {
-        return "$filteredKey: $cssValue;";
+        return "$cssKey: $cssValue;";
     }
 
     private static function buildCSSDeclarationBlock($cssDeclarations)
@@ -323,6 +337,23 @@ class AMPArticle extends Element implements InstantArticleInterface
         return "$cssSelector $cssDeclarationBlock";
     }
 
+    private static function getSpacingDeclarationBlocks($spacingMappings, $spacingType, $textStyles)
+    {
+        $directions = array(
+            'left',
+            'top',
+            'right',
+            'bottom',
+        );
+        $spacingStyles = $textStyles[$spacingType];
+        $spacings = array();
+        foreach ($directions as $direction) {
+            $spacing = AMPArticle::getDirectionSpacing($spacingMappings, $direction, $spacingStyles);
+            $spacings[] = $spacing != 0 ? $spacing . 'px' : '0';
+        }
+        return array($spacingType => implode(' ', $spacings));
+    }
+
     private static function buildCSSRulesFromMappings($mappings, $styles)
     {
         $rule = '';
@@ -333,5 +364,18 @@ class AMPArticle extends Element implements InstantArticleInterface
             }
         }
         return $rule;
+    }
+
+    private static function getDirectionSpacing($spacingMappings, $direction, $spacingStyles)
+    {
+        return array_key_exists($direction, $spacingStyles)
+            ? AMPArticle::getSpacing($spacingMappings, $spacingStyles[$direction])
+            : 0;
+    }
+
+    private static function getSpacing($spacingMappings, $spacingDirectionStyles) {
+        $size = $spacingDirectionStyles['size'];
+        $scalingFactor = $spacingDirectionStyles['scaling_factor'];
+        return $spacingMappings[$size] * $scalingFactor;
     }
 }
