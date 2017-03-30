@@ -424,8 +424,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         $mappings = array(
             // TODO: Logo
             // TODO: Kicker --> header h3.op-kicker
-            'header h1' => 'title',
-            'header h2' => 'subtitle',
+            '.ia2amp-header h1' => 'title',
+            '.ia2amp-header h2' => 'subtitle',
             // TODO: Byline --> header address
             // TODO: Date --> header time
         );
@@ -435,10 +435,10 @@ class AMPArticle extends Element implements InstantArticleInterface
     private static function articleBodyStyles($styles)
     {
         $mappings = array(
-            'h1' => 'primary_heading',
-            'h2' => 'secondary_heading',
-            'p' => 'body_text',
-            'a' => 'inline_link',
+            '.ia2amp-h1' => 'primary_heading',
+            '.ia2amp-h2' => 'secondary_heading',
+            '.ia2amp-p' => 'body_text',
+            '.ia2amp-article a' => 'inline_link',
         );
         return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
     }
@@ -446,9 +446,9 @@ class AMPArticle extends Element implements InstantArticleInterface
     private static function articleQuoteStyles($styles)
     {
         $mappings = array(
-            'blockquote' => 'block_quote',
-            'aside' => 'pull_quote',
-            'cite' => 'pull_quote_attribution',
+            '.ia2amp-blockquote' => 'block_quote',
+            '.ia2amp-pullquote' => 'pull_quote',
+            '.ia2amp-pullquote cite' => 'pull_quote_attribution',
         );
         return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
     }
