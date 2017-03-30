@@ -295,7 +295,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private static function articleColorsStyles($styles)
     {
-      $backgroundColor = $styles['background_color'];
+      $backgroundColor = AMPArticle::toRGB($styles['background_color']);
       return "html {background-color: $backgroundColor;}";
     }
 
@@ -334,7 +334,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         $mappings = array(
             'font-family' => 'font',
             'color' => 'color',
-            'background-color' => 'background_color',
             'text-align' => 'text_alignment',
             'display' => 'display',
             // TODO: Implement
@@ -353,6 +352,10 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         if (array_key_exists('underline', $textStyles) && $textStyles['underline'] != 'NONE') {
             $filteredMappings['text-decoration'] = 'underline';
+        }
+
+        if (array_key_exists('background_color', $textStyles)) {
+            $filteredMappings['background-color'] = AMPArticle::toRGB($textStyles['background_color']);
         }
 
         $spacingMappings = array(
@@ -467,10 +470,29 @@ class AMPArticle extends Element implements InstantArticleInterface
             $borderWidth = $borderDirectionStyles['width'];
             $borderWidths[] = $borderWidth != 0 ? $borderWidth . 'px' : '0';
             if (array_key_exists('color', $borderDirectionStyles)) {
-                $declarationBlocks["border-$direction-color"] = $borderDirectionStyles['color'];
+                $declarationBlocks["border-$direction-color"] = AMPArticle::toRGB($borderDirectionStyles['color']);
             }
         }
         $declarationBlocks['border-width'] = implode(' ', $borderWidths);
         return $declarationBlocks;
+    }
+
+    public static function toRGB($color)
+    {
+        if ($color[0] == '#')
+            $color = substr($color, 1);
+
+        $opacity = 1.0;
+        if (strlen($color) == 8) {
+            $opacity = round(hexdec(substr($color, 0, 2)) / 255, 2);
+            $color = substr($color, 2);
+        }
+        
+        $hex = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
+        $rgb = array_map('hexdec', $hex);
+
+        return $opacity == 1.0
+            ? 'rgb(' . implode(",", $rgb) . ')'
+            :  'rgba(' . implode(",", $rgb) . ',' . $opacity . ')';
     }
 }

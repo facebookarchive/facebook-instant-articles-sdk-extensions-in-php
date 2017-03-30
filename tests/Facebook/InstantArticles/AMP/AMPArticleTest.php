@@ -75,4 +75,23 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($amp_expected, $amp_rendered);
         // var_dump($amp_rendered);
     }
+
+    /**
+    * @dataProvider testToRGBDataProvider
+    */
+    public function testToRG($hexColor, $expected)
+    {
+        $rgb = AMPArticle::toRGB($hexColor);
+        $this->assertEquals($expected, $rgb);
+    }
+
+    public function testToRGBDataProvider() {
+        return array(
+            array('FFAABB', 'rgb(255,170,187)'),
+            array('#FFAABB', 'rgb(255,170,187)'),
+            array('#FFFFAABB', 'rgb(255,170,187)'),
+            array('EEFFAABB', 'rgba(255,170,187,0.93)'),
+            array('#EEFFAABB', 'rgba(255,170,187,0.93)'),
+        );
+    }
 }
