@@ -274,7 +274,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function getCustomCSS()
     {
         // TODO: Move to settings
-        $stylesFolder = __DIR__ . '/../../../Facebook/InstantArticles/AMP/';
+        $stylesFolder = __DIR__ . '/../../../../tests/Facebook/InstantArticles/AMP/';
 
         $styleName = $this->instantArticle->getStyle();
         $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
