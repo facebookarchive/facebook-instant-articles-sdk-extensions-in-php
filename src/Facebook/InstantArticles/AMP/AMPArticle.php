@@ -403,23 +403,23 @@ class AMPArticle extends Element implements InstantArticleInterface
         $customCSSFile = file_get_contents($stylesFolder . $styleName . '.amp-custom.css');
         $customCSSFile = str_replace(array("\r", "\n"), ' ', $customCSSFile);
 
-        return AMPArticle::articleColorsStyles($styles) .
-            AMPArticle::articleHeadStyles($styles) .
-            AMPArticle::articleBodyStyles($styles) .
-            AMPArticle::articleQuoteStyles($styles) .
-            AMPArticle::articleCaptionStyles($styles) .
+        return $this->articleColorsStyles($styles) .
+            $this->articleHeadStyles($styles) .
+            $this->articleBodyStyles($styles) .
+            $this->articleQuoteStyles($styles) .
+            $this->articleCaptionStyles($styles) .
             // TODO: Additional Caption Sizes
-            AMPArticle::articleFooterStyles($styles) .
+            $this->articleFooterStyles($styles) .
             $customCSSFile;
     }
 
-    private static function articleColorsStyles($styles)
+    private function articleColorsStyles($styles)
     {
       $backgroundColor = AMPArticle::toRGB($styles['background_color']);
       return "html {background-color: $backgroundColor;}";
     }
 
-    private static function articleHeadStyles($styles)
+    private function articleHeadStyles($styles)
     {
         $mappings = array(
             // TODO: Logo
@@ -429,10 +429,10 @@ class AMPArticle extends Element implements InstantArticleInterface
             // TODO: Byline --> header address
             // TODO: Date --> header time
         );
-        return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
 
-    private static function articleBodyStyles($styles)
+    private function articleBodyStyles($styles)
     {
         $mappings = array(
             '.ia2amp-h1' => 'primary_heading',
@@ -440,20 +440,20 @@ class AMPArticle extends Element implements InstantArticleInterface
             '.ia2amp-p' => 'body_text',
             '.ia2amp-article a' => 'inline_link',
         );
-        return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
 
-    private static function articleQuoteStyles($styles)
+    private function articleQuoteStyles($styles)
     {
         $mappings = array(
             '.ia2amp-blockquote' => 'block_quote',
             '.ia2amp-pullquote' => 'pull_quote',
             '.ia2amp-pullquote cite' => 'pull_quote_attribution',
         );
-        return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
 
-    private static function articleCaptionStyles($styles)
+    private function articleCaptionStyles($styles)
     {
         $mappings = array(
             // TODO: Validate selectors
@@ -461,16 +461,16 @@ class AMPArticle extends Element implements InstantArticleInterface
             'figcaption h2' => 'caption_description_small',
             'figcaption cite' => 'caption_credit',
         );
-        return AMPArticle::buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
 
-    private static function articleFooterStyles($styles)
+    private function articleFooterStyles($styles)
     {
       // TODO: Implement
       return '';
     }
 
-    private static function buildTextCSSDeclarationBlock($textStyles)
+    private function buildTextCSSDeclarationBlock($textStyles)
     {
         $mappings = array(
             'font-family' => 'font',
@@ -566,12 +566,12 @@ class AMPArticle extends Element implements InstantArticleInterface
         return array($spacingType => implode(' ', $spacings));
     }
 
-    private static function buildCSSRulesFromMappings($mappings, $styles)
+    private function buildCSSRulesFromMappings($mappings, $styles)
     {
         $rule = '';
         foreach ($mappings as $selector => $objectKey) {
             if (array_key_exists($objectKey, $styles)) {
-                $declarationBlock = AMPArticle::buildTextCSSDeclarationBlock($styles[$objectKey]);
+                $declarationBlock = $this->buildTextCSSDeclarationBlock($styles[$objectKey]);
                 $rule = $rule . AMPArticle::buildCssRule($selector, $declarationBlock);
             }
         }
