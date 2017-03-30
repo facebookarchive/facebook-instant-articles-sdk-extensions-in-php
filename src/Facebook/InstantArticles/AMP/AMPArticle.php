@@ -280,13 +280,17 @@ class AMPArticle extends Element implements InstantArticleInterface
         $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
         $styles = json_decode($stylesFile, true);
 
+        $customCSSFile = file_get_contents($stylesFolder . $styleName . '.amp-custom.css');
+        $customCSSFile = str_replace(array("\r", "\n"), ' ', $customCSSFile);
+
         return AMPArticle::articleColorsStyles($styles) .
             AMPArticle::articleHeadStyles($styles) .
             AMPArticle::articleBodyStyles($styles) .
             // TODO: Quotes
             // TODO: Captions
             // TODO: Additional Caption Sizes
-            AMPArticle::articleFooterStyles($styles);
+            AMPArticle::articleFooterStyles($styles) .
+            $customCSSFile;
     }
 
     private static function articleColorsStyles($styles)
