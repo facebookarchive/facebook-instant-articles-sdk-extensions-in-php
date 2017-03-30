@@ -5,7 +5,7 @@
 		"color": "#000000",
 		"background_color": "#00FFFFFF",
 		"font": "Georgia",
-		"display": "INLINE",
+		"display": "BLOCK",
 		"underline": "NONE",
 		"text_alignment": "LEFT",
 		"text_size_scale": 1,
