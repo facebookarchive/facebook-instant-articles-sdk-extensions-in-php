@@ -80,6 +80,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         // Sets content into the file for fast testing
         file_put_contents(__DIR__ . '/amp-converted.html', $amp_rendered);
 
+        // URL of file: https://s3.amazonaws.com/wodexpert/amp-converted-pablo.html
+        // AMP url for testing: https://search.google.com/search-console/amp
         $awsClient = S3Client::factory(array(
             'credentials' => array(
                 'key'    => 'AKIAIA5UXSRCJTQL66QA',
