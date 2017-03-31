@@ -154,6 +154,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         // Builds the content Header, with proper colors and image, adding to body
         $header = $document->createElement('header');
         $body->appendChild($header);
+        // TODO Add Title, subtitle, author and date to the header
         $header->setAttribute('class', $this->buildClassName('header'));
         if (isset($this->properties['header-logo-image-url'])) {
             $imageURL = $this->properties['header-logo-image-url'];
