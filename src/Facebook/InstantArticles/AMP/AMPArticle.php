@@ -570,8 +570,19 @@ class AMPArticle extends Element implements InstantArticleInterface
       return '';
     }
 
-    private function buildTextCSSDeclarationBlock($textStyles)
+    private function buildTextCSSDeclarationBlock($textStyles, $textType)
     {
+        // TODO: Move to constant
+        $textSizes = array(
+            'title' => 60,
+            'subtitle' => 38,
+            'body_text' => 34,
+            'block_quote' => 34,
+            'pull_quote' => 46,
+            // TODO: Add all
+        );
+
+        // TODO: Move to constant
         $mappings = array(
             'font-family' => 'font',
             'color' => 'color',
@@ -581,7 +592,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         );
         $filteredMappings = AMPArticle::filterMappings($mappings, $textStyles);
 
-        $filteredMappings['font-size'] = ($textStyles['text_size_scale'] * 100) . '%';
+        $textSize = ((array_key_exists($textType, $textSizes) ? $textSizes[$textType] : 25) * $textStyles['text_size_scale']) . 'px';
+        $filteredMappings['font-size'] = $textSize;
         $filteredMappings['line-height'] = ($textStyles['line_height_scale'] * 100) . '%';
 
         $textTransformMappings = array(
@@ -671,7 +683,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $rule = '';
         foreach ($mappings as $selector => $objectKey) {
             if (array_key_exists($objectKey, $styles)) {
-                $declarationBlock = $this->buildTextCSSDeclarationBlock($styles[$objectKey]);
+                $declarationBlock = $this->buildTextCSSDeclarationBlock($styles[$objectKey], $objectKey);
                 $rule = $rule . AMPArticle::buildCssRule($selector, $declarationBlock);
             }
         }
