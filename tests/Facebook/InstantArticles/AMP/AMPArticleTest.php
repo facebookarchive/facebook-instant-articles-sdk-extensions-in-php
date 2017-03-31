@@ -12,6 +12,9 @@ use Facebook\InstantArticles\Elements\InstantArticle;
 use Facebook\InstantArticles\AMP\AMPArticle;
 use Facebook\InstantArticles\Parser\Parser;
 
+use Aws\S3\S3Client;
+use Aws\Common\Aws;
+
 class AMPArticleTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
@@ -74,6 +77,24 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($amp_expected, $amp_rendered);
         // var_dump($amp_rendered);
+        // Sets content into the file for fast testing
+        file_put_contents(__DIR__ . '/amp-converted.html', $amp_rendered);
+
+        $awsClient = S3Client::factory(array(
+            'credentials' => array(
+                'key'    => 'AKIAIA5UXSRCJTQL66QA',
+                'secret' => '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',
+            ),
+            'region'     => 'us-east-1',
+            'version'    => '2006-03-01',
+        ));
+
+        $awsClient->putObject(array(
+            'Bucket'     => 'wodexpert',
+            'Key'        => 'amp-converted-pablo.html',
+            'SourceFile' => __DIR__ . '/amp-converted.html',
+            'ACL'        => 'public-read'
+        ));
     }
 
     /**
