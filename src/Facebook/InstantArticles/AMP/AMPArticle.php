@@ -348,8 +348,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         $imageHeight = $imageDimmensions[1];
 
         $ampImg->setAttribute('src', $imageURL);
-        $ampImg->setAttribute('width', $imageWidth);
+        //$ampImg->setAttribute('width', $imageWidth);
         $ampImg->setAttribute('height', $imageHeight);
+        $ampImg->setAttribute('layout', 'fixed-height');
 
 
         return ($withContainer) ? $ampImgContainer : $ampImg;
