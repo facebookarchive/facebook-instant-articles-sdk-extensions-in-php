@@ -154,7 +154,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         // Builds the content Header, with proper colors and image, adding to body
         $header = $document->createElement('header');
         $body->appendChild($header);
-        // TODO Add Title, subtitle, author and date to the header
+
         $header->setAttribute('class', $this->buildClassName('header'));
         if (isset($this->properties['header-logo-image-url'])) {
             $imageURL = $this->properties['header-logo-image-url'];
@@ -185,6 +185,35 @@ class AMPArticle extends Element implements InstantArticleInterface
             $ampImage->setAttribute('height', $imageHeight);
 
         }
+        // The kicker for article
+        $kicker = $document->createElement('h2');
+        $header->appendChild($kicker);
+        $kicker->setAttribute('class', 'ia2amp-header-category');
+        $kicker->appendChild($this->instantArticle->getHeader()->getKicker()->textToDOMDocumentFragment($document));
+
+        // The Title for article
+        $h1 = $document->createElement('h1');
+        $header->appendChild($h1);
+        $h1->setAttribute('class', 'ia2amp-header-h1');
+        $h1->appendChild($this->instantArticle->getHeader()->getTitle()->textToDOMDocumentFragment($document));
+
+        // The article authors
+        $authors = $document->createElement('h3');
+        $header->appendChild($authors);
+        $authors->setAttribute('class', 'ia2amp-header-author');
+        $authorsElement = $this->instantArticle->getHeader()->getAuthors();
+        $authorsString = [];
+        foreach($authorsElement as $author) {
+            $authorsString[] = $author->getName();
+        }
+        $authors->appendChild($document->createTextNode('BY '.implode($authorsString, ', ')));
+
+        // Aritcle publish date
+        $publishDate = $document->createElement('h3');
+        $header->appendChild($publishDate);
+        $publishDate->setAttribute('class', 'ia2amp-header-date');
+        $datetime = $this->instantArticle->getHeader()->getPublished()->getDatetime();
+        $publishDate->appendChild($document->createTextNode(date_format($datetime, 'F d, Y')));
 
         $article = $document->createElement('article');
         $body->appendChild($article);
