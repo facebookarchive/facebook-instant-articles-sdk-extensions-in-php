@@ -7,3 +7,9 @@ p {
     background-color: rgb(255,00,00);
 }
 */
+
+.ia2amp-cover-image {
+    width: 600px;
+    height: 480px;
+    overflow: hidden;
+}

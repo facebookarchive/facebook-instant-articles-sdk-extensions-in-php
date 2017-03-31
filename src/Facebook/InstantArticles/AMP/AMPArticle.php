@@ -34,6 +34,8 @@ use Facebook\InstantArticles\Validators\Type;
 class AMPArticle extends Element implements InstantArticleInterface
 {
     const DEFAULT_MARGIN = 15;
+    const DEFAULT_WIDTH = 600;
+    const DEFAULT_HEIGHT = 480;
 
     private $instantArticle;
     /*
@@ -285,8 +287,11 @@ class AMPArticle extends Element implements InstantArticleInterface
                     $childElement = $this->buildIframe($child, $document, 'interactive');
                 }
                 else if (Type::is($child, Map::getClassName())) {
-                    $childElement->setAttribute('class', $this->buildClassName('map'));
-                    // TODO Map
+                    if (!$containsIframe) {
+                        $containsIframe = true;
+                        $head->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $document));
+                    }
+                    $childElement = $this->buildIframe($child, $document, 'map');
                 }
                 else if (Type::is($child, RelatedArticles::getClassName())) {
                     $childElement->setAttribute('class', $this->buildClassName('related-articles'));
@@ -368,8 +373,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         $imageHeight = $imageDimmensions[1];
 
         $ampImg->setAttribute('src', $imageURL);
-        $ampImg->setAttribute('width', $imageWidth);
-        $ampImg->setAttribute('height', $imageHeight);
+        $ampImg->setAttribute('width', self::DEFAULT_WIDTH);
+        $ampImg->setAttribute('height', self::DEFAULT_HEIGHT);
 
         return ($withContainer) ? $ampImgContainer : $ampImg;
     }
@@ -388,8 +393,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         $videoHeight = $videoDimensions[1];
 
         $ampVideo->setAttribute('src', $videoUrl);
-        $ampVideo->setAttribute('width', $videoWidth);
-        $ampVideo->setAttribute('height', $videoHeight);
+        $ampVideo->setAttribute('width', self::DEFAULT_WIDTH);
+        $ampVideo->setAttribute('height', self::DEFAULT_HEIGHT);
 
         return $ampVideoContainer;
     }
@@ -408,8 +413,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         $videoHeight = $videoDimensions[1];
 
         $ampVideo->setAttribute('src', $videoUrl);
-        $ampVideo->setAttribute('width', $videoWidth);
-        $ampVideo->setAttribute('height', $videoHeight);
+        $ampVideo->setAttribute('width', self::DEFAULT_WIDTH);
+        $ampVideo->setAttribute('height', self::DEFAULT_HEIGHT);
 
         return $ampVideoContainer;
     }
@@ -434,8 +439,8 @@ class AMPArticle extends Element implements InstantArticleInterface
           }
       }
       if (isset($imageWidth) && isset($imageHeight)) {
-          $ampCarousel->setAttribute('width', $imageWidth);
-          $ampCarousel->setAttribute('height', $imageHeight);
+          $ampCarousel->setAttribute('width', self::DEFAULT_WIDTH);
+          $ampCarousel->setAttribute('height', self::DEFAULT_HEIGHT);
       }
 
       return $ampCarouselContainer;
@@ -461,13 +466,20 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampIframe = $document->createElement('amp-iframe');
         $iframeContainer->appendChild($ampIframe);
         $ampIframe->setAttribute('src', $srcUrl);
-        $ampIframe->setAttribute('width', $interactive->getWidth());
-        $ampIframe->setAttribute('height', $interactive->getHeight());
+        $ampIframe->setAttribute('width', self::DEFAULT_WIDTH);
+        $ampIframe->setAttribute('height', self::DEFAULT_HEIGHT);
         $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
         $ampIframe->setAttribute('layout', 'responsive');
         $ampIframe->setAttribute('frameborder', '0');
 
         return $iframeContainer;
+    }
+
+    private function buildMaps($map, $document, $cssClass)
+    {
+        // TODO google maps requires a key to embed
+        // The URL should be: https://www.google.com/maps/embed/v1/place?key=<API_GOOGLE_KEY>q=%2244.0,122.0%22
+        return $document->createElement('div');
     }
 
     private function buildClassName($selectorName, $prefix = null) {
