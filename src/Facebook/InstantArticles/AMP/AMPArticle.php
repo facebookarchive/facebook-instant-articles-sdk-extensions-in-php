@@ -551,7 +551,6 @@ class AMPArticle extends Element implements InstantArticleInterface
             '.ia2amp-header-h1' => 'title',
             '.ia2amp-header-h2' => 'subtitle',
             '.ia2amp-header-author' => 'byline'
-            // TODO: Date --> header time
         );
 
         // Move to constant/static
