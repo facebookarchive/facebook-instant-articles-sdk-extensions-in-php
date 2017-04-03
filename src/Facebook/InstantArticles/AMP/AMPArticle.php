@@ -529,6 +529,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $this->articleCaptionStyles($styles) .
             // TODO: Additional Caption Sizes
             $this->articleFooterStyles($styles) .
+            $globalCSSFile .
             $customCSSFile;
     }
 
