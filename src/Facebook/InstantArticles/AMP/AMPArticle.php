@@ -547,7 +547,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             'ia2amp-header-category' => 'kicker',
             '.ia2amp-header h1' => 'title',
             '.ia2amp-header h2' => 'subtitle',
-            // TODO: Byline --> header address
+            '.ia2amp-header-author' => 'byline'
             // TODO: Date --> header time
         );
         return $this->buildCSSRulesFromMappings($mappings, $styles);
