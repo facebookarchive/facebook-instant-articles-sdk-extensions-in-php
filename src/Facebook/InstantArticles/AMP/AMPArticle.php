@@ -586,14 +586,15 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function buildTextCSSDeclarationBlock($textStyles, $textType)
     {
         // TODO: Move to constant
-        $textSizes = array(
-            'title' => 60,
-            'subtitle' => 38,
-            'body_text' => 34,
-            'block_quote' => 34,
-            'pull_quote' => 46,
-            // TODO: Add all
-        );
+        // TODO: Determine how we want to handle this. React components use screen size and resolution to generate styles dynamically
+        // $textSizes = array(
+        //     'title' => 60,
+        //     'subtitle' => 38,
+        //     'body_text' => 34,
+        //     'block_quote' => 34,
+        //     'pull_quote' => 46,
+        //     // TODO: Add all
+        // );
 
         // TODO: Move to constant
         $mappings = array(
@@ -605,9 +606,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         );
         $filteredMappings = AMPArticle::filterMappings($mappings, $textStyles);
 
-        $textSize = ((array_key_exists($textType, $textSizes) ? $textSizes[$textType] : 25) * $textStyles['text_size_scale']) . 'px';
-        $filteredMappings['font-size'] = $textSize;
-        $filteredMappings['line-height'] = ($textStyles['line_height_scale'] * 100) . '%';
+        // $textSize = ((array_key_exists($textType, $textSizes) ? $textSizes[$textType] : 25) * $textStyles['text_size_scale']) . 'px';
+        // $filteredMappings['font-size'] = $textSize;
+        // $filteredMappings['line-height'] = ($textStyles['line_height_scale'] * 100) . '%';
 
         $textTransformMappings = array(
             'ALL_CAPS' => 'uppercase',
