@@ -36,6 +36,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     const DEFAULT_MARGIN = 15;
     const DEFAULT_WIDTH = 600;
     const DEFAULT_HEIGHT = 480;
+    const DEFAULT_DATE_FORMAT = 'F d, Y';
 
     private $instantArticle;
     /*
@@ -44,6 +45,8 @@ class AMPArticle extends Element implements InstantArticleInterface
        'header-logo-image-url' => 'http://domain.com/someimage.png',
      */
     private $properties = array();
+
+    private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
 
     public function __construct($instantArticle, $properties = array())
     {
@@ -215,7 +218,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $header->appendChild($publishDate);
         $publishDate->setAttribute('class', 'ia2amp-header-date');
         $datetime = $this->instantArticle->getHeader()->getPublished()->getDatetime();
-        $publishDate->appendChild($document->createTextNode(date_format($datetime, 'F d, Y')));
+        $publishDate->appendChild($document->createTextNode(date_format($datetime, $this->dateFormat)));
 
         $article = $document->createElement('article');
         $body->appendChild($article);
@@ -550,6 +553,22 @@ class AMPArticle extends Element implements InstantArticleInterface
             '.ia2amp-header-author' => 'byline'
             // TODO: Date --> header time
         );
+
+        // Move to constant/static
+        $dateFormatMappings = array(
+            'MONTH_AND_DAY' => 'F d',
+            'MONTH_AND_YEAR' => 'F Y',
+            'MONTH_DAY_YEAR' => 'F d, Y',
+            'YEAR' => 'Y',
+            'MONTH_DAY_YEAR_TIME' => 'F d, Y H:i A',
+        );
+        if (array_key_exists('date_style', $styles)) {
+            $dateFormat = $styles['date_style'];
+            if (array_key_exists($dateFormat, $dateFormatMappings)) {
+                $this->dateFormat = $dateFormatMappings[$dateFormat];
+            }
+        }
+
         return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
 
