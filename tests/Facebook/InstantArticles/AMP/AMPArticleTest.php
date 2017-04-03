@@ -93,7 +93,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $awsClient->putObject(array(
             'Bucket'     => 'wodexpert',
-            'Key'        => 'amp-converted-everton.html',
+            'Key'        => 'amp-converted-pablo.html',
             'SourceFile' => __DIR__ . '/amp-converted.html',
             'ACL'        => 'public-read'
         ));
