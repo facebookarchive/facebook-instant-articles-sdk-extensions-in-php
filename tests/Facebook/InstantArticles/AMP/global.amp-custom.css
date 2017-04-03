@@ -2,21 +2,25 @@
 .ia2amp-header-category {
     font-size: 10px;
     line-height: 12px;
+    display: block;
 }
 
 .ia2amp-header-h1 {
     font-size: 30px;
     line-height: 30px;
+    display: block;
 }
 
 .ia2amp-header-h2 {
     font-size: 16px;
     line-height: 20px;
+    display: block;
 }
 
-.ia2amp-header-author {
+.ia2amp-header-author, .ia2amp-header-date {
     font-size: 8px;
     line-height: 12px;
+    display: block;
 }
 
 .ia2amp-p {

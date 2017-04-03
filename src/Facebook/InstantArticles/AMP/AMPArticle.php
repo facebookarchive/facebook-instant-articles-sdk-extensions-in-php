@@ -545,8 +545,8 @@ class AMPArticle extends Element implements InstantArticleInterface
             // TODO: Logo
             // TODO: Shoud this class be 'ia2amp-header-kicker'
             'ia2amp-header-category' => 'kicker',
-            '.ia2amp-header h1' => 'title',
-            '.ia2amp-header h2' => 'subtitle',
+            '.ia2amp-header-h1' => 'title',
+            '.ia2amp-header-h2' => 'subtitle',
             '.ia2amp-header-author' => 'byline'
             // TODO: Date --> header time
         );
