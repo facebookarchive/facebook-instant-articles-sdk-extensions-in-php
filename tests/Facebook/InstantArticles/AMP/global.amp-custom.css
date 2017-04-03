@@ -1,7 +1,10 @@
 /*Global Styles*/
+.ia2amp-header {
+    margin-bottom: 10px;
+}
 .ia2amp-header-bar {
     background-color: #666;
-    margin-top: -4px;
+    margin: -5px 0 12px 0;
     height: 36px;
     padding-left: 15px;
 }
@@ -20,6 +23,7 @@
     line-height: 30px;
     display: block;
     font-weight: normal;
+    margin-bottom: 10px;
 }
 
 .ia2amp-header-h2 {
@@ -36,14 +40,18 @@
     display: block;
     font-weight: normal;
     text-transform: uppercase;
+    margin: 0px 15px 0 15px;
 }
 
 .ia2amp-p {
     font-size: 14px;
     line-height: 20px;
+    display: inline-block;
 }
 
 .ia2amp-blockquote {
     font-size: 14px;
     line-height: 20px;
+    padding-left: 15px;
+    margin: 30px 15px 30px 15px;
 }
