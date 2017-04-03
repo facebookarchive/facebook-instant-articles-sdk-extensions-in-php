@@ -568,7 +568,20 @@ class AMPArticle extends Element implements InstantArticleInterface
             }
         }
 
-        return $this->buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles) .
+            $this->articleLogo($styles);
+    }
+
+    private function articleLogo($styles) {
+        $logoStyles = $styles['header'];
+        // TODO: Add style for Like button
+        return AMPArticle::buildCSSRule('.ia2amp-header-bar',
+            AMPArticle::buildCSSDeclarationBlock(
+                array(
+                    AMPArticle::buildCSSDeclaration('background-color', $logoStyles['background_color'])
+                )
+            )
+        );
     }
 
     private function articleBodyStyles($styles)
