@@ -515,6 +515,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
         $styles = json_decode($stylesFile, true);
 
+        // TODO: Refactor this logic for custom CSS (global and style specific)
+        $globalCSSFile = file_get_contents($stylesFolder . 'global.amp-custom.css');
+        $globalCSSFile = str_replace(array("\r", "\n"), ' ', $globalCSSFile);
+
         $customCSSFile = file_get_contents($stylesFolder . $styleName . '.amp-custom.css');
         $customCSSFile = str_replace(array("\r", "\n"), ' ', $customCSSFile);
 
