@@ -543,7 +543,8 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         $mappings = array(
             // TODO: Logo
-            // TODO: Kicker --> header h3.op-kicker
+            // TODO: Shoud this class be 'ia2amp-header-kicker'
+            'ia2amp-header-category' => 'kicker',
             '.ia2amp-header h1' => 'title',
             '.ia2amp-header h2' => 'subtitle',
             // TODO: Byline --> header address

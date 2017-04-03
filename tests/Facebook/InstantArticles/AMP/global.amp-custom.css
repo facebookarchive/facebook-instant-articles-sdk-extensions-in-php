@@ -1,4 +1,9 @@
 /*Global Styles*/
+.ia2amp-header-category {
+    font-size: 10px;
+    line-height: 12px;
+}
+
 .ia2amp-header-h1 {
     font-size: 30px;
     line-height: 30px;
