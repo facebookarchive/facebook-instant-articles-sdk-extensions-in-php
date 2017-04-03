@@ -311,7 +311,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function buildCover($media, $document)
     {
         if (Type::is($media, Image::getClassName())) {
-            return $this->buildImage($media, $document, 'cover-image');
+            return $this->buildImage($media, $document, 'cover-image', false);
         }
         else if (Type::is($media, Slideshow::getClassName())) {
             return $this->buildSlideshow($media, $document, 'cover-slideshow');
@@ -347,11 +347,13 @@ class AMPArticle extends Element implements InstantArticleInterface
         $imageWidth = $imageDimmensions[0];
         $imageHeight = $imageDimmensions[1];
 
-        $ampImg->setAttribute('src', $imageURL);
-        //$ampImg->setAttribute('width', $imageWidth);
-        $ampImg->setAttribute('height', $imageHeight);
-        $ampImg->setAttribute('layout', 'fixed-height');
+        // Somehow the full width on mobile is 360, so I resize image height on same ratio
+        $resizedWidthFactor = (double) (360 / (int) $imageWidth);
+        $newHeight = (int) ($imageHeight * $resizedWidthFactor);
 
+        $ampImg->setAttribute('src', $imageURL);
+        $ampImg->setAttribute('width', '360');
+        $ampImg->setAttribute('height', (string) $newHeight);
 
         return ($withContainer) ? $ampImgContainer : $ampImg;
     }
