@@ -438,7 +438,7 @@ class AMPArticle extends Element implements InstantArticleInterface
       $ampCarouselContainer->appendChild($ampCarousel);
 
       foreach ($slideshow->getArticleImages() as $image) {
-          $ampImage = $this->buildImage($image, $document, 'slideshow-image', false);
+          $ampImage = $this->buildImage($image, $document, 'slideshow-image', true);
           $ampCarousel->appendChild($ampImage);
 
           if (!isset($imageWidth) && !isset($imageHeight)) {
@@ -449,8 +449,8 @@ class AMPArticle extends Element implements InstantArticleInterface
           }
       }
       if (isset($imageWidth) && isset($imageHeight)) {
-          $ampCarousel->setAttribute('width', self::DEFAULT_WIDTH);
-          $ampCarousel->setAttribute('height', self::DEFAULT_HEIGHT);
+          $ampCarousel->setAttribute('width', '380');
+          $ampCarousel->setAttribute('height', '240');
       }
 
       return $ampCarouselContainer;
