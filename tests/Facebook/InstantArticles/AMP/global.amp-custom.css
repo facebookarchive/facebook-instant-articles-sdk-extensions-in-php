@@ -34,12 +34,11 @@
     text-transform: uppercase;
 }
 
-.ia2amp-header-author, .ia2amp-header-date {
+.ia2amp-header h3 {
     font-size: 8px;
     line-height: 12px;
     display: block;
     font-weight: normal;
-    text-transform: uppercase;
     margin: 0px 15px 0 15px;
 }
 

@@ -550,7 +550,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             'ia2amp-header-category' => 'kicker',
             '.ia2amp-header-h1' => 'title',
             '.ia2amp-header-h2' => 'subtitle',
-            '.ia2amp-header-author' => 'byline'
+            '.ia2amp-header h3' => 'byline'
         );
 
         // Move to constant/static
