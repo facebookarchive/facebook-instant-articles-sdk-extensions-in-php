@@ -4,19 +4,27 @@
 }
 .ia2amp-header-bar {
     margin: -5px 0 12px 0;
-    height: 36px;
-    padding-left: 15px;
+    height: 55px;
+    font: 0/0 a;
 }
-
+.ia2amp-header-bar:before {
+    content: ' ';
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+    width: 15px;
+}
+.ia2amp-header-bar-img-container {
+    display: inline-block;
+    vertical-align: middle;
+}
 .ia2amp-header-category {
     font-size: 10px;
     line-height: 12px;
     display: block;
-    text-transform: uppercase;
     font-weight: normal;
     margin-left: 15px;
 }
-
 .ia2amp-header-h1 {
     font-size: 30px;
     line-height: 30px;
@@ -24,29 +32,24 @@
     font-weight: normal;
     margin-bottom: 10px;
 }
-
 .ia2amp-header-h2 {
     font-size: 16px;
     line-height: 20px;
     display: block;
     font-weight: normal;
-    text-transform: uppercase;
 }
-
 .ia2amp-header h3 {
     font-size: 8px;
     line-height: 12px;
     display: block;
     font-weight: normal;
-    margin: 0px 15px 0 15px;
+    margin: 0 15px 0 15px;
 }
-
 .ia2amp-p {
     font-size: 14px;
     line-height: 20px;
     display: inline-block;
 }
-
 .ia2amp-blockquote {
     font-size: 14px;
     line-height: 20px;
