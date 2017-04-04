@@ -1,6 +1,6 @@
 /*Global Styles*/
 .ia2amp-header {
-    margin-bottom: 10px;
+    margin-bottom: 26.4px;
 }
 .ia2amp-header-bar {
     margin: -5px 0 12px 0;
@@ -23,27 +23,28 @@
     line-height: 12px;
     display: block;
     font-weight: normal;
-    margin-left: 15px;
+    margin: 18.8px 16.4px 0 16.4px;
 }
 .ia2amp-header-h1 {
     font-size: 30px;
     line-height: 30px;
     display: block;
     font-weight: normal;
-    margin-bottom: 10px;
+    margin: 13.2px 16.4px 13.2px 16.4px;
 }
 .ia2amp-header-h2 {
     font-size: 16px;
     line-height: 20px;
     display: block;
     font-weight: normal;
+    margin: 0 16.4px 18.8px 16.4px;
 }
 .ia2amp-header h3 {
     font-size: 8px;
     line-height: 12px;
     display: block;
     font-weight: normal;
-    margin: 0 15px 0 15px;
+    margin: 0 16.4px 0 16.4px;
 }
 .ia2amp-p {
     font-size: 14px;
@@ -53,6 +54,6 @@
 .ia2amp-blockquote {
     font-size: 14px;
     line-height: 20px;
-    padding-left: 15px;
-    margin: 30px 15px 30px 15px;
+    padding: 0px 13.2px 0px 18.8px;
+    margin: 18.8px 16.4px 18.8px 16.4px;
 }
