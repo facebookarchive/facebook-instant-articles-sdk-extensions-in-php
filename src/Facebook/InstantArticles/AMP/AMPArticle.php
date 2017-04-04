@@ -183,11 +183,15 @@ class AMPArticle extends Element implements InstantArticleInterface
             $headerBar = $document->createElement('div');
             $header->appendChild($headerBar);
             $headerBar->setAttribute('class', $this->buildClassName('header-bar'));
+            $ampImageContainer = $document->createElement('div');
+            $headerBar->appendChild($ampImageContainer);
+            $ampImageContainer->setAttribute('class', $this->buildClassName('header-bar-img-container'));
             $ampImage = $document->createElement('amp-img');
-            $headerBar->appendChild($ampImage);
+            $ampImageContainer->appendChild($ampImage);
             $ampImage->setAttribute('src', $imageURL);
-            $ampImage->setAttribute('width', $imageWidth);
-            $ampImage->setAttribute('height', $imageHeight);
+            // TODO work on this image logo size
+            $ampImage->setAttribute('width', '200');
+            $ampImage->setAttribute('height', '40');
 
         }
         // The kicker for article
@@ -350,12 +354,12 @@ class AMPArticle extends Element implements InstantArticleInterface
         $imageWidth = $imageDimmensions[0];
         $imageHeight = $imageDimmensions[1];
 
-        // Somehow the full width on mobile is 360, so I resize image height on same ratio
-        $resizedWidthFactor = (double) (360 / (int) $imageWidth);
+        // Somehow the full width on mobile is 380, so I resize image height on same ratio
+        $resizedWidthFactor = (double) (380 / (int) $imageWidth);
         $newHeight = (int) ($imageHeight * $resizedWidthFactor);
 
         $ampImg->setAttribute('src', $imageURL);
-        $ampImg->setAttribute('width', '360');
+        $ampImg->setAttribute('width', '380');
         $ampImg->setAttribute('height', (string) $newHeight);
 
         return ($withContainer) ? $ampImgContainer : $ampImg;
@@ -547,7 +551,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $mappings = array(
             // TODO: Logo
             // TODO: Shoud this class be 'ia2amp-header-kicker'
-            'ia2amp-header-category' => 'kicker',
+            '.ia2amp-header-category' => 'kicker',
             '.ia2amp-header-h1' => 'title',
             '.ia2amp-header-h2' => 'subtitle',
             '.ia2amp-header h3' => 'byline'
