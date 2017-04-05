@@ -195,10 +195,12 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         }
         // The kicker for article
-        $kicker = $document->createElement('h2');
-        $header->appendChild($kicker);
-        $kicker->setAttribute('class', 'ia2amp-header-category');
-        $kicker->appendChild($this->instantArticle->getHeader()->getKicker()->textToDOMDocumentFragment($document));
+        if ($this->instantArticle->getHeader()->getKicker()) {
+            $kicker = $document->createElement('h2');
+            $header->appendChild($kicker);
+            $kicker->setAttribute('class', 'ia2amp-header-category');
+            $kicker->appendChild($this->instantArticle->getHeader()->getKicker()->textToDOMDocumentFragment($document));
+        }
 
         // The Title for article
         $h1 = $document->createElement('h1');
