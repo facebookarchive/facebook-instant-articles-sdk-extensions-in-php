@@ -70,10 +70,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $amp_rendered = $renderer->render(null, true)."\n";
 
         $amp_expected = file_get_contents(__DIR__ . '/test1-amp-converted.html');
-        libxml_use_internal_errors(true);
-        $document = new \DOMDocument();
-        $document->loadHTML($amp_expected);
-        libxml_use_internal_errors(false);
 
         // $this->assertEquals($amp_expected, $amp_rendered);
         // var_dump($amp_rendered);
@@ -100,10 +96,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $amp_rendered = $renderer->render(null, true)."\n";
 
         $amp_expected = file_get_contents(__DIR__ . '/test2-amp-converted.html');
-        libxml_use_internal_errors(true);
-        $document = new \DOMDocument();
-        $document->loadHTML($amp_expected);
-        libxml_use_internal_errors(false);
 
         // $this->assertEquals($amp_expected, $amp_rendered);
         // var_dump($amp_rendered);
@@ -124,7 +116,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $rgb);
     }
 
-    public function testToRGBDataProvider() {
+    public function testToRGBDataProvider()
+    {
         return array(
             array('FFAABB', 'rgb(255,170,187)'),
             array('#FFAABB', 'rgb(255,170,187)'),
@@ -134,7 +127,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function uploadToS3($fileToUpload, $fileNameToStoreAtS3) {
+    public function uploadToS3($fileToUpload, $fileNameToStoreAtS3)
+    {
         $awsClient = S3Client::factory(array(
             'credentials' => array(
                 'key'    => 'AKIAIA5UXSRCJTQL66QA',
