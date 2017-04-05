@@ -39,7 +39,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testParseIA()
     {
-        $html_file = file_get_contents(__DIR__ . '/instant-article-example.html');
+        $html_file = file_get_contents(__DIR__ . '/test1-instant-article.html');
 
         libxml_use_internal_errors(true);
         $document = new \DOMDocument();
@@ -57,7 +57,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testTransformIAtoAMP()
     {
-        $html_file = file_get_contents(__DIR__ . '/instant-article-example.html');
+        $html_file = file_get_contents(__DIR__ . '/test1-instant-article.html');
 
         $renderer = AMPArticle::create(
             $html_file,
@@ -69,7 +69,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             ));
         $amp_rendered = $renderer->render(null, true)."\n";
 
-        $amp_expected = file_get_contents(__DIR__ . '/amp-converted.html');
+        $amp_expected = file_get_contents(__DIR__ . '/test1-amp-converted.html');
         libxml_use_internal_errors(true);
         $document = new \DOMDocument();
         $document->loadHTML($amp_expected);
@@ -78,25 +78,41 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         // $this->assertEquals($amp_expected, $amp_rendered);
         // var_dump($amp_rendered);
         // Sets content into the file for fast testing
-        file_put_contents(__DIR__ . '/amp-converted.html', $amp_rendered);
+        file_put_contents(__DIR__ . '/test1-amp-converted.html', $amp_rendered);
 
-        // URL of file: https://s3.amazonaws.com/wodexpert/amp-converted-pablo.html
+        // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted-pablo.html
         // AMP url for testing: https://search.google.com/search-console/amp
-        $awsClient = S3Client::factory(array(
-            'credentials' => array(
-                'key'    => 'AKIAIA5UXSRCJTQL66QA',
-                'secret' => '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',
-            ),
-            'region'     => 'us-east-1',
-            'version'    => '2006-03-01',
-        ));
+        $this->uploadToS3(__DIR__ . '/test1-amp-converted.html', 'test1-amp-converted-pablo.html');
+    }
 
-        $awsClient->putObject(array(
-            'Bucket'     => 'wodexpert',
-            'Key'        => 'amp-converted-pablo.html',
-            'SourceFile' => __DIR__ . '/amp-converted.html',
-            'ACL'        => 'public-read'
-        ));
+    public function testTransformIAtoAMPTest2()
+    {
+        $html_file = file_get_contents(__DIR__ . '/test2-instant-article.html');
+
+        $renderer = AMPArticle::create(
+            $html_file,
+            array(
+                'lang' => 'en-US',
+                'header-logo-image-url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/wod-expert-horizontal@033x.png',
+                'header-logo-image-width' => '132',
+                'header-logo-image-height' => '26'
+            ));
+        $amp_rendered = $renderer->render(null, true)."\n";
+
+        $amp_expected = file_get_contents(__DIR__ . '/test2-amp-converted.html');
+        libxml_use_internal_errors(true);
+        $document = new \DOMDocument();
+        $document->loadHTML($amp_expected);
+        libxml_use_internal_errors(false);
+
+        // $this->assertEquals($amp_expected, $amp_rendered);
+        // var_dump($amp_rendered);
+        // Sets content into the file for fast testing
+        file_put_contents(__DIR__ . '/test2-amp-converted.html', $amp_rendered);
+
+        // URL of file: https://s3.amazonaws.com/wodexpert/test2-amp-converted.html
+        // AMP url for testing: https://search.google.com/search-console/amp
+        $this->uploadToS3(__DIR__ . '/test2-amp-converted.html', 'test2-amp-converted.html');
     }
 
     /**
@@ -116,5 +132,23 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             array('EEFFAABB', 'rgba(255,170,187,0.93)'),
             array('#EEFFAABB', 'rgba(255,170,187,0.93)'),
         );
+    }
+
+    public function uploadToS3($fileToUpload, $fileNameToStoreAtS3) {
+        $awsClient = S3Client::factory(array(
+            'credentials' => array(
+                'key'    => 'AKIAIA5UXSRCJTQL66QA',
+                'secret' => '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',
+            ),
+            'region'     => 'us-east-1',
+            'version'    => '2006-03-01',
+        ));
+
+        $awsClient->putObject(array(
+            'Bucket'     => 'wodexpert',
+            'Key'        => $fileNameToStoreAtS3,
+            'SourceFile' => $fileToUpload,
+            'ACL'        => 'public-read'
+        ));
     }
 }
