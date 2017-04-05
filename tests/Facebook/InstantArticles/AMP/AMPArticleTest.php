@@ -70,6 +70,16 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->runIAtoAMPTest('test3');
     }
 
+    public function testTransformIAtoAMPTest4()
+    {
+        $this->runIAtoAMPTest('test4');
+    }
+
+    public function testTransformIAtoAMPTest5()
+    {
+        $this->runIAtoAMPTest('test5');
+    }
+
     public function runIAtoAMPTest($test)
     {
         $html_file = file_get_contents(__DIR__ . '/'.$test.'-instant-article.html');
