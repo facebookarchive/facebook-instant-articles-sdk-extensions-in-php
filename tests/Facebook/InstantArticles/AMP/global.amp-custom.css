@@ -49,6 +49,17 @@
 
 .ia2amp-h1, .ia2amp-h2, .ia2amp-h3 {
     display: block;
+    font-weight: normal;
+}
+
+.ia2amp-h1 {
+    font-size: 19px;
+    line-height: 23px;
+}
+
+.ia2amp-h2 {
+    font-size: 16px;
+    line-height: 20px;
 }
 
 .ia2amp-p {
