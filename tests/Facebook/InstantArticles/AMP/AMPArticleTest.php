@@ -37,47 +37,52 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testParseIA()
+    // public function testParseIA()
+    // {
+    //     $html_file = file_get_contents(__DIR__ . '/test1-instant-article.html');
+    //
+    //     libxml_use_internal_errors(true);
+    //     $document = new \DOMDocument();
+    //     $document->loadHTML($html_file);
+    //     libxml_use_internal_errors(false);
+    //
+    //     $parser = new Parser();
+    //     $instant_article = $parser->parse($document);
+    //     $instant_article->addMetaProperty('op:generator:version', '1.0.0');
+    //     $instant_article->addMetaProperty('op:generator:transformer:version', '1.0.0');
+    //     $result = $instant_article->render('', true)."\n";
+    //
+    //     $this->assertEquals($html_file, $result);
+    // }
+    //
+    // public function testTransformIAtoAMPTest1()
+    // {
+    //     $this->runIAtoAMPTest('test1');
+    // }
+    //
+    // public function testTransformIAtoAMPTest2()
+    // {
+    //     $this->runIAtoAMPTest('test2');
+    // }
+    //
+    // public function testTransformIAtoAMPTest3()
+    // {
+    //     $this->runIAtoAMPTest('test3');
+    // }
+    //
+    // public function testTransformIAtoAMPTest4()
+    // {
+    //     $this->runIAtoAMPTest('test4');
+    // }
+    //
+    // public function testTransformIAtoAMPTest5()
+    // {
+    //     $this->runIAtoAMPTest('test5');
+    // }
+
+    public function testTransformIAtoAMPTestNatGeo()
     {
-        $html_file = file_get_contents(__DIR__ . '/test1-instant-article.html');
-
-        libxml_use_internal_errors(true);
-        $document = new \DOMDocument();
-        $document->loadHTML($html_file);
-        libxml_use_internal_errors(false);
-
-        $parser = new Parser();
-        $instant_article = $parser->parse($document);
-        $instant_article->addMetaProperty('op:generator:version', '1.0.0');
-        $instant_article->addMetaProperty('op:generator:transformer:version', '1.0.0');
-        $result = $instant_article->render('', true)."\n";
-
-        $this->assertEquals($html_file, $result);
-    }
-
-    public function testTransformIAtoAMPTest1()
-    {
-        $this->runIAtoAMPTest('test1');
-    }
-
-    public function testTransformIAtoAMPTest2()
-    {
-        $this->runIAtoAMPTest('test2');
-    }
-
-    public function testTransformIAtoAMPTest3()
-    {
-        $this->runIAtoAMPTest('test3');
-    }
-
-    public function testTransformIAtoAMPTest4()
-    {
-        $this->runIAtoAMPTest('test4');
-    }
-
-    public function testTransformIAtoAMPTest5()
-    {
-        $this->runIAtoAMPTest('test5');
+        $this->runIAtoAMPTest('natgeo');
     }
 
     public function runIAtoAMPTest($test)
@@ -94,37 +99,42 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             ));
         $amp_rendered = $renderer->render(null, true)."\n";
 
-        $amp_expected = file_get_contents(__DIR__ . '/'.$test.'-amp-converted.html');
+        // $amp_expected = file_get_contents(__DIR__ . '/'.$test.'-amp-converted.html');
 
         // $this->assertEquals($amp_expected, $amp_rendered);
         // var_dump($amp_rendered);
         // Sets content into the file for fast testing
-        file_put_contents(__DIR__ . '/'.$test.'-amp-converted.html', $amp_rendered);
+
+
+
+        //file_put_contents(__DIR__ . '/'.$test.'-amp-converted.html', $amp_rendered);
 
         // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
         // AMP url for testing: https://search.google.com/search-console/amp
-        $this->uploadToS3(__DIR__ . '/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
+
+
+        //$this->uploadToS3(__DIR__ . '/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
     }
 
-    /**
-    * @dataProvider testToRGBDataProvider
-    */
-    public function testToRG($hexColor, $expected)
-    {
-        $rgb = AMPArticle::toRGB($hexColor);
-        $this->assertEquals($expected, $rgb);
-    }
-
-    public function testToRGBDataProvider()
-    {
-        return array(
-            array('FFAABB', 'rgb(255,170,187)'),
-            array('#FFAABB', 'rgb(255,170,187)'),
-            array('#FFFFAABB', 'rgb(255,170,187)'),
-            array('EEFFAABB', 'rgba(255,170,187,0.93)'),
-            array('#EEFFAABB', 'rgba(255,170,187,0.93)'),
-        );
-    }
+    // /**
+    // * @dataProvider testToRGBDataProvider
+    // */
+    // public function testToRG($hexColor, $expected)
+    // {
+    //     $rgb = AMPArticle::toRGB($hexColor);
+    //     $this->assertEquals($expected, $rgb);
+    // }
+    //
+    // public function testToRGBDataProvider()
+    // {
+    //     return array(
+    //         array('FFAABB', 'rgb(255,170,187)'),
+    //         array('#FFAABB', 'rgb(255,170,187)'),
+    //         array('#FFFFAABB', 'rgb(255,170,187)'),
+    //         array('EEFFAABB', 'rgba(255,170,187,0.93)'),
+    //         array('#EEFFAABB', 'rgba(255,170,187,0.93)'),
+    //     );
+    // }
 
     public function uploadToS3($fileToUpload, $fileNameToStoreAtS3)
     {

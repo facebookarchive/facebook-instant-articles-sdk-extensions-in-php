@@ -34,8 +34,8 @@ use Facebook\InstantArticles\Validators\Type;
 class AMPArticle extends Element implements InstantArticleInterface
 {
     const DEFAULT_MARGIN = 16.4;
-    const DEFAULT_WIDTH = 600;
-    const DEFAULT_HEIGHT = 480;
+    const DEFAULT_WIDTH = 380;
+    const DEFAULT_HEIGHT = 240;
     const DEFAULT_DATE_FORMAT = 'F d, Y';
 
     private $instantArticle;
@@ -300,7 +300,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                         $containsIframe = true;
                         $head->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $document));
                     }
-                    $childElement = $this->buildIframe($child, $document, 'map');
+                    $childElement = $this->buildMaps($child, $document, 'map');
                 }
                 else if (Type::is($child, RelatedArticles::getClassName())) {
                     $childElement->setAttribute('class', $this->buildClassName('related-articles'));
@@ -352,7 +352,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $imageURL = $image->getUrl();
 
-        $imageDimmensions = getimagesize($imageURL);
+        // $imageDimmensions = getimagesize($imageURL);
+        $imageDimmensions = array(380, 240);
         $imageWidth = $imageDimmensions[0];
         $imageHeight = $imageDimmensions[1];
 
@@ -380,9 +381,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $imageURL = $image->getUrl();
 
-        $imageDimmensions = getimagesize($imageURL);
-        $imageWidth = $imageDimmensions[0];
-        $imageHeight = $imageDimmensions[1];
+        // $imageDimmensions = getimagesize($imageURL);
+        // $imageWidth = $imageDimmensions[0];
+        // $imageHeight = $imageDimmensions[1];
 
         $ampImg->setAttribute('src', $imageURL);
         $ampImg->setAttribute('width', self::DEFAULT_WIDTH);
@@ -400,9 +401,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampVideoContainer->appendChild($ampVideo);
         $videoUrl = $video->getUrl();
 
-        $videoDimensions = getimagesize($videoUrl);
-        $videoWidth = $videoDimensions[0];
-        $videoHeight = $videoDimensions[1];
+        // $videoDimensions = getimagesize($videoUrl);
+        // $videoWidth = $videoDimensions[0];
+        // $videoHeight = $videoDimensions[1];
 
         $ampVideo->setAttribute('src', $videoUrl);
         $ampVideo->setAttribute('width', self::DEFAULT_WIDTH);
@@ -521,6 +522,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         $stylesFolder = __DIR__ . '/../../../../tests/Facebook/InstantArticles/AMP/';
 
         $styleName = $this->instantArticle->getStyle();
+        if (!$styleName || $styleName == null || $styleName === '') {
+            $styleName = 'default';
+        }
         $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
         $styles = json_decode($stylesFile, true);
 
