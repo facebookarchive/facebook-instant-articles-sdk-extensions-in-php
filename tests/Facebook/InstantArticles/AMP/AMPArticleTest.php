@@ -121,7 +121,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             ));
         $amp_rendered = $renderer->render(null, true)."\n";
 
-        // $amp_expected = file_get_contents(__DIR__ . '/test3-amp-converted.html');
+        $amp_expected = file_get_contents(__DIR__ . '/test3-amp-converted.html');
 
         // $this->assertEquals($amp_expected, $amp_rendered);
         // var_dump($amp_rendered);
