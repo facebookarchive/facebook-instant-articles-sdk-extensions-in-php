@@ -57,59 +57,22 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testTransformIAtoAMPTest1()
     {
-        $html_file = file_get_contents(__DIR__ . '/test1-instant-article.html');
-
-        $renderer = AMPArticle::create(
-            $html_file,
-            array(
-                'lang' => 'en-US',
-                'header-logo-image-url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/wod-expert-horizontal@033x.png',
-                'header-logo-image-width' => '132',
-                'header-logo-image-height' => '26'
-            ));
-        $amp_rendered = $renderer->render(null, true)."\n";
-
-        $amp_expected = file_get_contents(__DIR__ . '/test1-amp-converted.html');
-
-        // $this->assertEquals($amp_expected, $amp_rendered);
-        // var_dump($amp_rendered);
-        // Sets content into the file for fast testing
-        file_put_contents(__DIR__ . '/test1-amp-converted.html', $amp_rendered);
-
-        // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted-pablo.html
-        // AMP url for testing: https://search.google.com/search-console/amp
-        $this->uploadToS3(__DIR__ . '/test1-amp-converted.html', 'test1-amp-converted-pablo.html');
+        $this->runIAtoAMPTest('test1');
     }
 
     public function testTransformIAtoAMPTest2()
     {
-        $html_file = file_get_contents(__DIR__ . '/test2-instant-article.html');
-
-        $renderer = AMPArticle::create(
-            $html_file,
-            array(
-                'lang' => 'en-US',
-                'header-logo-image-url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/wod-expert-horizontal@033x.png',
-                'header-logo-image-width' => '132',
-                'header-logo-image-height' => '26'
-            ));
-        $amp_rendered = $renderer->render(null, true)."\n";
-
-        $amp_expected = file_get_contents(__DIR__ . '/test2-amp-converted.html');
-
-        // $this->assertEquals($amp_expected, $amp_rendered);
-        // var_dump($amp_rendered);
-        // Sets content into the file for fast testing
-        file_put_contents(__DIR__ . '/test2-amp-converted.html', $amp_rendered);
-
-        // URL of file: https://s3.amazonaws.com/wodexpert/test2-amp-converted.html
-        // AMP url for testing: https://search.google.com/search-console/amp
-        $this->uploadToS3(__DIR__ . '/test2-amp-converted.html', 'test2-amp-converted.html');
+        $this->runIAtoAMPTest('test2');
     }
 
     public function testTransformIAtoAMPTest3()
     {
-        $html_file = file_get_contents(__DIR__ . '/test3-instant-article.html');
+        $this->runIAtoAMPTest('test3');
+    }
+
+    public function runIAtoAMPTest($test)
+    {
+        $html_file = file_get_contents(__DIR__ . '/'.$test.'-instant-article.html');
 
         $renderer = AMPArticle::create(
             $html_file,
@@ -121,16 +84,16 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             ));
         $amp_rendered = $renderer->render(null, true)."\n";
 
-        $amp_expected = file_get_contents(__DIR__ . '/test3-amp-converted.html');
+        $amp_expected = file_get_contents(__DIR__ . '/'.$test.'-amp-converted.html');
 
         // $this->assertEquals($amp_expected, $amp_rendered);
         // var_dump($amp_rendered);
         // Sets content into the file for fast testing
-        file_put_contents(__DIR__ . '/test3-amp-converted.html', $amp_rendered);
+        file_put_contents(__DIR__ . '/'.$test.'-amp-converted.html', $amp_rendered);
 
-        // URL of file: https://s3.amazonaws.com/wodexpert/test2-amp-converted.html
+        // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
         // AMP url for testing: https://search.google.com/search-console/amp
-        $this->uploadToS3(__DIR__ . '/test3-amp-converted.html', 'test3-amp-converted.html');
+        $this->uploadToS3(__DIR__ . '/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
     }
 
     /**
