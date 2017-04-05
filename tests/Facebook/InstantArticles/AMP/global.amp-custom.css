@@ -12,7 +12,7 @@
     display: inline-block;
     vertical-align: middle;
     height: 100%;
-    width: 15px;
+    width: 16.4px;
 }
 .ia2amp-header-bar-img-container {
     display: inline-block;
@@ -23,28 +23,28 @@
     line-height: 12px;
     display: block;
     font-weight: normal;
-    margin: 18.8px 16.4px 0 16.4px;
+    margin-top: 18.8px;
 }
 .ia2amp-header-h1 {
     font-size: 30px;
     line-height: 30px;
     display: block;
     font-weight: normal;
-    margin: 13.2px 16.4px 13.2px 16.4px;
+    margin-top: 13.2px;
+    margin-bottom: 13.2px;
 }
 .ia2amp-header-h2 {
     font-size: 16px;
     line-height: 20px;
     display: block;
     font-weight: normal;
-    margin: 0 16.4px 18.8px 16.4px;
+    margin-bottom: 18.8px;
 }
 .ia2amp-header h3 {
     font-size: 8px;
     line-height: 12px;
     display: block;
     font-weight: normal;
-    margin: 0 16.4px 0 16.4px;
 }
 
 .ia2amp-h1, .ia2amp-h2, .ia2amp-h3 {
@@ -60,5 +60,6 @@
     font-size: 14px;
     line-height: 20px;
     padding: 0px 13.2px 0px 18.8px;
-    margin: 18.8px 16.4px 18.8px 16.4px;
+    margin-top: 18.8px;
+    margin-bottom: 18.8px;
 }
