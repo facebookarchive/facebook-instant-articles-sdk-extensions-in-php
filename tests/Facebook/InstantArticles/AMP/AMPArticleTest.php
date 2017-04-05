@@ -100,11 +100,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $amp_rendered = $renderer->render(null, true)."\n";
 
         // $amp_expected = file_get_contents(__DIR__ . '/'.$test.'-amp-converted.html');
-
         // $this->assertEquals($amp_expected, $amp_rendered);
-        // var_dump($amp_rendered);
-        // Sets content into the file for fast testing
 
+        // Sets content into the file for fast testing
         file_put_contents(__DIR__ . '/'.$test.'-amp-converted.html', $amp_rendered);
 
         // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html

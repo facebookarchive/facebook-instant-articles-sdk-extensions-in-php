@@ -414,22 +414,12 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function buildAudio($video, $document, $cssClass)
     {
-        $ampVideoContainer = $document->createElement('div');
-        $ampVideoContainer->setAttribute('class', $this->buildClassName($cssClass));
+        $ampAudio = $document->createElement('div');
+        $ampAudio->setAttribute('class', $this->buildClassName($cssClass));
 
-        $ampVideo = $document->createElement('amp-video');
-        $ampVideoContainer->appendChild($ampVideo);
-        $videoUrl = $video->getUrl();
+        // TODO
 
-        $videoDimensions = getimagesize($videoUrl);
-        $videoWidth = $videoDimensions[0];
-        $videoHeight = $videoDimensions[1];
-
-        $ampVideo->setAttribute('src', $videoUrl);
-        $ampVideo->setAttribute('width', self::DEFAULT_WIDTH);
-        $ampVideo->setAttribute('height', self::DEFAULT_HEIGHT);
-
-        return $ampVideoContainer;
+        return $ampAudio;
     }
 
     private function buildSlideshow($slideshow, $document, $cssClass)
@@ -444,16 +434,16 @@ class AMPArticle extends Element implements InstantArticleInterface
           $ampImage = $this->buildImage($image, $document, 'slideshow-image', true);
           $ampCarousel->appendChild($ampImage);
 
-          if (!isset($imageWidth) && !isset($imageHeight)) {
-              $imageUrl = $image->getUrl();
-              $imageDimensions = getimagesize($imageUrl);
-              $imageWidth = $imageDimensions[0];
-              $imageHeight = $imageDimensions[1];
-          }
+          // if (!isset($imageWidth) && !isset($imageHeight)) {
+          //     $imageUrl = $image->getUrl();
+          //     $imageDimensions = getimagesize($imageUrl);
+          //     $imageWidth = $imageDimensions[0];
+          //     $imageHeight = $imageDimensions[1];
+          // }
       }
       if (isset($imageWidth) && isset($imageHeight)) {
-          $ampCarousel->setAttribute('width', '380');
-          $ampCarousel->setAttribute('height', '240');
+          $ampCarousel->setAttribute('width', self::DEFAULT_WIDTH);
+          $ampCarousel->setAttribute('height', self::DEFAULT_HEIGHT);
       }
 
       return $ampCarouselContainer;
