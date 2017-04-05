@@ -46,6 +46,11 @@
     font-weight: normal;
     margin: 0 16.4px 0 16.4px;
 }
+
+.ia2amp-h1, .ia2amp-h2, .ia2amp-h3 {
+    display: block;
+}
+
 .ia2amp-p {
     font-size: 14px;
     line-height: 20px;
