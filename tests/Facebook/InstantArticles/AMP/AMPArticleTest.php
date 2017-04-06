@@ -85,11 +85,10 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->runIAtoAMPTest('natgeo');
     }
 
-    public function runIAtoAMPTest($test)
-    {
+    private function getRenderer($test) {
         $html_file = file_get_contents(__DIR__ . '/'.$test.'-instant-article.html');
 
-        $renderer = AMPArticle::create(
+        return AMPArticle::create(
             $html_file,
             array(
                 'lang' => 'en-US',
@@ -97,7 +96,17 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
                 'header-logo-image-width' => '132',
                 'header-logo-image-height' => '26'
             ));
-        $amp_rendered = $renderer->render(null, true)."\n";
+    }
+
+    private function getRenderedAMP($test) {
+        $renderer = $this->getRenderer($test);
+        
+        return $renderer->render(null, true)."\n";
+    }
+
+    public function runIAtoAMPTest($test)
+    {
+        $amp_rendered = $this->getRenderedAMP($test);
 
         $amp_expected = file_get_contents(__DIR__ . '/'.$test.'-amp-converted.html');
         $this->assertEquals($amp_expected, $amp_rendered);
@@ -108,6 +117,66 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
         // AMP url for testing: https://search.google.com/search-console/amp
         $this->uploadToS3(__DIR__ . '/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
+    }
+
+    public function testArticleHasSingleLdJsonScript() {
+        $amp_rendered = $this->getRenderedAMP('test1');
+        
+        libxml_use_internal_errors(true);
+        $renderedDocument = new \DOMDocument();
+        $renderedDocument->loadHTML($amp_rendered);
+        libxml_use_internal_errors(false);
+        $xPath = new \DOMXPath($renderedDocument);
+
+        $this->assertEquals(1, $xPath->query('//script[@type="application/ld+json"]')->length);
+    }
+
+    private function getDiscoveryMetadata($test) {
+        $renderer = $this->getRenderer($test);
+
+        $discoveryMetadataContent = $renderer->buildSchemaOrgMetadata();
+        return json_decode($discoveryMetadataContent, true);
+    }
+
+    private function verifySchemaOrgHasExpectedValue($key, $expectedValue, $test = 'test1') {
+        $discoveryMetadata = $this->getDiscoveryMetadata($test);
+
+        $this->assertArrayHasKey($key, $discoveryMetadata, "Could not find $key key in Schema.org metadata");
+        $this->assertEquals($expectedValue, $discoveryMetadata[$key], "Unexpected value found for $key");
+    }
+
+    private function verifySchemaOrgDoesNotHaveKey($key, $test = 'test1') {
+        $discoveryMetadata = $this->getDiscoveryMetadata($test);
+
+        $this->assertFalse(array_key_exists($key, $discoveryMetadata), "Found unexpected $key key in Schema.org metadata");
+    }
+
+    public function testSchemaOrgContext() {
+        $this->verifySchemaOrgHasExpectedValue('@content', 'http://schema.org');
+    }
+
+    public function testSchemaOrgType() {
+        $this->verifySchemaOrgHasExpectedValue('@type', 'NewsArticle');
+    }
+
+    public function testSchemaOrgMainEntityOfPage() {
+        $this->verifySchemaOrgHasExpectedValue('mainEntityOfPage', 'http://blog.wod.expert/very-first-wod/');
+    }
+
+    public function testSchemaOrgHeadline() {
+        $this->verifySchemaOrgHasExpectedValue('headline', 'Very First WOD!');
+    }
+
+    public function testSchemaOrgDatePublished() {
+        $this->verifySchemaOrgHasExpectedValue('datePublished', '2016-05-10T18:05:36+00:00');
+    }
+
+    public function testSchemaOrgDateModified() {
+        $this->verifySchemaOrgHasExpectedValue('dateModified', '2017-03-17T16:46:07+00:00');
+    }
+
+    public function testSchemaOrgNoDateModified() {
+        $this->verifySchemaOrgDoesNotHaveKey('dateModified', 'natgeo');
     }
 
     /**

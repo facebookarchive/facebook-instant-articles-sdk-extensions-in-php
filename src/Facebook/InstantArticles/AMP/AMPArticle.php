@@ -140,10 +140,17 @@ class AMPArticle extends Element implements InstantArticleInterface
         $link->setAttribute('rel', 'canonical');
         $link->setAttribute('href', $this->instantArticle->getCanonicalURL());
 
-        // Builds custon css style and append to head
+        // Builds custom css style and append to head
         $ampCustomCSS = $this->buildCustomCSS($document);
         $head->appendChild($ampCustomCSS);
         $head->appendChild($link);
+
+        // Builds Schema.org metadata and appends to head
+        $discoveryScript = $document->createElement('script');
+        $discoveryScript->setAttribute('type', 'application/ld+json');
+        $discoveryScriptContent = $this->buildSchemaOrgMetadata();
+        $discoveryScript->appendChild($document->createTextNode($discoveryScriptContent));
+        $head->appendChild($discoveryScript);
 
         // Builds title and append to head
         $title = $document->createElement('title');
@@ -801,5 +808,28 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $opacity == 1.0
             ? 'rgb(' . implode(",", $rgb) . ')'
             :  'rgba(' . implode(",", $rgb) . ',' . $opacity . ')';
+    }
+
+    public function buildSchemaOrgMetadata() {
+        $header = $this->instantArticle->getHeader();
+        $published = $header->getPublished();
+        $modified = $header->getModified();
+
+        // TODO: Finish implementation
+        $metadata = array(
+            '@content' => 'http://schema.org',
+            // TODO: Should we always use NewsArticle as Type? Some of the fields below depend on the type
+            '@type' => 'NewsArticle',
+            'mainEntityOfPage' => $this->instantArticle->getCanonicalURL(),
+            // TODO: Is there a better way to get the text?
+            'headline' => $this->instantArticle->getHeader()->getTitle()->getTextChildren()[0],
+            'datePublished' => date_format($published->getDatetime(), 'c'),
+        );
+
+        if ($modified) {
+            $metadata['dateModified'] = date_format($modified->getDatetime(), 'c');
+        }
+
+        return json_encode($metadata);
     }
 }
