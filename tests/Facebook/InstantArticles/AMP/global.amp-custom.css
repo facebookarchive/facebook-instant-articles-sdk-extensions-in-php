@@ -131,3 +131,7 @@
 .ia2amp-spacing-photo-p, .ia2amp-spacing-video-p, .ia2amp-spacing-slideshow-p {
     height: 26.4px;
 }
+
+.ia2amp-spacing-h1-p, .ia2amp-spacing-h2-p, .ia2amp-spacing-h3-p {
+    height: 18.8px;
+}
