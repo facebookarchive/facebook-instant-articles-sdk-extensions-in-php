@@ -830,6 +830,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $metadata['dateModified'] = date_format($modified->getDatetime(), 'c');
         }
 
-        return json_encode($metadata);
+        // Prevent URL slashes to be escaped
+        return json_encode($metadata, JSON_UNESCAPED_SLASHES);
     }
 }
