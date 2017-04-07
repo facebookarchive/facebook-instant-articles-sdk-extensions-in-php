@@ -858,10 +858,35 @@ class AMPArticle extends Element implements InstantArticleInterface
             // TODO: Is there a better way to get the text?
             'headline' => $this->instantArticle->getHeader()->getTitle()->getTextChildren()[0],
             'datePublished' => date_format($published->getDatetime(), 'c'),
+            // TODO: How can we define a description?
+            // 'description' => 'Lorem ipsum',   
         );
 
         if ($modified) {
             $metadata['dateModified'] = date_format($modified->getDatetime(), 'c');
+        }
+
+        $authors = $header->getAuthors();
+        foreach($authors as $author) {
+            $metadata['author'] = array(
+                '@type' => 'Person',
+                'name' => $author->getName(),
+            );
+            break; // TODO: How to define multiple authors?
+        }
+
+        $cover = $header->getCover();
+        if ($cover) {
+            if (Type::is($cover, Image::getClassName())) {
+                $metadata['image'] = array(
+                    '@type' => 'ImageObject',
+                    'url' => $cover->getUrl(),
+                    // TODO: Get image dimensions
+                    'width' => 380,
+                    'height' => 240,
+                );
+            }
+            // TODO: Should we take the the first image from a slideshow?
         }
 
         // Prevent URL slashes to be escaped

@@ -179,6 +179,26 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->verifySchemaOrgDoesNotHaveKey('dateModified', 'natgeo');
     }
 
+    public function testSchemaOrgAuthor() {
+        $expectedAuthor = array(
+            '@type' => 'Person',
+            'name' => 'Éverton Rosário',
+        );
+
+        $this->verifySchemaOrgHasExpectedValue('author', $expectedAuthor);
+    }
+
+    public function testSchemaOrgImage() {
+        $expectedImage = array(
+            '@type' => 'ImageObject',
+            'url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg',
+            'width' => 380,
+            'height' => 240,
+        );
+
+        $this->verifySchemaOrgHasExpectedValue('image', $expectedImage);
+    }
+
     /**
     * @dataProvider testToRGBDataProvider
     */
