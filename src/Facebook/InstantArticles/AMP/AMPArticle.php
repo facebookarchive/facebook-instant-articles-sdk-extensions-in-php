@@ -85,25 +85,124 @@ class AMPArticle extends Element implements InstantArticleInterface
         if (!$document) {
             $document = new \DOMDocument();
         }
+        $ampDocument = $this->transformInstantArticle($document, $this->instantArticle);
+        return $ampDocument;
+    }
 
+    public function transformInstantArticle($document, $instantArticle) {
         // Builds and appends head to the HTML document
         $html = $document->createElement('html');
         $html->setAttribute('amp','');
-        if ($this->instantArticle->isRTLEnabled()) {
+        if ($instantArticle->isRTLEnabled()) {
             $html->setAttribute('dir', 'rtl');
         }
         if (isset($this->properties['lang'])) {
             $html->setAttribute('lang', $this->properties['lang']);
         }
 
+        $head = $this->transformMetaInfoHead($document, $html, $instantArticle);
+
+
+        // Build and append body and article tags to the HTML document
+        $body = $document->createElement('body');
+        $html->appendChild($body);
+        $body->setAttribute('class', $this->buildClassName('body'));
+
+
+        $header = $this->transformArticleHeader($document, $body, $instantArticle);
+
+        $article = $this->transformArticleContent($document, $body, $head, $instantArticle);
+
+        $footer = $this->transformArticleFooter($document, $body, $head, $instantArticle);
+
+        return $html;
+    }
+
+    public function transformArticleHeader($document, $body, $instantArticle)
+    {
+        // Builds the content Header, with proper colors and image, adding to body
+        $header = $document->createElement('header');
+        $body->appendChild($header);
+
+        $header->setAttribute('class', $this->buildClassName('header'));
+        if (isset($this->properties['header-logo-image-url'])) {
+            $imageURL = $this->properties['header-logo-image-url'];
+            if (isset($this->properties['header-logo-image-width']) && isset($this->properties['header-logo-image-height'])) {
+                $imageWidth = $this->properties['header-logo-image-width'];
+                $imageHeight = $this->properties['header-logo-image-height'];
+            }
+            else {
+                $imageDimmensions = getimagesize($imageURL);
+                $imageWidth = $imageDimmensions[0];
+                $imageHeight = $imageDimmensions[1];
+            }
+
+            // Creates the cover content for the header and appends to the header
+            if ($instantArticle->getHeader()->getCover()) {
+                $headerCover = $this->buildCover($instantArticle->getHeader()->getCover(), $document);
+                $header->appendChild($headerCover);
+            }
+
+            // Creates the header bar with image (maybe fb like?) and appends to header
+            $headerBar = $document->createElement('div');
+            $header->appendChild($headerBar);
+            $headerBar->setAttribute('class', $this->buildClassName('header-bar'));
+            $ampImageContainer = $document->createElement('div');
+            $headerBar->appendChild($ampImageContainer);
+            $ampImageContainer->setAttribute('class', $this->buildClassName('header-bar-img-container'));
+            $ampImage = $document->createElement('amp-img');
+            $ampImageContainer->appendChild($ampImage);
+            $ampImage->setAttribute('src', $imageURL);
+            // TODO work on this image logo size
+            $ampImage->setAttribute('width', '200');
+            $ampImage->setAttribute('height', '40');
+
+        }
+        // The kicker for article
+        if ($instantArticle->getHeader()->getKicker()) {
+            $kicker = $document->createElement('h2');
+            $header->appendChild($kicker);
+            $kicker->setAttribute('class', 'ia2amp-header-category');
+            $kicker->appendChild($instantArticle->getHeader()->getKicker()->textToDOMDocumentFragment($document));
+        }
+
+        // The Title for article
+        $h1 = $document->createElement('h1');
+        $header->appendChild($h1);
+        $h1->setAttribute('class', 'ia2amp-header-h1');
+        $h1->appendChild($instantArticle->getHeader()->getTitle()->textToDOMDocumentFragment($document));
+
+        // The article authors
+        $authors = $document->createElement('h3');
+        $header->appendChild($authors);
+        $authors->setAttribute('class', 'ia2amp-header-author');
+        $authorsElement = $instantArticle->getHeader()->getAuthors();
+        $authorsString = [];
+        foreach($authorsElement as $author) {
+            $authorsString[] = $author->getName();
+        }
+        $authors->appendChild($document->createTextNode('BY '.implode($authorsString, ', ')));
+
+        // Aritcle publish date
+        $publishDate = $document->createElement('h3');
+        $header->appendChild($publishDate);
+        $publishDate->setAttribute('class', 'ia2amp-header-date');
+        $datetime = $instantArticle->getHeader()->getPublished()->getDatetime();
+        $publishDate->appendChild($document->createTextNode(date_format($datetime, $this->dateFormat)));
+
+        return $header;
+    }
+
+    public function transformMetaInfoHead($document, $html, $instantArticle)
+    {
         // Builds the Head
         $head = $document->createElement('head');
         $html->appendChild($head);
 
         // Builds meta charset and append to head
-        if ($this->instantArticle->getCharset()) {
+        if ($instantArticle->getCharset()) {
             $charset = $document->createElement('meta');
-            $charset->setAttribute('charset', $this->instantArticle->getCharset());
+            $charset->setAttribute('charset', $instantArticle->getCharset());
             $head->appendChild($charset);
         }
 
@@ -138,7 +237,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         // Builds canonical link and append to head
         $link = $document->createElement('link');
         $link->setAttribute('rel', 'canonical');
-        $link->setAttribute('href', $this->instantArticle->getCanonicalURL());
+        $link->setAttribute('href', $instantArticle->getCanonicalURL());
 
         // Builds custom css style and append to head
         $ampCustomCSS = $this->buildCustomCSS($document);
@@ -155,84 +254,14 @@ class AMPArticle extends Element implements InstantArticleInterface
         // Builds title and append to head
         $title = $document->createElement('title');
         $head->appendChild($title);
-        $titleText = $this->instantArticle->getHeader()->getTitle()->textToDOMDocumentFragment($document);
+        $titleText = $instantArticle->getHeader()->getTitle()->textToDOMDocumentFragment($document);
         $title->appendChild($titleText);
 
-        // Build and append body and article tags to the HTML document
-        $body = $document->createElement('body');
-        $html->appendChild($body);
-        $body->setAttribute('class', $this->buildClassName('body'));
+        return $head;
+    }
 
-        // Builds the content Header, with proper colors and image, adding to body
-        $header = $document->createElement('header');
-        $body->appendChild($header);
-
-        $header->setAttribute('class', $this->buildClassName('header'));
-        if (isset($this->properties['header-logo-image-url'])) {
-            $imageURL = $this->properties['header-logo-image-url'];
-            if (isset($this->properties['header-logo-image-width']) && isset($this->properties['header-logo-image-height'])) {
-                $imageWidth = $this->properties['header-logo-image-width'];
-                $imageHeight = $this->properties['header-logo-image-height'];
-            }
-            else {
-                $imageDimmensions = getimagesize($imageURL);
-                $imageWidth = $imageDimmensions[0];
-                $imageHeight = $imageDimmensions[1];
-            }
-
-            // Creates the cover content for the header and appends to the header
-            if ($this->instantArticle->getHeader()->getCover()) {
-                $headerCover = $this->buildCover($this->instantArticle->getHeader()->getCover(), $document);
-                $header->appendChild($headerCover);
-            }
-
-            // Creates the header bar with image (maybe fb like?) and appends to header
-            $headerBar = $document->createElement('div');
-            $header->appendChild($headerBar);
-            $headerBar->setAttribute('class', $this->buildClassName('header-bar'));
-            $ampImageContainer = $document->createElement('div');
-            $headerBar->appendChild($ampImageContainer);
-            $ampImageContainer->setAttribute('class', $this->buildClassName('header-bar-img-container'));
-            $ampImage = $document->createElement('amp-img');
-            $ampImageContainer->appendChild($ampImage);
-            $ampImage->setAttribute('src', $imageURL);
-            // TODO work on this image logo size
-            $ampImage->setAttribute('width', '200');
-            $ampImage->setAttribute('height', '40');
-
-        }
-        // The kicker for article
-        if ($this->instantArticle->getHeader()->getKicker()) {
-            $kicker = $document->createElement('h2');
-            $header->appendChild($kicker);
-            $kicker->setAttribute('class', 'ia2amp-header-category');
-            $kicker->appendChild($this->instantArticle->getHeader()->getKicker()->textToDOMDocumentFragment($document));
-        }
-
-        // The Title for article
-        $h1 = $document->createElement('h1');
-        $header->appendChild($h1);
-        $h1->setAttribute('class', 'ia2amp-header-h1');
-        $h1->appendChild($this->instantArticle->getHeader()->getTitle()->textToDOMDocumentFragment($document));
-
-        // The article authors
-        $authors = $document->createElement('h3');
-        $header->appendChild($authors);
-        $authors->setAttribute('class', 'ia2amp-header-author');
-        $authorsElement = $this->instantArticle->getHeader()->getAuthors();
-        $authorsString = [];
-        foreach($authorsElement as $author) {
-            $authorsString[] = $author->getName();
-        }
-        $authors->appendChild($document->createTextNode('BY '.implode($authorsString, ', ')));
-
-        // Aritcle publish date
-        $publishDate = $document->createElement('h3');
-        $header->appendChild($publishDate);
-        $publishDate->setAttribute('class', 'ia2amp-header-date');
-        $datetime = $this->instantArticle->getHeader()->getPublished()->getDatetime();
-        $publishDate->appendChild($document->createTextNode(date_format($datetime, $this->dateFormat)));
-
+    public function transformArticleContent($document, $body, $head, $instantArticle)
+    {
         $article = $document->createElement('article');
         $body->appendChild($article);
         $article->setAttribute('class', $this->buildClassName('article'));
@@ -241,8 +270,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         $containsSlideshow = false;
         $containsAudio = false;
 
-        if ($this->instantArticle->getChildren()) {
-            foreach ($this->instantArticle->getChildren() as $child) {
+        if ($instantArticle->getChildren()) {
+            foreach ($instantArticle->getChildren() as $child) {
                 if (Type::is($child, TextContainer::getClassName())) {
                     if (count($child->getTextChildren()) === 0) {
                         continue;
@@ -316,12 +345,17 @@ class AMPArticle extends Element implements InstantArticleInterface
 
                 $article->appendChild($childElement);
             }
-            // if ($this->instantArticle->getFooter() && $this->instantArticle->getFooter()->isValid()) {
-            //     $article->appendChild($this->instantArticle->getFooter()->toDOMElement($document));
-            // }
         }
 
-        return $html;
+        return $article;
+    }
+
+    public function transformArticleFooter()
+    {
+        // if ($instantArticle->getFooter() && $this->instantArticle->getFooter()->isValid()) {
+        //     $article->appendChild($this->instantArticle->getFooter()->toDOMElement($document));
+        // }
+        return null;
     }
 
     private function buildCover($media, $document)
