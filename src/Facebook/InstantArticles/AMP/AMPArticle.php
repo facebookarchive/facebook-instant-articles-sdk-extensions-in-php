@@ -105,7 +105,6 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $head = $this->transformMetaInfoHead($document, $html, $instantArticle);
 
-
         // Build and append body and article tags to the HTML document
         $body = $document->createElement('body');
         $html->appendChild($body);
