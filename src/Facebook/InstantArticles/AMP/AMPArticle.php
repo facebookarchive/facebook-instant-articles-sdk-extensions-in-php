@@ -583,7 +583,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $this->articleBodyStyles($styles) .
             $this->articleQuoteStyles($styles) .
             $this->articleCaptionStyles($styles) .
-            // TODO: Additional Caption Sizes
+            $this->articleAdditionalCaptionStyles($styles) .
             $this->articleFooterStyles($styles) .
             $globalCSSFile .
             $customCSSFile;
@@ -669,6 +669,14 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
 
+    private function articleAdditionalCaptionStyles($styles)
+    {
+        $mappings = array(
+            // TODO: Define mappings for additional styles
+        );
+        return $this->buildCSSRulesFromMappings($mappings, $styles);
+    }
+
     private function articleFooterStyles($styles)
     {
       // TODO: Implement
@@ -679,6 +687,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         // TODO: Move to constant
         // TODO: Determine how we want to handle this. React components use screen size and resolution to generate styles dynamically
+        
         // $textSizes = array(
         //     'title' => 60,
         //     'subtitle' => 38,
