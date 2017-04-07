@@ -38,6 +38,9 @@ class AMPArticle extends Element implements InstantArticleInterface
     const DEFAULT_HEIGHT = 240;
     const DEFAULT_DATE_FORMAT = 'F d, Y';
 
+    public const STYLES_FOLDER_KEY = 'styles-folder';
+    public const OVERRIDE_STYLES_KEY = 'override-styles';
+
     private $instantArticle;
     /*
        'lang' => 'en-US',
@@ -549,15 +552,24 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function getCustomCSS()
     {
-        // TODO: Move to settings
-        $stylesFolder = __DIR__ . '/../../../../tests/Facebook/InstantArticles/AMP/';
+        $stylesFolder = (array_key_exists(AMPArticle::STYLES_FOLDER_KEY, $this->properties)
+            ? $this->properties[AMPArticle::STYLES_FOLDER_KEY]
+            : __DIR__) . '/';
 
-        $styleName = $this->instantArticle->getStyle();
-        if (!$styleName || $styleName == null || $styleName === '') {
-            $styleName = 'default';
+        // TODO: Make sure you don't have double slashes in the path above
+
+        // Try to get the IA styles from properties
+        if (array_key_exists(AMPArticle::OVERRIDE_STYLES_KEY, $this->properties)) {
+            $styles = $this->properties[AMPArticle::OVERRIDE_STYLES_KEY];
         }
-        $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
-        $styles = json_decode($stylesFile, true);
+        else {
+            $styleName = $this->instantArticle->getStyle();
+            if ($styleName == NULL) {
+                $styleName = 'default';
+            }
+            $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
+            $styles = json_decode($stylesFile, true);
+        }
 
         // TODO: Refactor this logic for custom CSS (global and style specific)
         $globalCSSFile = file_get_contents($stylesFolder . 'global.amp-custom.css');

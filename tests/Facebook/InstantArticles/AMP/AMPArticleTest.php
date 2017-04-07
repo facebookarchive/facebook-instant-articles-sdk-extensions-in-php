@@ -85,17 +85,21 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->runIAtoAMPTest('natgeo');
     }
 
-    private function getRenderer($test) {
+    private function getRenderer($test, $customProperties = null) {
         $html_file = file_get_contents(__DIR__ . '/'.$test.'-instant-article.html');
 
-        return AMPArticle::create(
-            $html_file,
-            array(
-                'lang' => 'en-US',
-                'header-logo-image-url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/wod-expert-horizontal@033x.png',
-                'header-logo-image-width' => '132',
-                'header-logo-image-height' => '26'
-            ));
+        $propeties = array(
+            'lang' => 'en-US',
+            'header-logo-image-url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/wod-expert-horizontal@033x.png',
+            'header-logo-image-width' => '132',
+            'header-logo-image-height' => '26',
+            AMPArticle::STYLES_FOLDER_KEY => __DIR__,
+        );
+        if (!is_null($customProperties)) {
+            $propeties = array_merge($propeties, $customProperties);
+        }
+
+        return AMPArticle::create($html_file, $propeties);
     }
 
     private function getRenderedAMP($test) {
