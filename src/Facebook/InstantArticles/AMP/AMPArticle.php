@@ -703,7 +703,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         // TODO: Move to constant
         $mappings = array(
             'font-family' => 'font',
-            'color' => 'color',
             'text-align' => 'text_alignment',
             'display' => 'display',
             // TODO: Implement
@@ -727,6 +726,10 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         if (array_key_exists('background_color', $textStyles)) {
             $filteredMappings['background-color'] = AMPArticle::toRGB($textStyles['background_color']);
+        }
+
+        if (array_key_exists('color', $textStyles)) {
+            $filteredMappings['color'] = AMPArticle::toRGB($textStyles['color']);
         }
 
         $spacingMappings = array(

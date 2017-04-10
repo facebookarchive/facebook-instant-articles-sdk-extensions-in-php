@@ -255,12 +255,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testBackgroundColorStyle()
     {
-        $red = rand(0, 255);
-        $green = rand(0, 255);
-        $blue = rand(0, 255);
-        $hexColor = '#' . str_pad(dechex($red), 2, '0', STR_PAD_LEFT) .
-                    str_pad(dechex($green), 2, '0', STR_PAD_LEFT) .
-                    str_pad(dechex($blue), 2, '0', STR_PAD_LEFT);
+        $hexColor = AMPArticleTest::getRandomHexColor();
         
         $defaultStyles = $this->getDefaultStyles();
         $defaultStyles['background_color'] = $hexColor;
@@ -279,10 +274,26 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testKickerFontFamily()
     {
-        $this->validateSecondLevelProperty('kicker', 'font', '.ia2amp-header-category', 'font-family');
+        $this->validateRandomSecondLevelProperty('kicker', 'font', '.ia2amp-header-category', 'font-family');
     }
 
-    private function validateSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty)
+    public function testKickerColor()
+    {
+        $hexColor = AMPArticleTest::getRandomHexColor();
+        // Escape parenthesis before using regex
+        $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
+        $this->validateSecondLevelProperty('kicker', 'color', '.ia2amp-header-category', 'color', $hexColor, $expectedValue);
+    }
+
+    public function testKickerBackgroundColor()
+    {
+        $hexColor = AMPArticleTest::getRandomHexColor();
+        // Escape parenthesis before using regex
+        $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
+        $this->validateSecondLevelProperty('kicker', 'background_color', '.ia2amp-header-category', 'background-color', $hexColor, $expectedValue);
+    }
+
+    private function validateRandomSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty)
     {
         $randomValue = rand();
 
@@ -299,10 +310,36 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->validateCSSRule($css, $cssSelector, $cssProperty, $randomValue);
     }
 
+    private function validateSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty, $styleValue, $expectedCSSValue)
+    {
+        $defaultStyles = $this->getDefaultStyles();
+        $defaultStyles[$firstLevelKey][$secondLevelKey] = $styleValue;
+
+        $customProperties = array(
+            AMPArticle::OVERRIDE_STYLES_KEY => $defaultStyles,
+        );
+
+        $renderer = $this->getRenderer('test1', $customProperties);
+        $css = $renderer->getCustomCSS();
+
+        $this->validateCSSRule($css, $cssSelector, $cssProperty, $expectedCSSValue);
+    }
+
     private function validateCSSRule($css, $selector, $property, $value)
     {
-        $cssRulePattern = '/' . $selector. '\s*{'. $property . ':\s*' . $value . ';/';
+        $cssRulePattern = '/' . $selector. '\s*{[^}]*'. $property . ':\s*' . $value . ';/';
         $this->assertEquals(1, preg_match($cssRulePattern, $css), "Could not find CSS rule '$property' for selector '$selector'");
+    }
+
+    private static function getRandomHexColor()
+    {
+        $red = rand(0, 255);
+        $green = rand(0, 255);
+        $blue = rand(0, 255);
+        
+        return '#' . str_pad(dechex($red), 2, '0', STR_PAD_LEFT) .
+                    str_pad(dechex($green), 2, '0', STR_PAD_LEFT) .
+                    str_pad(dechex($blue), 2, '0', STR_PAD_LEFT);
     }
 
     public function uploadToS3($fileToUpload, $fileNameToStoreAtS3)
