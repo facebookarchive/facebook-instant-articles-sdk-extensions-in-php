@@ -293,6 +293,23 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->validateSecondLevelProperty('kicker', 'background_color', '.ia2amp-header-category', 'background-color', $hexColor, $expectedValue);
     }
 
+    /**
+    * @dataProvider testKickerTextTransformDataProvider
+    */
+    public function testKickerTextTransform($styleValue, $expectedValue)
+    {
+        $this->validateSecondLevelProperty('kicker', 'capitalization', '.ia2amp-header-category', 'text-transform', $styleValue, $expectedValue);
+    }
+
+    public function testKickerTextTransformDataProvider()
+    {
+        return array(
+            array('ALL_CAPS', 'uppercase'),
+            array('NONE', 'none'),
+            array('ALL_LOWER_CASE', 'lowercase'),
+        );
+    }
+
     private function validateRandomSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty)
     {
         $randomValue = rand();
