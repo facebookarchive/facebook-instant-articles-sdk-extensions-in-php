@@ -108,7 +108,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         return $renderer->render(null, true)."\n";
     }
 
-    private function getMarkupWithoutStyles($markup) {
+    private function getMarkupWithoutStyles($markup)
+    {
         libxml_use_internal_errors(true);
         $markupDocument = new \DOMDocument();
         $markupDocument->loadHTML($markup);
@@ -121,7 +122,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         return $markupDocument->saveHTML();
     }
 
-    private function compareIgnoringStyles($ampExpected, $ampRendered) {
+    private function compareIgnoringStyles($ampExpected, $ampRendered)
+    {
         $ampExpectedNoStyles = $this->getMarkupWithoutStyles($ampExpected);
         $ampRenderedNoStyles = $this->getMarkupWithoutStyles($ampRendered);
 

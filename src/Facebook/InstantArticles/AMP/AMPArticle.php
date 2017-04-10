@@ -882,7 +882,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             'headline' => $this->instantArticle->getHeader()->getTitle()->getTextChildren()[0],
             'datePublished' => date_format($published->getDatetime(), 'c'),
             // TODO: How can we define a description?
-            // 'description' => 'Lorem ipsum',   
+            // 'description' => 'Lorem ipsum',  
         );
 
         if ($modified) {
