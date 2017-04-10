@@ -144,7 +144,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
         // AMP url for testing: https://search.google.com/search-console/amp
-        $this->uploadToS3(__DIR__ . '/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
+        // $this->uploadToS3(__DIR__ . '/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
     }
 
     public function testArticleHasSingleLdJsonScript() {
@@ -275,6 +275,28 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         // Escape parenthesis before using regex
         $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
         $this->validateCSSRule($css, 'html', 'background-color', $expectedValue);
+    }
+
+    public function testKickerFontFamily()
+    {
+        $this->validateSecondLevelProperty('kicker', 'font', '.ia2amp-header-category', 'font-family');
+    }
+
+    private function validateSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty)
+    {
+        $randomValue = rand();
+
+        $defaultStyles = $this->getDefaultStyles();
+        $defaultStyles[$firstLevelKey][$secondLevelKey] = $randomValue;
+
+        $customProperties = array(
+            AMPArticle::OVERRIDE_STYLES_KEY => $defaultStyles,
+        );
+
+        $renderer = $this->getRenderer('test1', $customProperties);
+        $css = $renderer->getCustomCSS();
+
+        $this->validateCSSRule($css, $cssSelector, $cssProperty, $randomValue);
     }
 
     private function validateCSSRule($css, $selector, $property, $value)
