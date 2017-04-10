@@ -346,18 +346,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     private function validateRandomSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty)
     {
         $randomValue = rand();
-
-        $defaultStyles = $this->getDefaultStyles();
-        $defaultStyles[$firstLevelKey][$secondLevelKey] = $randomValue;
-
-        $customProperties = array(
-            AMPArticle::OVERRIDE_STYLES_KEY => $defaultStyles,
-        );
-
-        $renderer = $this->getRenderer('test1', $customProperties);
-        $css = $renderer->getCustomCSS();
-
-        $this->validateCSSRule($css, $cssSelector, $cssProperty, $randomValue);
+        $this->validateSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty, $randomValue, $randomValue);
     }
 
     private function validateSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty, $styleValue, $expectedCSSValue)
