@@ -33,7 +33,7 @@ use Facebook\InstantArticles\Validators\Type;
 
 class AMPArticle extends Element implements InstantArticleInterface
 {
-    const DEFAULT_MARGIN = 16.4;
+    public const DEFAULT_MARGIN = 16.4;
     const DEFAULT_WIDTH = 380;
     const DEFAULT_HEIGHT = 240;
     const DEFAULT_DATE_FORMAT = 'F d, Y';

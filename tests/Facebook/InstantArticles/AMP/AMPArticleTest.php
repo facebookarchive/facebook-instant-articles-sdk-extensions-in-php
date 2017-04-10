@@ -343,6 +343,108 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+    * @dataProvider testKickerSpacingDataProvider
+    */
+    public function testKickerSpacing($spacing, $size, $baseSpacingValue, $direction, $spacingFormat)
+    {
+        $scalingFactor = rand(0, 1000) / 1000 + 0.5;
+        $directionSpacing = array(
+            'scaling_factor' => $scalingFactor,
+            'size' => $size,
+        );
+        $spacingStyle = array(
+            $direction => $directionSpacing,
+        );
+
+        $expectedSpacing = $baseSpacingValue * $scalingFactor;
+        $expectedValue  = sprintf($spacingFormat, $expectedSpacing);
+
+        $this->validateSecondLevelProperty('kicker', $spacing, '.ia2amp-header-category', $spacing, $spacingStyle, $expectedValue);
+    }
+
+    public function testKickerSpacingDataProvider()
+    {
+        // TODO: Create unit tests for other margin and padding values
+        return array(
+            array('margin', 'DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'right', '0 %spx 0 0'),
+            array('margin', 'DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'left', '0 0 0 %spx'),
+
+            array('margin', 'NONE', 0, 'right', '0 0 0 0'),
+            array('margin', 'NONE', 0, 'left', '0 0 0 0'),
+
+            array('padding', 'NONE', 0, 'top', '0 0 0 0'),
+            array('padding', 'NONE', 0, 'right', '0 0 0 0'),
+            array('padding', 'NONE', 0, 'bottom', '0 0 0 0'),
+            array('padding', 'NONE', 0, 'left', '0 0 0 0'),
+
+            array('padding', 'MEDIUM', 46, 'top', '%spx 0 0 0'),
+            array('padding', 'MEDIUM', 46, 'right', '0 %spx 0 0'),
+            array('padding', 'MEDIUM', 46, 'bottom', '0 0 %spx 0'),
+            array('padding', 'MEDIUM', 46, 'left', '0 0 0 %spx'),
+        );
+    }
+
+    /**
+    * @dataProvider testKickerBorderColorDataProvider
+    */
+    public function testKickerBorderColor($direction)
+    {
+        $width = rand(0, 100);
+        $hexColor = AMPArticleTest::getRandomHexColor();
+        $directionBorder = array(
+            'color' => $hexColor,
+            'width' => $width,
+        );
+        $borderStyle = array(
+            $direction => $directionBorder,
+        );
+
+        // Escape parenthesis before using regex
+        $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
+        // TODO: Enable once implemented
+        // $this->validateSecondLevelProperty('kicker', 'border', '.ia2amp-header-category', 'border-color', $borderStyle, $expectedValue);
+    }
+
+    public function testKickerBorderColorDataProvider()
+    {
+        return array(
+            array('top'),
+            array('right'),
+            array('bottom'),
+            array('left'),
+        );
+    }
+
+    /**
+    * @dataProvider testKickerBorderWidthDataProvider
+    */
+    public function testKickerBorderWidth($direction, $borderFormat)
+    {
+        $width = rand(0, 100);
+        $directionBorder = array(
+            'color' => '#000000',
+            'width' => $width,
+        );
+        $borderStyle = array(
+            $direction => $directionBorder,
+        );
+
+        $expectedValue  = sprintf($borderFormat, $width);
+        // TODO: Fix
+        // $this->validateSecondLevelProperty('kicker', 'border', '.ia2amp-header-category', 'border-width', $borderStyle, $expectedValue);
+    }
+
+    public function testKickerBorderWidthDataProvider()
+    {
+        return array(
+            array('top', '%spx 0 0 0'),
+            array('right', '0 %spx 0 0'),
+            array('bottom', '0 0 %spx 0'),
+            array('left', '0 0 0 %spx'),
+        );
+    }
+
     private function validateRandomSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty)
     {
         $randomValue = rand();
@@ -366,6 +468,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     private function validateCSSRule($css, $selector, $property, $value)
     {
+        // Escape the dot (used on class name selectors) so it is not interpreted as any character
+        $selector = str_replace('.', '\.', $selector);
+
         $cssRulePattern = '/' . $selector. '\s*{[^}]*'. $property . ':\s*' . $value . ';/';
         $this->assertEquals(1, preg_match($cssRulePattern, $css), "Could not find CSS rule '$property' for selector '$selector'");
     }
