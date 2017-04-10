@@ -108,12 +108,32 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         return $renderer->render(null, true)."\n";
     }
 
+    private function getMarkupWithoutStyles($markup) {
+        libxml_use_internal_errors(true);
+        $markupDocument = new \DOMDocument();
+        $markupDocument->loadHTML($markup);
+        libxml_use_internal_errors(false);
+
+        $xPath = new \DOMXPath($markupDocument);
+        if ($customStyle = $xPath->query('//style[@amp-custom]')->item(0)) {
+            $customStyle->parentNode->removeChild($customStyle);
+        }
+        return $markupDocument->saveHTML();
+    }
+
+    private function compareIgnoringStyles($ampExpected, $ampRendered) {
+        $ampExpectedNoStyles = $this->getMarkupWithoutStyles($ampExpected);
+        $ampRenderedNoStyles = $this->getMarkupWithoutStyles($ampRendered);
+
+        $this->assertEquals($ampExpectedNoStyles, $ampRenderedNoStyles);
+    }
+
     public function runIAtoAMPTest($test)
     {
-        $amp_rendered = $this->getRenderedAMP($test);
+        $ampRendered = $this->getRenderedAMP($test);
 
-        $amp_expected = file_get_contents(__DIR__ . '/'.$test.'-amp-converted.html');
-        $this->assertEquals($amp_expected, $amp_rendered);
+        $ampExpected = file_get_contents(__DIR__ . '/'.$test.'-amp-converted.html');
+        $this->compareIgnoringStyles($ampExpected, $ampRendered);
 
         // Sets content into the file for fast testing
         // file_put_contents(__DIR__ . '/'.$test.'-amp-converted.html', $amp_rendered);
