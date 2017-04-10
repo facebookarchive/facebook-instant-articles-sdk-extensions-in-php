@@ -313,7 +313,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     /**
     * @dataProvider testKickerTextAlignmentDataProvider
     */
-    public function testKickerAlignmentTransform($value)
+    public function testKickerTextAlignment($value)
     {
         $this->validateSecondLevelProperty('kicker', 'text_alignment', '.ia2amp-header-category', 'text-align', $value, $value);
     }
@@ -324,6 +324,22 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             array('LEFT'),
             array('CENTER'),
             array('RIGHT'),
+        );
+    }
+
+    /**
+    * @dataProvider testKickerDisplayDataProvider
+    */
+    public function testKickerDisplay($value)
+    {
+        $this->validateSecondLevelProperty('kicker', 'display', '.ia2amp-header-category', 'display', $value, $value);
+    }
+
+    public function testKickerDisplayDataProvider()
+    {
+        return array(
+            array('INLINE'),
+            array('BLOCK'),
         );
     }
 
