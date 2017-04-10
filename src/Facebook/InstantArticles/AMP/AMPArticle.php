@@ -550,7 +550,7 @@ class AMPArticle extends Element implements InstantArticleInterface
       return $ampCustomCSS;
     }
 
-    private function getCustomCSS()
+    public function getCustomCSS()
     {
         $stylesFolder = (array_key_exists(AMPArticle::STYLES_FOLDER_KEY, $this->properties)
             ? $this->properties[AMPArticle::STYLES_FOLDER_KEY]
@@ -558,15 +558,16 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // TODO: Make sure you don't have double slashes in the path above
 
+        $styleName = $this->instantArticle->getStyle();
+        if ($styleName == NULL) {
+            $styleName = 'default';
+        }
         // Try to get the IA styles from properties
         if (array_key_exists(AMPArticle::OVERRIDE_STYLES_KEY, $this->properties)) {
             $styles = $this->properties[AMPArticle::OVERRIDE_STYLES_KEY];
         }
         else {
-            $styleName = $this->instantArticle->getStyle();
-            if ($styleName == NULL) {
-                $styleName = 'default';
-            }
+            
             $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
             $styles = json_decode($stylesFile, true);
         }

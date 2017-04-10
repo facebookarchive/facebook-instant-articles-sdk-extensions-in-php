@@ -85,7 +85,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->runIAtoAMPTest('natgeo');
     }
 
-    private function getRenderer($test, $customProperties = null) {
+    private function getRenderer($test, $customProperties = null)
+    {
         $html_file = file_get_contents(__DIR__ . '/'.$test.'-instant-article.html');
 
         $propeties = array(
@@ -102,8 +103,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         return AMPArticle::create($html_file, $propeties);
     }
 
-    private function getRenderedAMP($test) {
-        $renderer = $this->getRenderer($test);
+    private function getRenderedAMP($test, $customProperties = null)
+    {
+        $renderer = $this->getRenderer($test, $customProperties);
         
         return $renderer->render(null, true)."\n";
     }
@@ -243,6 +245,42 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             array('EEFFAABB', 'rgba(255,170,187,0.93)'),
             array('#EEFFAABB', 'rgba(255,170,187,0.93)'),
         );
+    }
+
+    private function getDefaultStyles()
+    {
+        $jsonStyles = file_get_contents(__DIR__ . '/default.style.json');
+        return json_decode($jsonStyles, true);
+    }
+
+    public function testBackgroundColorStyle()
+    {
+        $red = rand(0, 255);
+        $green = rand(0, 255);
+        $blue = rand(0, 255);
+        $hexColor = '#' . str_pad(dechex($red), 2, '0', STR_PAD_LEFT) .
+                    str_pad(dechex($green), 2, '0', STR_PAD_LEFT) .
+                    str_pad(dechex($blue), 2, '0', STR_PAD_LEFT);
+        
+        $defaultStyles = $this->getDefaultStyles();
+        $defaultStyles['background_color'] = $hexColor;
+
+        $customProperties = array(
+            AMPArticle::OVERRIDE_STYLES_KEY => $defaultStyles,
+        );
+
+        $renderer = $this->getRenderer('test1', $customProperties);
+        $css = $renderer->getCustomCSS();
+
+        // Escape parenthesis before using regex
+        $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
+        $this->validateCSSRule($css, 'html', 'background-color', $expectedValue);
+    }
+
+    private function validateCSSRule($css, $selector, $property, $value)
+    {
+        $cssRulePattern = '/' . $selector. '\s*{'. $property . ':\s*' . $value . ';/';
+        $this->assertEquals(1, preg_match($cssRulePattern, $css), "Could not find CSS rule '$property' for selector '$selector'");
     }
 
     public function uploadToS3($fileToUpload, $fileNameToStoreAtS3)
