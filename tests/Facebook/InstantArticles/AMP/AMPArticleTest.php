@@ -310,6 +310,23 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+    * @dataProvider testKickerTextAlignmentDataProvider
+    */
+    public function testKickerAlignmentTransform($value)
+    {
+        $this->validateSecondLevelProperty('kicker', 'text_alignment', '.ia2amp-header-category', 'text-align', $value, $value);
+    }
+
+    public function testKickerTextAlignmentDataProvider()
+    {
+        return array(
+            array('LEFT'),
+            array('CENTER'),
+            array('RIGHT'),
+        );
+    }
+
     private function validateRandomSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty)
     {
         $randomValue = rand();
