@@ -679,8 +679,10 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function articleFooterStyles($styles)
     {
-      // TODO: Implement
-      return '';
+      $mappings = array(
+            '.ia2amp-footer' => 'footer',
+        );
+        return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
 
     private function buildTextCSSDeclarationBlock($textStyles, $textType)
