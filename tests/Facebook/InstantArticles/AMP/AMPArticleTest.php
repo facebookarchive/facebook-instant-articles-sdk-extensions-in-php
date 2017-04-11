@@ -430,18 +430,17 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             $direction => $directionBorder,
         );
 
-        $expectedValue  = sprintf($borderFormat, $width);
-        // TODO: Fix
-        // $this->validateSecondLevelProperty('kicker', 'border', '.ia2amp-header-category', 'border-width', $borderStyle, $expectedValue);
+        $expectedValue  = sprintf($borderFormat, $width !== 0 ? $width . 'px' : 0);
+        $this->validateSecondLevelProperty('kicker', 'border', '.ia2amp-header-category', 'border-width', $borderStyle, $expectedValue);
     }
 
     public function testKickerBorderWidthDataProvider()
     {
         return array(
-            array('top', '%spx 0 0 0'),
-            array('right', '0 %spx 0 0'),
-            array('bottom', '0 0 %spx 0'),
-            array('left', '0 0 0 %spx'),
+            array('top', '%s 0 0 0'),
+            array('right', '0 %s 0 0'),
+            array('bottom', '0 0 %s 0'),
+            array('left', '0 0 0 %s'),
         );
     }
 

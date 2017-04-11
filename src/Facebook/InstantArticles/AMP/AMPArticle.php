@@ -837,15 +837,18 @@ class AMPArticle extends Element implements InstantArticleInterface
         $declarationBlocks = array();
         $borderWidths = array();
         foreach ($directions as $direction) {
-            if (!array_key_exists($direction, $borderStyles)) {
-                continue;
+            if (array_key_exists($direction, $borderStyles)) {
+                $borderDirectionStyles = $borderStyles[$direction];
+                $borderWidth = $borderDirectionStyles['width'];
+                
+                if (array_key_exists('color', $borderDirectionStyles)) {
+                    $declarationBlocks["border-$direction-color"] = AMPArticle::toRGB($borderDirectionStyles['color']);
+                }
             }
-            $borderDirectionStyles = $borderStyles[$direction];
-            $borderWidth = $borderDirectionStyles['width'];
-            $borderWidths[] = $borderWidth != 0 ? $borderWidth . 'px' : '0';
-            if (array_key_exists('color', $borderDirectionStyles)) {
-                $declarationBlocks["border-$direction-color"] = AMPArticle::toRGB($borderDirectionStyles['color']);
+            else {
+                $borderWidth = 0;
             }
+            $borderWidths[] = $borderWidth !== 0 ? $borderWidth . 'px' : '0';
         }
         $declarationBlocks['border-width'] = implode(' ', $borderWidths);
         $declarationBlocks['border-style'] = 'solid';
