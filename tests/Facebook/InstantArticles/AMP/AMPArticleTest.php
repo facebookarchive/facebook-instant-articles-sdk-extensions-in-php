@@ -272,35 +272,103 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->validateCSSRule($css, 'html', 'background-color', $expectedValue);
     }
 
-    public function testKickerFontFamily()
+    public function textStylesDataProvider()
     {
-        $this->validateRandomSecondLevelProperty('kicker', 'font', '.ia2amp-header-category', 'font-family');
+        return $this->getTextStylesTestData('kicker', '.ia2amp-header-category');
     }
 
-    public function testKickerColor()
+    /**
+    * @dataProvider textStylesDataProvider
+    */
+    public function testTextStyles($styleName, $secondLevelProperty, $cssSelector, $cssProperty, $styleValue, $expectedCSSValue)
     {
-        $hexColor = AMPArticleTest::getRandomHexColor();
-        // Escape parenthesis before using regex
-        $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
-        $this->validateSecondLevelProperty('kicker', 'color', '.ia2amp-header-category', 'color', $hexColor, $expectedValue);
+        $this->validateSecondLevelProperty($styleName, $secondLevelProperty, $cssSelector, $cssProperty, $styleValue, $expectedCSSValue);
     }
 
-    public function testKickerBackgroundColor()
-    {
-        $hexColor = AMPArticleTest::getRandomHexColor();
-        // Escape parenthesis before using regex
-        $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
-        $this->validateSecondLevelProperty('kicker', 'background_color', '.ia2amp-header-category', 'background-color', $hexColor, $expectedValue);
-    }
-
-    private function getSecondLevelPropertyTestData($dataProviderMethodName, $styleName, $secondLevelProperty, $cssSelector, $cssProperty)
+    /**
+     * @dataProvider testTextStylesDataProvider
+     */
+    private function getTextStylesTestData($styleName, $cssSelector)
     {
         $testData = array();
 
-        // Get all test cases for the given data provider method
-        $dataProviderTestData = call_user_func_array(array($this, $dataProviderMethodName), array());
+        // Font Family
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('randomDataProvider', 'passThroughValuesProvider',
+                $styleName, 'font', $cssSelector, 'font-family'));
+
+        // Color
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('colorDataProvider', 'passThroughValuesProvider',
+                $styleName, 'color', $cssSelector, 'color'));
+
+        // Background Color
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('colorDataProvider', 'passThroughValuesProvider',
+                $styleName, 'background_color', $cssSelector, 'background-color'));
+
+        // Text Transform
+        $testData = array_merge($testData,
+            //  TODO: Is there a way to remove the magic strings?
+            $this->getSecondLevelPropertyTestData('textTransformDataProvider', 'passThroughValuesProvider',
+                $styleName, 'capitalization', $cssSelector, 'text-transform'));
+
+        // Text Alignment
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('textAlignmentDataProvider', 'passThroughValuesProvider',
+                $styleName, 'text_alignment', $cssSelector, 'text-align'));
+
+        // Display
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('displayDataProvider', 'passThroughValuesProvider',
+                $styleName, 'display', $cssSelector, 'display'));
+
+        // Margin
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('marginDataProvider', 'spacingValuesProvider',
+                $styleName, 'margin', $cssSelector, 'margin'));
+
+        // Padding
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('paddingDataProvider', 'spacingValuesProvider',
+                $styleName, 'padding', $cssSelector, 'padding'));
+
+        // Border Color
+        // TODO: Enable once implemented
+        // $testData = array_merge($testData,
+        //     $this->getSecondLevelPropertyTestData('directionsDataProvider', 'borderColorValuesProvider',
+        //         $styleName, 'border', $cssSelector, 'border-color'));
+
+        // Border Width
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('borderWidthDataProvider', 'borderWidthValuesProvider',
+                $styleName, 'border', $cssSelector, 'border-width'));
+
+        return $testData;
+    }
+
+    /**
+     * Builds the arguments that will be pased to function validateSecondLevelProperty
+     *
+     * @param string $dataProviderFunctionName The name of the parameterless function that serves as Data Provider
+     * @param string $validationArgumentsProviderFunctionName The name of the function that receives the Data Provider rows and converts them to pairs of style 
+     * @param string $styleName The style name that will be used for validateSecondLevelProperty
+     * @param object $secondLevelProperty The name of the property that will be transformed in the styles for the unit test
+     * @param string $cssSelector The CSS selector that will be used to verify the unit test result
+     * @param string $cssProperty The CSS property that will be used to verify the unit test result
+     * @return array An array with the style value that will be set, and the expected CSS value that will be generated
+     */
+    private function getSecondLevelPropertyTestData($dataProviderFunctionName, $validationArgumentsProviderFunctionName,
+        $styleName, $secondLevelProperty, $cssSelector, $cssProperty)
+    {
+        $testData = array();
+
+        // Get all test cases for the given Data Provider function
+        $dataProviderTestData = call_user_func_array(array($this, $dataProviderFunctionName), array());
         
-        foreach ($dataProviderTestData as $styleValueToExpectedValueMappings) {
+        foreach ($dataProviderTestData as $dataProviderTestItem) {
+            // Call the Validation Arguments Provider function using the values from the Data Provider
+            $styleAndCssValues = call_user_func_array(array($this, $validationArgumentsProviderFunctionName), $dataProviderTestItem);
             // Merge the known values with the mappings of style value to expected CSS value
             $testDataItem = array_merge(
                 array(
@@ -309,7 +377,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
                     $cssSelector,
                     $cssProperty,
                 ),
-                $styleValueToExpectedValueMappings);
+                $styleAndCssValues);
             // Add the merged values to the list of test items
             $testData[] = $testDataItem;
         }
@@ -317,42 +385,52 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         return $testData;
     }
 
-    private function getTextStylesTestData($styleName, $cssSelector)
+    /**
+     * Takes an IA style property name and an expected value and returns both in an array
+     *
+     * @param string $stylePropertyName
+     * @param string $expectedCSSValue
+     * @return array
+     */
+    private function passThroughValuesProvider($stylePropertyName, $expectedCSSValue)
     {
-        $testData = array();
-
-        // Text Transform
-        $testData = array_merge($testData,
-            //  TODO: Is there a way to remove the magic strings?
-            $this->getSecondLevelPropertyTestData('textTransformDataProvider', $styleName, 'capitalization',
-                $cssSelector, 'text-transform'));
-
-        // Text Alignment
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('textAlignmentDataProvider', $styleName, 'text_alignment',
-                $cssSelector, 'text-align'));
-
-        // Display
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('displayDataProvider', $styleName, 'display',
-                $cssSelector, 'display'));
-
-        return $testData;
+        // TODO: Should we use a class instead of an array? (Probably)
+        return array($stylePropertyName, $expectedCSSValue);
     }
 
     /**
-    * @dataProvider testKickerTextStylesDataProvider
-    */
-    public function testKickerTextStyles($styleName, $secondLevelProperty, $cssSelector, $cssProperty, $styleValue, $expectedCSSValue)
+     * Generates random values for function passThroughValuesProvider
+     *
+     * @return array
+     */
+    private function randomDataProvider()
     {
-        $this->validateSecondLevelProperty($styleName, $secondLevelProperty, $cssSelector, $cssProperty, $styleValue, $expectedCSSValue);
+        $randomValue = rand();
+        return array(
+            array($randomValue, $randomValue),
+        );
     }
 
-    public function testKickerTextStylesDataProvider()
+    /**
+     * Generates color values for function passThroughValuesProvider
+     *
+     * @return array
+     */
+    private function colorDataProvider()
     {
-        return $this->getTextStylesTestData('kicker', '.ia2amp-header-category');
+        $hexColor = AMPArticleTest::getRandomHexColor();
+        // Escape parenthesis before using regex
+        $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
+        return array(
+            array($hexColor, $expectedValue),
+        );
     }
 
+    /**
+     * Generates text transform values for function passThroughValuesProvider
+     *
+     * @return array
+     */
     private function textTransformDataProvider()
     {
         return array(
@@ -362,6 +440,11 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Generates text alignment values for function passThroughValuesProvider
+     *
+     * @return array
+     */
     public function textAlignmentDataProvider()
     {
         return array(
@@ -371,6 +454,11 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Generates display values for function passThroughValuesProvider
+     *
+     * @return array
+     */
     public function displayDataProvider()
     {
         return array(
@@ -380,9 +468,15 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * @dataProvider testKickerSpacingDataProvider
-    */
-    public function testKickerSpacing($spacing, $size, $baseSpacingValue, $direction, $spacingFormat)
+     * Generates spacing (margin or padding) IA style values and expected CSS values
+     *
+     * @param int $size The IA style size value
+     * @param int $baseSpacingValue The value that will be multiplied by the scaling factor
+     * @param string $direction A valid direction for a border style e.g. 'top'
+     * @param string $spacingFormat The expected spacing format e.g. '0 0 0 %spx'
+     * @return array
+     */
+    public function spacingValuesProvider($size, $baseSpacingValue, $direction, $spacingFormat)
     {
         $scalingFactor = rand(0, 1000) / 1000 + 0.5;
         $directionSpacing = array(
@@ -396,35 +490,56 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $expectedSpacing = $baseSpacingValue * $scalingFactor;
         $expectedValue  = sprintf($spacingFormat, $expectedSpacing);
 
-        $this->validateSecondLevelProperty('kicker', $spacing, '.ia2amp-header-category', $spacing, $spacingStyle, $expectedValue);
+        return array($spacingStyle, $expectedValue);
     }
 
-    public function testKickerSpacingDataProvider()
+    /**
+     * Generates margin values for function spacingValuesProvider
+     *
+     * @return array
+     */
+    private function marginDataProvider()
     {
-        // TODO: Create unit tests for other margin and padding values
+        // TODO: Create unit tests for other margin values
         return array(
-            array('margin', 'DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'right', '0 %spx 0 0'),
-            array('margin', 'DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'left', '0 0 0 %spx'),
+            // size, baseSpacingValue, direction, spacingFormat
+            array('DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'right', '0 %spx 0 0'),
+            array('DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'left', '0 0 0 %spx'),
 
-            array('margin', 'NONE', 0, 'right', '0 0 0 0'),
-            array('margin', 'NONE', 0, 'left', '0 0 0 0'),
-
-            array('padding', 'NONE', 0, 'top', '0 0 0 0'),
-            array('padding', 'NONE', 0, 'right', '0 0 0 0'),
-            array('padding', 'NONE', 0, 'bottom', '0 0 0 0'),
-            array('padding', 'NONE', 0, 'left', '0 0 0 0'),
-
-            array('padding', 'MEDIUM', 46, 'top', '%spx 0 0 0'),
-            array('padding', 'MEDIUM', 46, 'right', '0 %spx 0 0'),
-            array('padding', 'MEDIUM', 46, 'bottom', '0 0 %spx 0'),
-            array('padding', 'MEDIUM', 46, 'left', '0 0 0 %spx'),
+            array('NONE', 0, 'right', '0 0 0 0'),
+            array('NONE', 0, 'left', '0 0 0 0'),
         );
     }
 
     /**
-    * @dataProvider testKickerBorderColorDataProvider
-    */
-    public function testKickerBorderColor($direction)
+     * Generates padding values for function spacingValuesProvider
+     *
+     * @return array
+     */
+    private function paddingDataProvider()
+    {
+        // TODO: Create unit tests for other padding values
+        return array(
+            // size, baseSpacingValue, direction, spacingFormat
+            array('NONE', 0, 'top', '0 0 0 0'),
+            array('NONE', 0, 'right', '0 0 0 0'),
+            array('NONE', 0, 'bottom', '0 0 0 0'),
+            array('NONE', 0, 'left', '0 0 0 0'),
+
+            array('MEDIUM', 46, 'top', '%spx 0 0 0'),
+            array('MEDIUM', 46, 'right', '0 %spx 0 0'),
+            array('MEDIUM', 46, 'bottom', '0 0 %spx 0'),
+            array('MEDIUM', 46, 'left', '0 0 0 %spx'),
+        );
+    }
+
+    /**
+     * Generates Border Color IA style values and expected CSS values
+     *
+     * @param string $direction A valid direction for a border style e.g. 'top'
+     * @return array
+     */
+    public function borderColorValuesProvider($direction)
     {
         $width = rand(0, 100);
         $hexColor = AMPArticleTest::getRandomHexColor();
@@ -438,11 +553,16 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         // Escape parenthesis before using regex
         $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
-        // TODO: Enable once implemented
-        // $this->validateSecondLevelProperty('kicker', 'border', '.ia2amp-header-category', 'border-color', $borderStyle, $expectedValue);
+
+        return array($borderStyle, $expectedValue);
     }
 
-    public function testKickerBorderColorDataProvider()
+    /**
+     * Generates values for function borderColorValuesProvider
+     *
+     * @return array
+     */
+    private function directionsDataProvider()
     {
         return array(
             array('top'),
@@ -453,9 +573,13 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * @dataProvider testKickerBorderWidthDataProvider
-    */
-    public function testKickerBorderWidth($direction, $borderFormat)
+     * Generates Border Width IA style values and expected CSS values
+     *
+     * @param string $direction A valid direction for a border style e.g. 'top'
+     * @param string $borderFormat The expected format of the border width for the given direction e.g. '%s 0 0 0'
+     * @return array
+     */
+    public function borderWidthValuesProvider($direction, $borderFormat)
     {
         $width = rand(0, 100);
         $directionBorder = array(
@@ -467,10 +591,15 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
 
         $expectedValue  = sprintf($borderFormat, $width !== 0 ? $width . 'px' : 0);
-        $this->validateSecondLevelProperty('kicker', 'border', '.ia2amp-header-category', 'border-width', $borderStyle, $expectedValue);
+        return array($borderStyle, $expectedValue);
     }
 
-    public function testKickerBorderWidthDataProvider()
+    /**
+     * Generates arguments for function borderWidthValuesProvider
+     *
+     * @return array
+     */
+    private function borderWidthDataProvider()
     {
         return array(
             array('top', '%s 0 0 0'),
@@ -480,27 +609,45 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    private function validateRandomSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty)
-    {
-        $randomValue = rand();
-        $this->validateSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty, $randomValue, $randomValue);
-    }
-
+    /**
+     * Validates the transformation of IA Styles to CSS by updating a second level JSON property and looking for an expected CSS value
+     *
+     * @param string $firstLevelKey The name of the IA styles object that is the parent of the property that will be tested
+     * @param string $secondLevelKey The name of the IA styles object that will be tested
+     * @param string $cssSelector The CSS selector that will be used to verify the genarted CSS
+     * @param string $cssProperty The name of CSS property that will be used to test the transformation
+     * @param string $styleValue The style value that will be assigned to test the generation of an expected CSS value
+     * @param object $expectedCSSValue The value of CSS property that will be used to test the transformation
+     * @return void
+     */
     private function validateSecondLevelProperty($firstLevelKey, $secondLevelKey, $cssSelector, $cssProperty, $styleValue, $expectedCSSValue)
     {
-        $defaultStyles = $this->getDefaultStyles();
-        $defaultStyles[$firstLevelKey][$secondLevelKey] = $styleValue;
+        // Load the default values
+        $testStyles = $this->getDefaultStyles();
+        // Set the style property value that will be used to generate the expected CSS
+        $testStyles[$firstLevelKey][$secondLevelKey] = $styleValue;
 
         $customProperties = array(
-            AMPArticle::OVERRIDE_STYLES_KEY => $defaultStyles,
+            // Use the updated styles instead of the ones defined in the IA document
+            AMPArticle::OVERRIDE_STYLES_KEY => $testStyles,
         );
 
         $renderer = $this->getRenderer('test1', $customProperties);
         $css = $renderer->getCustomCSS();
 
+        // Look for the expected CSS
         $this->validateCSSRule($css, $cssSelector, $cssProperty, $expectedCSSValue);
     }
 
+    /**
+     * Inspects CSS rules looking for expected values using regular expressions
+     *
+     * @param string $css The CSS rules that will be inspected
+     * @param string $selector The CSS selector whose rules will be inspected
+     * @param string $property The CSS property that will be verified
+     * @param string $value The CSS property value that will be verified
+     * @return void
+     */
     private function validateCSSRule($css, $selector, $property, $value)
     {
         // Escape the dot (used on class name selectors) so it is not interpreted as any character
@@ -510,6 +657,11 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, preg_match($cssRulePattern, $css), "Could not find CSS rule '$property' for selector '$selector'");
     }
 
+    /**
+     * Generates a random color expressed as three hexadecimal values
+     *
+     * @return string E.g. '#237A90'
+     */
     private static function getRandomHexColor()
     {
         $red = rand(0, 255);
