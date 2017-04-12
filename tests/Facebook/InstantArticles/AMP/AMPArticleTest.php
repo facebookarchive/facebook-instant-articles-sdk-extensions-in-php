@@ -293,15 +293,67 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->validateSecondLevelProperty('kicker', 'background_color', '.ia2amp-header-category', 'background-color', $hexColor, $expectedValue);
     }
 
-    /**
-    * @dataProvider testKickerTextTransformDataProvider
-    */
-    public function testKickerTextTransform($styleValue, $expectedValue)
+    private function getSecondLevelPropertyTestData($dataProviderMethodName, $styleName, $secondLevelProperty, $cssSelector, $cssProperty)
     {
-        $this->validateSecondLevelProperty('kicker', 'capitalization', '.ia2amp-header-category', 'text-transform', $styleValue, $expectedValue);
+        $testData = array();
+
+        // Get all test cases for the given data provider method
+        $dataProviderTestData = call_user_func_array(array($this, $dataProviderMethodName), array());
+        
+        foreach ($dataProviderTestData as $styleValueToExpectedValueMappings) {
+            // Merge the known values with the mappings of style value to expected CSS value
+            $testDataItem = array_merge(
+                array(
+                    $styleName,
+                    $secondLevelProperty,
+                    $cssSelector,
+                    $cssProperty,
+                ),
+                $styleValueToExpectedValueMappings);
+            // Add the merged values to the list of test items
+            $testData[] = $testDataItem;
+        }
+
+        return $testData;
     }
 
-    public function testKickerTextTransformDataProvider()
+    private function getTextStylesTestData($styleName, $cssSelector)
+    {
+        $testData = array();
+
+        // Text Transform
+        $testData = array_merge($testData,
+            //  TODO: Is there a way to remove the magic strings?
+            $this->getSecondLevelPropertyTestData('textTransformDataProvider', $styleName, 'capitalization',
+                $cssSelector, 'text-transform'));
+
+        // Text Alignment
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('textAlignmentDataProvider', $styleName, 'text_alignment',
+                $cssSelector, 'text-align'));
+
+        // Display
+        $testData = array_merge($testData,
+            $this->getSecondLevelPropertyTestData('displayDataProvider', $styleName, 'display',
+                $cssSelector, 'display'));
+
+        return $testData;
+    }
+
+    /**
+    * @dataProvider testKickerTextStylesDataProvider
+    */
+    public function testKickerTextStyles($styleName, $secondLevelProperty, $cssSelector, $cssProperty, $styleValue, $expectedCSSValue)
+    {
+        $this->validateSecondLevelProperty($styleName, $secondLevelProperty, $cssSelector, $cssProperty, $styleValue, $expectedCSSValue);
+    }
+
+    public function testKickerTextStylesDataProvider()
+    {
+        return $this->getTextStylesTestData('kicker', '.ia2amp-header-category');
+    }
+
+    private function textTransformDataProvider()
     {
         return array(
             array('ALL_CAPS', 'uppercase'),
@@ -310,36 +362,20 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-    * @dataProvider testKickerTextAlignmentDataProvider
-    */
-    public function testKickerTextAlignment($value)
-    {
-        $this->validateSecondLevelProperty('kicker', 'text_alignment', '.ia2amp-header-category', 'text-align', $value, $value);
-    }
-
-    public function testKickerTextAlignmentDataProvider()
+    public function textAlignmentDataProvider()
     {
         return array(
-            array('LEFT'),
-            array('CENTER'),
-            array('RIGHT'),
+            array('LEFT', 'LEFT'),
+            array('CENTER', 'CENTER'),
+            array('RIGHT', 'RIGHT'),
         );
     }
 
-    /**
-    * @dataProvider testKickerDisplayDataProvider
-    */
-    public function testKickerDisplay($value)
-    {
-        $this->validateSecondLevelProperty('kicker', 'display', '.ia2amp-header-category', 'display', $value, $value);
-    }
-
-    public function testKickerDisplayDataProvider()
+    public function displayDataProvider()
     {
         return array(
-            array('INLINE'),
-            array('BLOCK'),
+            array('INLINE', 'INLINE'),
+            array('BLOCK', 'BLOCK'),
         );
     }
 
