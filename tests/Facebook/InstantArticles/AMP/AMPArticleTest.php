@@ -274,7 +274,34 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function textStylesDataProvider()
     {
-        return $this->getTextStylesTestData('kicker', '.ia2amp-header-category');
+        return array_merge(
+            // Head
+            $this->getTextStylesTestData('kicker', '.ia2amp-header-category'),
+            $this->getTextStylesTestData('title', '.ia2amp-header-h1'),
+            $this->getTextStylesTestData('subtitle', '.ia2amp-header-h2'),
+            $this->getTextStylesTestData('byline', '.ia2amp-header h3'),
+
+            // Body
+            $this->getTextStylesTestData('primary_heading', '.ia2amp-h1'),
+            $this->getTextStylesTestData('secondary_heading', '.ia2amp-h2'),
+            $this->getTextStylesTestData('body_text', '.ia2amp-p'),
+            $this->getTextStylesTestData('inline_link', '.ia2amp-article a'),
+
+            // Quotes
+            $this->getTextStylesTestData('block_quote', '.ia2amp-blockquote'),
+            $this->getTextStylesTestData('pull_quote', '.ia2amp-pullquote'),
+            $this->getTextStylesTestData('pull_quote_attribution', '.ia2amp-pullquote cite'),
+
+            // Captions
+            $this->getTextStylesTestData('caption_title_small', 'figcaption h1'),
+            $this->getTextStylesTestData('caption_description_small', 'figcaption h2'),
+            $this->getTextStylesTestData('caption_credit', 'figcaption cite'),
+
+            // TODO: Additional Caption Sizes
+
+            // Footer
+            $this->getTextStylesTestData('footer', '.ia2amp-footer')
+        );
     }
 
     /**
