@@ -1,0 +1,311 @@
+<?php
+/**
+ * Copyright (c) 2016-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+namespace Facebook\InstantArticles\AMP;
+
+use Facebook\InstantArticles\Elements\InstantArticle;
+use Facebook\InstantArticles\Elements\Paragraph;
+use Facebook\InstantArticles\AMP\AMPArticle;
+use Facebook\InstantArticles\Parser\Parser;
+
+use Aws\S3\S3Client;
+use Aws\Common\Aws;
+
+class AMPContextTest extends \PHPUnit_Framework_TestCase
+{
+    protected function setUp()
+    {
+        \Logger::configure(
+            [
+                'rootLogger' => [
+                    'appenders' => ['facebook-instantarticles-traverser']
+                ],
+                'appenders' => [
+                    'facebook-instantarticles-traverser' => [
+                        'class' => 'LoggerAppenderConsole',
+                        'threshold' => 'INFO',
+                        'layout' => [
+                            'class' => 'LoggerLayoutSimple'
+                        ]
+                    ]
+                ]
+            ]
+        );
+    }
+
+    public function testContextCreation()
+    {
+        $context = AMPContext::create(new \DOMDocument(), InstantArticle::create());
+        $this->assertNotNull($context);
+    }
+
+    public function testContextCreationErrorDocument()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+        $context = AMPContext::create("new \DOMDocument()", InstantArticle::create());
+    }
+
+    public function testContextCreationErrorIA()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+        $context = AMPContext::create(new \DOMDocument(), Paragraph::create());
+    }
+
+    public function testCreatingHtml()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withHtml($document->createElement('html'));
+        $this->assertTrue($context->hasHtml());
+    }
+
+    public function testCreatingHtmlEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasHtml());
+    }
+
+    public function testCreatingHtmlInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <html> expected, <script> informed.');
+        $context->withHtml($document->createElement('script'));
+    }
+
+    public function testCreatingHead()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withHead($document->createElement('head'));
+        $this->assertTrue($context->hasHead());
+    }
+
+    public function testCreatingHeadEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasHead());
+    }
+
+    public function testCreatingHeadInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <head> expected, <script> informed.');
+        $context->withHead($document->createElement('script'));
+    }
+
+    public function testCreatingBody()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withBody($document->createElement('body'));
+        $this->assertTrue($context->hasBody());
+    }
+
+    public function testCreatingBodyEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasBody());
+    }
+
+    public function testCreatingBodyInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <body> expected, <script> informed.');
+        $context->withBody($document->createElement('script'));
+    }
+
+    public function testCreatingArticle()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withArticle($document->createElement('article'));
+        $this->assertTrue($context->hasArticle());
+    }
+
+    public function testCreatingArticleEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasArticle());
+    }
+
+    public function testCreatingArticleInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <article> expected, <script> informed.');
+        $context->withArticle($document->createElement('script'));
+    }
+
+    public function testCreatingHeader()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withHeader($document->createElement('header'));
+        $this->assertTrue($context->hasHeader());
+    }
+
+    public function testCreatingHeaderEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasHeader());
+    }
+
+    public function testCreatingHeaderInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <header> expected, <script> informed.');
+        $context->withHeader($document->createElement('script'));
+    }
+
+    public function testCreatingHeaderBar()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withHeaderBar($document->createElement('div'));
+        $this->assertTrue($context->hasHeaderBar());
+    }
+
+    public function testCreatingHeaderBarEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasHeaderBar());
+    }
+
+    public function testCreatingHeaderBarInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <div> expected, <script> informed.');
+        $context->withHeaderBar($document->createElement('script'));
+    }
+
+    public function testCreatingHeaderBarLogo()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withHeaderBarLogo($document->createElement('div'));
+        $this->assertTrue($context->hasHeaderBarLogo());
+    }
+
+    public function testCreatingHeaderBarLogoEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasHeaderBarLogo());
+    }
+
+    public function testCreatingHeaderBarLogoInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <div> expected, <script> informed.');
+        $context->withHeaderBarLogo($document->createElement('script'));
+    }
+
+    public function testCreatingHeaderTitle()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withHeaderTitle($document->createElement('h1'));
+        $this->assertTrue($context->hasHeaderTitle());
+    }
+
+    public function testCreatingHeaderTitleEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasHeaderTitle());
+    }
+
+    public function testCreatingHeaderTitleInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <h1> expected, <script> informed.');
+        $context->withHeaderTitle($document->createElement('script'));
+    }
+
+    public function testCreatingHeaderAuthor()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withHeaderAuthor($document->createElement('h3'));
+        $this->assertTrue($context->hasHeaderAuthor());
+    }
+
+    public function testCreatingHeaderAuthorEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasHeaderAuthor());
+    }
+
+    public function testCreatingHeaderAuthorInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <h3> expected, <script> informed.');
+        $context->withHeaderAuthor($document->createElement('script'));
+    }
+
+    public function testCreatingHeaderKicker()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withHeaderKicker($document->createElement('h2'));
+        $this->assertTrue($context->hasHeaderKicker());
+    }
+
+    public function testCreatingHeaderKickerEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasHeaderKicker());
+    }
+
+    public function testCreatingHeaderKickerInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <h2> expected, <script> informed.');
+        $context->withHeaderKicker($document->createElement('script'));
+    }
+
+    public function testCreatingHeaderDate()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $context->withHeaderDate($document->createElement('h3'));
+        $this->assertTrue($context->hasHeaderDate());
+    }
+
+    public function testCreatingHeaderDateEmpty()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->assertFalse($context->hasHeaderDate());
+    }
+
+    public function testCreatingHeaderDateInvalid()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+        $this->setExpectedException('InvalidArgumentException', 'Tag <h3> expected, <script> informed.');
+        $context->withHeaderDate($document->createElement('script'));
+    }
+}
