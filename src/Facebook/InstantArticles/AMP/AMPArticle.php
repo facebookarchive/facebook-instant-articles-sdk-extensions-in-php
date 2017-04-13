@@ -222,11 +222,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         $discoveryScript = $context->createElement('script', $head, array('type' => 'application/ld+json'));
         $discoveryScriptContent = $this->buildSchemaOrgMetadata();
         $discoveryScript->appendChild($context->getDocument()->createTextNode($discoveryScriptContent));
-        $head->appendChild($discoveryScript);
 
         // Builds title and append to head
-        $title = $context->createElement('title');
-        $head->appendChild($title);
+        $title = $context->createElement('title', $head);
         $titleText = $context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument());
         $title->appendChild($titleText);
 
