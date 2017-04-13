@@ -37,6 +37,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     const DEFAULT_WIDTH = 380;
     const DEFAULT_HEIGHT = 240;
     const DEFAULT_DATE_FORMAT = 'F d, Y';
+    const DEFAULT_CSS_PREFIX = 'ia2amp-';
 
     const STYLES_FOLDER_KEY = 'styles-folder';
     const OVERRIDE_STYLES_KEY = 'override-styles';
@@ -51,7 +52,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
 
-    public function __construct($instantArticle, $properties = array())
+    private function __construct($instantArticle, $properties = array())
     {
         $this->instantArticle = $instantArticle;
         $this->properties = $properties;
@@ -510,7 +511,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                 $prefix = $this->properties['css-selector-prefix'];
             }
             else {
-                $prefix = 'ia2amp-';
+                $prefix = self::DEFAULT_CSS_PREFIX;
             }
         }
         return $prefix.$selectorName;
@@ -576,10 +577,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         $mappings = array(
             // TODO: Logo
             // TODO: Shoud this class be 'ia2amp-header-kicker'
-            '.ia2amp-header-category' => 'kicker',
-            '.ia2amp-header-h1' => 'title',
-            '.ia2amp-header-h2' => 'subtitle',
-            '.ia2amp-header h3' => 'byline'
+            '.'.$this->buildClassName('header-category') => 'kicker',
+            '.'.$this->buildClassName('header-h1') => 'title',
+            '.'.$this->buildClassName('header-h2') => 'subtitle',
+            '.'.$this->buildClassName('header h3') => 'byline'
         );
 
         // Move to constant/static
@@ -616,10 +617,10 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function articleBodyStyles($styles)
     {
         $mappings = array(
-            '.ia2amp-h1' => 'primary_heading',
-            '.ia2amp-h2' => 'secondary_heading',
-            '.ia2amp-p' => 'body_text',
-            '.ia2amp-article a' => 'inline_link',
+            '.'.$this->buildClassName('h1') => 'primary_heading',
+            '.'.$this->buildClassName('h2') => 'secondary_heading',
+            '.'.$this->buildClassName('p') => 'body_text',
+            '.'.$this->buildClassName('article a') => 'inline_link',
         );
         return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
@@ -627,9 +628,9 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function articleQuoteStyles($styles)
     {
         $mappings = array(
-            '.ia2amp-blockquote' => 'block_quote',
-            '.ia2amp-pullquote' => 'pull_quote',
-            '.ia2amp-pullquote cite' => 'pull_quote_attribution',
+            '.'.$this->buildClassName('blockquote') => 'block_quote',
+            '.'.$this->buildClassName('pullquote') => 'pull_quote',
+            '.'.$this->buildClassName('pullquote cite') => 'pull_quote_attribution',
         );
         return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
@@ -656,7 +657,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function articleFooterStyles($styles)
     {
       $mappings = array(
-            '.ia2amp-footer' => 'footer',
+            '.'.$this->buildClassName('footer') => 'footer',
         );
         return $this->buildCSSRulesFromMappings($mappings, $styles);
     }
