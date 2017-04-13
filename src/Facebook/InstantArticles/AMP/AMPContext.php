@@ -75,6 +75,30 @@ class AMPContext
     }
 
     /**
+     * Creates an element named by $tagName using the $document.
+     * @param string $tagName The tag name that will be used: <tagName>
+     * @param array(<string>=><string>) $attributes mapped array of attributes to be set to this Element being created.
+     * @param $DOMNode $container The container element where the new created element will be appended. Optional.
+     * @return DOMElement <$tagName> element using the DOMDocument $document from context.
+     */
+    public function createElement($tagName, $container = null, $attributes = null)
+    {
+        $element = $this->getDocument()->createElement($tagName);
+        if (isset($attributes) && $attributes) {
+            foreach ($attributes as $name => $value) {
+                $element->setAttribute($name, $value);
+            }
+        }
+
+        if (isset($container) && $container) {
+            Type::enforce($container, get_class(new \DOMNode()));
+            $container->appendChild($element);
+        }
+
+        return $element;
+    }
+
+    /**
      * Sets the InstantArticle reference. Private method since this should be unmodifiable.
      * @param InstantArticle $instantArticle The element being used as conversion.
      * @return $this reference.

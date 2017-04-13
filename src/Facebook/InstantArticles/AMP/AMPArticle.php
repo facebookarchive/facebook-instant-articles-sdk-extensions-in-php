@@ -92,8 +92,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function transformInstantArticle($context) {
         // Builds and appends head to the HTML document
-        $html = $context->getDocument()->createElement('html');
-        $html->setAttribute('amp','');
+        $html = $context->createElement('html', null, array("amp" => ""));
         if ($context->getInstantArticle()->isRTLEnabled()) {
             $html->setAttribute('dir', 'rtl');
         }
@@ -105,9 +104,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $this->transformMetaInfoHead($context);
 
         // Build and append body and article tags to the HTML document
-        $body = $context->getDocument()->createElement('body');
-        $html->appendChild($body);
-        $body->setAttribute('class', $this->buildClassName('body'));
+        $body = $context->createElement('body', $html, array('class' => $this->buildClassName('body')));
         $context->withBody($body);
 
         $this->transformArticleHeader($context);
@@ -120,10 +117,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     public function transformArticleHeader($context)
     {
         // Builds the content Header, with proper colors and image, adding to body
-        $header = $context->getDocument()->createElement('header');
-        $context->getBody()->appendChild($header);
-
-        $header->setAttribute('class', $this->buildClassName('header'));
+        $header = $context->createElement('header', $context->getBody(), array('class' => $this->buildClassName('header')));
         if (isset($this->properties['header-logo-image-url'])) {
             $imageURL = $this->properties['header-logo-image-url'];
             if (isset($this->properties['header-logo-image-width']) && isset($this->properties['header-logo-image-height'])) {
@@ -143,38 +137,30 @@ class AMPArticle extends Element implements InstantArticleInterface
             }
 
             // Creates the header bar with image (maybe fb like?) and appends to header
-            $headerBar = $context->getDocument()->createElement('div');
-            $header->appendChild($headerBar);
-            $headerBar->setAttribute('class', $this->buildClassName('header-bar'));
-            $ampImageContainer = $context->getDocument()->createElement('div');
-            $headerBar->appendChild($ampImageContainer);
-            $ampImageContainer->setAttribute('class', $this->buildClassName('header-bar-img-container'));
-            $ampImage = $context->getDocument()->createElement('amp-img');
-            $ampImageContainer->appendChild($ampImage);
-            $ampImage->setAttribute('src', $imageURL);
-            // TODO work on this image logo size
-            $ampImage->setAttribute('width', '200');
-            $ampImage->setAttribute('height', '40');
+            $headerBar = $context->createElement('div', $header, array('class' => $this->buildClassName('header-bar')));
+            $ampImageContainer = $context->createElement('div', $headerBar, array('class' => $this->buildClassName('header-bar-img-container')));
+            $ampImage = $context->createElement(
+                'amp-img',
+                $ampImageContainer,
+                array(
+                    'src' => $imageURL,
+                    'width' => '200',
+                    'height' => '40'
+                ));
 
         }
         // The kicker for article
         if ($context->getInstantArticle()->getHeader()->getKicker()) {
-            $kicker = $context->getDocument()->createElement('h2');
-            $header->appendChild($kicker);
-            $kicker->setAttribute('class', 'ia2amp-header-category');
+            $kicker = $context->createElement('h2', $header, array('class' => $this->buildClassName('header-category')));
             $kicker->appendChild($context->getInstantArticle()->getHeader()->getKicker()->textToDOMDocumentFragment($context->getDocument()));
         }
 
         // The Title for article
-        $h1 = $context->getDocument()->createElement('h1');
-        $header->appendChild($h1);
-        $h1->setAttribute('class', 'ia2amp-header-h1');
+        $h1 = $context->createElement('h1', $header, array('class' => $this->buildClassName('header-h1')));
         $h1->appendChild($context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument()));
 
         // The article authors
-        $authors = $context->getDocument()->createElement('h3');
-        $header->appendChild($authors);
-        $authors->setAttribute('class', 'ia2amp-header-author');
+        $authors = $context->createElement('h3', $header, array('class' => $this->buildClassName('header-author')));
         $authorsElement = $context->getInstantArticle()->getHeader()->getAuthors();
         $authorsString = [];
         foreach($authorsElement as $author) {
@@ -183,9 +169,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $authors->appendChild($context->getDocument()->createTextNode('BY '.implode($authorsString, ', ')));
 
         // Aritcle publish date
-        $publishDate = $context->getDocument()->createElement('h3');
-        $header->appendChild($publishDate);
-        $publishDate->setAttribute('class', 'ia2amp-header-date');
+        $publishDate = $context->createElement('h3', $header, array('class' => $this->buildClassName('header-date')));
         $datetime = $context->getInstantArticle()->getHeader()->getPublished()->getDatetime();
         $publishDate->appendChild($context->getDocument()->createTextNode(date_format($datetime, $this->dateFormat)));
 
@@ -195,46 +179,42 @@ class AMPArticle extends Element implements InstantArticleInterface
     public function transformMetaInfoHead($context)
     {
         // Builds the Head
-        $head = $context->getDocument()->createElement('head');
+        $head = $context->createElement('head');
         $context->getHtml()->appendChild($head);
 
         // Builds meta charset and append to head
         if ($context->getInstantArticle()->getCharset()) {
-            $charset = $context->getDocument()->createElement('meta');
-            $charset->setAttribute('charset', $context->getInstantArticle()->getCharset());
-            $head->appendChild($charset);
+            $context->createElement('meta', $head, array('charset' => $context->getInstantArticle()->getCharset()));
         }
 
         // Builds meta viewport and append to head
-        $viewport = $context->getDocument()->createElement('meta');
-        $head->appendChild($viewport);
-        $viewport->setAttribute('name', 'viewport');
-        $viewport->setAttribute('content', 'width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no');
+        $context->createElement(
+            'meta',
+            $head,
+            array(
+                'name' => 'viewport',
+                'content' => 'width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no'
+            ));
 
         // Builds ampjs script and append to head
-        $ampjs = $context->getDocument()->createElement('script');
-        $head->appendChild($ampjs);
-        $ampjs->setAttribute('src', 'https://cdn.ampproject.org/v0.js');
-        $ampjs->setAttribute('async','');
+        $context->createElement('script', $head, array('src' => 'https://cdn.ampproject.org/v0.js', 'async' => ''));
 
         // Builds boilerplate css style and append to head
-        $boilerplate = $context->getDocument()->createElement('style');
-        $head->appendChild($boilerplate);
-        $boilerplate->setAttribute('amp-boilerplate','');
+        $boilerplate = $context->createElement('style', $head, array('amp-boilerplate' => ''));
         $boilerplateContent = $context->getDocument()->createTextNode('body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}');
         $boilerplate->appendChild($boilerplateContent);
 
         // Builds noscript css style and append to head
-        $noscript = $context->getDocument()->createElement('noscript');
+        $noscript = $context->createElement('noscript');
         $head->appendChild($noscript);
-        $noscriptBoilerplate = $context->getDocument()->createElement('style');
+        $noscriptBoilerplate = $context->createElement('style');
         $noscript->appendChild($noscriptBoilerplate);
         $noscriptBoilerplate->setAttribute('amp-boilerplate','');
         $noscriptBoilerplateContent = $context->getDocument()->createTextNode('body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}');
         $noscriptBoilerplate->appendChild($noscriptBoilerplateContent);
 
         // Builds canonical link and append to head
-        $link = $context->getDocument()->createElement('link');
+        $link = $context->createElement('link');
         $link->setAttribute('rel', 'canonical');
         $link->setAttribute('href', $context->getInstantArticle()->getCanonicalURL());
 
@@ -244,14 +224,14 @@ class AMPArticle extends Element implements InstantArticleInterface
         $head->appendChild($link);
 
         // Builds Schema.org metadata and appends to head
-        $discoveryScript = $context->getDocument()->createElement('script');
+        $discoveryScript = $context->createElement('script');
         $discoveryScript->setAttribute('type', 'application/ld+json');
         $discoveryScriptContent = $this->buildSchemaOrgMetadata();
         $discoveryScript->appendChild($context->getDocument()->createTextNode($discoveryScriptContent));
         $head->appendChild($discoveryScript);
 
         // Builds title and append to head
-        $title = $context->getDocument()->createElement('title');
+        $title = $context->createElement('title');
         $head->appendChild($title);
         $titleText = $context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument());
         $title->appendChild($titleText);
@@ -261,9 +241,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function transformArticleContent($context)
     {
-        $article = $context->getDocument()->createElement('article');
-        $context->getBody()->appendChild($article);
-        $article->setAttribute('class', $this->buildClassName('article'));
+        $article = $context->createElement('article', $context->getBody(), array('class' => $this->buildClassName('article')));
 
         $containsIframe = false;
         $containsSlideshow = false;
