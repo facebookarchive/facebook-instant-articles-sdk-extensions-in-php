@@ -39,7 +39,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testParseIA()
     {
-        $html_file = file_get_contents(__DIR__ . '/test1-instant-article.html');
+        $html_file = file_get_contents(__DIR__ . '/articles/test1-instant-article.html');
 
         libxml_use_internal_errors(true);
         $document = new \DOMDocument();
@@ -87,7 +87,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     private function getRenderer($test, $customProperties = null)
     {
-        $html_file = file_get_contents(__DIR__ . '/'.$test.'-instant-article.html');
+        $html_file = file_get_contents(__DIR__ . '/articles/'.$test.'-instant-article.html');
 
         $propeties = array(
             'lang' => 'en-US',
@@ -106,7 +106,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     private function getRenderedAMP($test, $customProperties = null)
     {
         $renderer = $this->getRenderer($test, $customProperties);
-        
+
         return $renderer->render(null, true)."\n";
     }
 
@@ -136,20 +136,20 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $ampRendered = $this->getRenderedAMP($test);
 
-        $ampExpected = file_get_contents(__DIR__ . '/'.$test.'-amp-converted.html');
+        $ampExpected = file_get_contents(__DIR__.'/articles/'.$test.'-amp-converted.html');
         $this->compareIgnoringStyles($ampExpected, $ampRendered);
 
         // Sets content into the file for fast testing
-        // file_put_contents(__DIR__ . '/'.$test.'-amp-converted.html', $amp_rendered);
+        // file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted.html', $amp_rendered);
 
         // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
         // AMP url for testing: https://search.google.com/search-console/amp
-        // $this->uploadToS3(__DIR__ . '/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
+        // $this->uploadToS3(__DIR__.'/articles/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
     }
 
     public function testArticleHasSingleLdJsonScript() {
         $amp_rendered = $this->getRenderedAMP('test1');
-        
+
         libxml_use_internal_errors(true);
         $renderedDocument = new \DOMDocument();
         $renderedDocument->loadHTML($amp_rendered);
@@ -256,7 +256,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     public function testBackgroundColorStyle()
     {
         $hexColor = AMPArticleTest::getRandomHexColor();
-        
+
         $defaultStyles = $this->getDefaultStyles();
         $defaultStyles['background_color'] = $hexColor;
 
@@ -378,7 +378,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
      * Builds the arguments that will be pased to function validateSecondLevelProperty
      *
      * @param string $dataProviderFunctionName The name of the parameterless function that serves as Data Provider
-     * @param string $validationArgumentsProviderFunctionName The name of the function that receives the Data Provider rows and converts them to pairs of style 
+     * @param string $validationArgumentsProviderFunctionName The name of the function that receives the Data Provider rows and converts them to pairs of style
      * @param string $styleName The style name that will be used for validateSecondLevelProperty
      * @param object $secondLevelProperty The name of the property that will be transformed in the styles for the unit test
      * @param string $cssSelector The CSS selector that will be used to verify the unit test result
@@ -392,7 +392,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         // Get all test cases for the given Data Provider function
         $dataProviderTestData = call_user_func_array(array($this, $dataProviderFunctionName), array());
-        
+
         foreach ($dataProviderTestData as $dataProviderTestItem) {
             // Call the Validation Arguments Provider function using the values from the Data Provider
             $styleAndCssValues = call_user_func_array(array($this, $validationArgumentsProviderFunctionName), $dataProviderTestItem);
@@ -694,7 +694,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $red = rand(0, 255);
         $green = rand(0, 255);
         $blue = rand(0, 255);
-        
+
         return '#' . str_pad(dechex($red), 2, '0', STR_PAD_LEFT) .
                     str_pad(dechex($green), 2, '0', STR_PAD_LEFT) .
                     str_pad(dechex($blue), 2, '0', STR_PAD_LEFT);
