@@ -33,13 +33,13 @@ use Facebook\InstantArticles\Validators\Type;
 
 class AMPArticle extends Element implements InstantArticleInterface
 {
-    public const DEFAULT_MARGIN = 16.4;
+    const DEFAULT_MARGIN = 16.4;
     const DEFAULT_WIDTH = 380;
     const DEFAULT_HEIGHT = 240;
     const DEFAULT_DATE_FORMAT = 'F d, Y';
 
-    public const STYLES_FOLDER_KEY = 'styles-folder';
-    public const OVERRIDE_STYLES_KEY = 'override-styles';
+    const STYLES_FOLDER_KEY = 'styles-folder';
+    const OVERRIDE_STYLES_KEY = 'override-styles';
 
     private $instantArticle;
     /*
@@ -542,7 +542,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $styles = $this->properties[AMPArticle::OVERRIDE_STYLES_KEY];
         }
         else {
-            
+
             $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
             $styles = json_decode($stylesFile, true);
         }
@@ -665,7 +665,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         // TODO: Move to constant
         // TODO: Determine how we want to handle this. React components use screen size and resolution to generate styles dynamically
-        
+
         // $textSizes = array(
         //     'title' => 60,
         //     'subtitle' => 38,
@@ -815,7 +815,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             if (array_key_exists($direction, $borderStyles)) {
                 $borderDirectionStyles = $borderStyles[$direction];
                 $borderWidth = $borderDirectionStyles['width'];
-                
+
                 if (array_key_exists('color', $borderDirectionStyles)) {
                     $declarationBlocks["border-$direction-color"] = AMPArticle::toRGB($borderDirectionStyles['color']);
                 }
@@ -864,7 +864,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             'headline' => $this->instantArticle->getHeader()->getTitle()->getTextChildren()[0],
             'datePublished' => date_format($published->getDatetime(), 'c'),
             // TODO: How can we define a description?
-            // 'description' => 'Lorem ipsum',  
+            // 'description' => 'Lorem ipsum',
         );
 
         if ($modified) {
