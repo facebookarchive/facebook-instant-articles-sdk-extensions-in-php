@@ -206,27 +206,20 @@ class AMPArticle extends Element implements InstantArticleInterface
         $boilerplate->appendChild($boilerplateContent);
 
         // Builds noscript css style and append to head
-        $noscript = $context->createElement('noscript');
-        $head->appendChild($noscript);
-        $noscriptBoilerplate = $context->createElement('style');
-        $noscript->appendChild($noscriptBoilerplate);
-        $noscriptBoilerplate->setAttribute('amp-boilerplate','');
+        $noscript = $context->createElement('noscript', $head);
+        $noscriptBoilerplate = $context->createElement('style', $noscript, array('amp-boilerplate' => ''));
         $noscriptBoilerplateContent = $context->getDocument()->createTextNode('body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}');
         $noscriptBoilerplate->appendChild($noscriptBoilerplateContent);
 
         // Builds canonical link and append to head
-        $link = $context->createElement('link');
-        $link->setAttribute('rel', 'canonical');
-        $link->setAttribute('href', $context->getInstantArticle()->getCanonicalURL());
+        $link = $context->createElement('link', $head, array('rel' => 'canonical', 'href' => $context->getInstantArticle()->getCanonicalURL()));
 
         // Builds custom css style and append to head
         $ampCustomCSS = $this->buildCustomCSS($context->getDocument());
         $head->appendChild($ampCustomCSS);
-        $head->appendChild($link);
 
         // Builds Schema.org metadata and appends to head
-        $discoveryScript = $context->createElement('script');
-        $discoveryScript->setAttribute('type', 'application/ld+json');
+        $discoveryScript = $context->createElement('script', $head, array('type' => 'application/ld+json'));
         $discoveryScriptContent = $this->buildSchemaOrgMetadata();
         $discoveryScript->appendChild($context->getDocument()->createTextNode($discoveryScriptContent));
         $head->appendChild($discoveryScript);
