@@ -102,15 +102,21 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $context->withHtml($html);
 
-        $this->transformMetaInfoHead($context);
+        $head = $this->transformMetaInfoHead($context);
+        $context->withHead($head);
 
         // Build and append body and article tags to the HTML document
         $body = $context->createElement('body', $html, array('class' => $this->buildClassName('body')));
         $context->withBody($body);
 
-        $this->transformArticleHeader($context);
-        $this->transformArticleContent($context);
-        $this->transformArticleFooter($context);
+        $header = $this->transformArticleHeader($context);
+        $context->withHeader($header);
+
+        $article = $this->transformArticleContent($context);
+        $context->withArticle($article);
+
+        $footer = $this->transformArticleFooter($context);
+        //$context->withFooter($footer);
 
         return $html;
     }
@@ -174,7 +180,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $datetime = $context->getInstantArticle()->getHeader()->getPublished()->getDatetime();
         $publishDate->appendChild($context->getDocument()->createTextNode(date_format($datetime, $this->dateFormat)));
 
-        $context->withHeader($header);
+        return $header;
     }
 
     public function transformMetaInfoHead($context)
@@ -228,7 +234,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $titleText = $context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument());
         $title->appendChild($titleText);
 
-        $context->withHead($head);
+        return $head;
     }
 
     public function transformArticleContent($context)
@@ -317,7 +323,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             }
         }
 
-        $context->withArticle($article);
+        return $article;
     }
 
     public function transformArticleFooter()

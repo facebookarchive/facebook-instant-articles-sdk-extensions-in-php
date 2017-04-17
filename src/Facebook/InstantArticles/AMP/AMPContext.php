@@ -490,4 +490,38 @@ class AMPContext
         Type::enforce($item, get_class($element));
         $this->articleItems[] = $item;
     }
+
+    /**
+     * Sets the <footer> tag.
+     * WARNING: by setting this, will overwrite the footer from document, be sure to
+     * have a valid AMP footer while setting.
+     * @param DOMElement $footer The footer tag, should be a <footer> tag.
+     * @throws InvalidArgumentException case not a DOMElement or not a <footer> tag.
+     * @return $this instance.
+     */
+    public function withFooter($footer)
+    {
+        Type::enforceElementTag($footer, 'footer');
+        $this->footer = $footer;
+        return $this;
+    }
+
+    /**
+     * Checks the existence of <footer> tag.
+     * @return boolean true if <footer> tag was set, false otherwise.
+     */
+    public function hasFooter()
+    {
+        return isset($this->footer) && $this->footer !== null;
+    }
+
+    /**
+     * Gets the <footer> tag.
+     * @return DOMElement $footer The <footer> tag.
+     */
+    public function getFooter()
+    {
+        return $this->footer;
+    }
+
 }
