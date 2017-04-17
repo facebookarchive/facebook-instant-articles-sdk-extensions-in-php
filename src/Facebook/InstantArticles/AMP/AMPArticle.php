@@ -30,6 +30,7 @@ use Facebook\InstantArticles\Elements\InstantArticleInterface;
 
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
+use Facebook\InstantArticles\Hook\Hook;
 
 class AMPArticle extends Element implements InstantArticleInterface
 {
@@ -53,10 +54,13 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
 
-    private function __construct($instantArticle, $properties = array(), $hook = Hook::create())
+    private function __construct($instantArticle, $properties = array(), $hook = null)
     {
         $this->instantArticle = $instantArticle;
         $this->properties = $properties;
+        if ($hook == null) {
+            $hook = Hook::create();
+        }
         $this->hook = $hook;
     }
 
@@ -70,6 +74,11 @@ class AMPArticle extends Element implements InstantArticleInterface
         $parser = new Parser();
         $instant_article = $parser->parse($document);
         return new self($instant_article, $properties);
+    }
+
+    public function getHook()
+    {
+        return $this->hook;
     }
 
     public function render($doctype = '<!doctype html>', $format = false)
@@ -89,7 +98,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     public function toDOMElement($document = null)
     {
         $context = AMPContext::create($document, $this->instantArticle);
-        $ampDocument = $this->transformInstantArticle($context);
+        $ampDocument = $this->hook->call('HOOK_AMP_DOCUMENT', array($this, 'transformInstantArticle'), array($context));
         return $ampDocument;
     }
 
@@ -104,23 +113,28 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $context->withHtml($html);
 
-        $head = $this->transformMetaInfoHead($context);
+        $head = $this->hook->call('HOOK_AMP_HEAD', array($this, 'transformMetaInfoHead'), array($context));
         $context->withHead($head);
 
         // Build and append body and article tags to the HTML document
-        $body = $context->createElement('body', $html, array('class' => $this->buildClassName('body')));
+        $body = $this->hook->call('HOOK_AMP_BODY', array($this, 'buildBody'), array($context));
         $context->withBody($body);
 
-        $header = $this->transformArticleHeader($context);
+        $header = $this->hook->call('HOOK_AMP_HEADER', array($this, 'transformArticleHeader'), array($context));
         $context->withHeader($header);
 
-        $article = $this->transformArticleContent($context);
+        $article = $this->hook->call('HOOK_AMP_ARTICLE', array($this, 'transformArticleContent'), array($context));
         $context->withArticle($article);
 
-        $footer = $this->transformArticleFooter($context);
+        $footer = $this->hook->call('HOOK_AMP_FOOTER', array($this, 'transformArticleFooter'), array($context));
         //$context->withFooter($footer);
 
         return $html;
+    }
+
+    public function buildBody($context)
+    {
+        return $context->createElement('body', $context->getHtml(), array('class' => $this->buildClassName('body')));
     }
 
     public function transformArticleHeader($context)
