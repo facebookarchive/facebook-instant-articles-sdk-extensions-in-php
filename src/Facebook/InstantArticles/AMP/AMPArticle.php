@@ -49,13 +49,15 @@ class AMPArticle extends Element implements InstantArticleInterface
        'header-logo-image-url' => 'http://domain.com/someimage.png',
      */
     private $properties = array();
+    private $hook;
 
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
 
-    private function __construct($instantArticle, $properties = array())
+    private function __construct($instantArticle, $properties = array(), $hook = Hook::create())
     {
         $this->instantArticle = $instantArticle;
         $this->properties = $properties;
+        $this->hook = $hook;
     }
 
     public static function create($instantArticleString, $properties = array())
