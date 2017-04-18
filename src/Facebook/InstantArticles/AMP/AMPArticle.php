@@ -53,6 +53,9 @@ class AMPArticle extends Element implements InstantArticleInterface
     private $hook;
 
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
+    private $logoURL;
+    private $logoWidth;
+    private $logoHeight;
 
     private function __construct($instantArticle, $properties = array(), $hook = null)
     {
@@ -152,26 +155,32 @@ class AMPArticle extends Element implements InstantArticleInterface
                 $imageWidth = $imageDimmensions[0];
                 $imageHeight = $imageDimmensions[1];
             }
-
-            // Creates the cover content for the header and appends to the header
-            if ($context->getInstantArticle()->getHeader()->getCover()) {
-                $headerCover = $this->buildCover($context->getInstantArticle()->getHeader()->getCover(), $context->getDocument());
-                $header->appendChild($headerCover);
-            }
-
-            // Creates the header bar with image (maybe fb like?) and appends to header
-            $headerBar = $context->createElement('div', $header, array('class' => $this->buildClassName('header-bar')));
-            $ampImageContainer = $context->createElement('div', $headerBar, array('class' => $this->buildClassName('header-bar-img-container')));
-            $ampImage = $context->createElement(
-                'amp-img',
-                $ampImageContainer,
-                array(
-                    'src' => $imageURL,
-                    'width' => '200',
-                    'height' => '40'
-                ));
-
         }
+        else {
+            $imageURL = $this->logoURL;
+            $imageWidth = $this->imageWidth;
+            $imageHeight = $this->imageHeight;
+        }
+
+        // Creates the cover content for the header and appends to the header
+        if ($context->getInstantArticle()->getHeader()->getCover()) {
+            $headerCover = $this->buildCover($context->getInstantArticle()->getHeader()->getCover(), $context->getDocument());
+            $header->appendChild($headerCover);
+        }
+
+        // Creates the header bar with image (maybe fb like?) and appends to header
+        $headerBar = $context->createElement('div', $header, array('class' => $this->buildClassName('header-bar')));
+        $ampImageContainer = $context->createElement('div', $headerBar, array('class' => $this->buildClassName('header-bar-img-container')));
+        $ampImage = $context->createElement(
+            'amp-img',
+            $ampImageContainer,
+            // TODO: Remove hardcoded image dimensions
+            array(
+                'src' => $imageURL,
+                'width' => '200',
+                'height' => '40'
+            ));
+
         // The kicker for article
         if ($context->getInstantArticle()->getHeader()->getKicker()) {
             $kicker = $context->createElement('h2', $header, array('class' => $this->buildClassName('header-category')));
@@ -616,15 +625,43 @@ class AMPArticle extends Element implements InstantArticleInterface
     }
 
     private function articleLogo($styles) {
-        $logoStyles = $styles['header'];
+        $headerStyles = $styles['header'];
         // TODO: Add style for Like button
-        return AMPArticle::buildCSSRule('.ia2amp-header-bar',
+        // TODO: Build class name
+        $barStyles = AMPArticle::buildCSSRule('.ia2amp-header-bar',
             AMPArticle::buildCSSDeclarationBlock(
                 array(
-                    AMPArticle::buildCSSDeclaration('background-color', $logoStyles['background_color'])
+                    AMPArticle::buildCSSDeclaration('background-color', $headerStyles['background_color'])
                 )
             )
         );
+
+        // TODO: Should we move the code below to another place?
+        // It is not really generating any CSS as the width and height are required fields of amp-image
+
+        if (!array_key_exists('logo', $headerStyles)) {
+            return '';
+        }
+        $logoStyles = $headerStyles['logo'];
+        
+        $dataURL = $logoStyles['dataURL'];
+        $fullResURL = $logoStyles['full_resolution_url'];
+        
+        $defaultLogoHeight = 90; // TODO: Move to other place
+        $defaultLogoWidth = 475; // TODO: Move to other place
+        $logoWidth = $logoStyles['full_resolution_width'];
+        $logoHeight = $logoStyles['full_resolution_height'];
+        $resizeScale = $headerStyles['logo_scale'] || 1.0;
+        $resizeScale *= min(
+            $defaultLogoHeight / $logoHeight,
+            $defaultLogoWidth / $logoWidth
+        );
+        
+        $this->logoURL = $dataURL ? $dataURL : $fullResURL;
+        $this->logoWidth = $logoWidth * $resizeScale;
+        $this->logoHeight = $logoHeight * $resizeScale;
+
+        return $barStyles;
     }
 
     private function articleBodyStyles($styles)
