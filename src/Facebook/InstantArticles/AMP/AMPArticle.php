@@ -707,7 +707,9 @@ class AMPArticle extends Element implements InstantArticleInterface
             'ALL_LOWER_CASE' => 'lowercase',
             'NONE' => 'none',
         );
-        $filteredMappings['text-transform'] = $textTransformMappings[$textStyles['capitalization']];
+        if (array_key_exists('capitalization', $textStyles)) {
+            $filteredMappings['text-transform'] = $textTransformMappings[$textStyles['capitalization']];
+        }
 
         if (array_key_exists('underline', $textStyles) && $textStyles['underline'] != 'NONE') {
             $filteredMappings['text-decoration'] = 'underline';
@@ -779,6 +781,9 @@ class AMPArticle extends Element implements InstantArticleInterface
             'bottom',
             'left',
         );
+        if (!array_key_exists($spacingType, $textStyles)) {
+            return array();
+        }
         $spacingStyles = $textStyles[$spacingType];
         $spacings = array();
         foreach ($directions as $direction) {
@@ -822,6 +827,9 @@ class AMPArticle extends Element implements InstantArticleInterface
             'bottom',
             'left',
         );
+        if (!array_key_exists('border', $textStyles)) {
+            return array();
+        }
         $borderStyles = $textStyles['border'];
         $declarationBlocks = array();
         $borderWidths = array();
