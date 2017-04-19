@@ -47,7 +47,6 @@ class AMPArticle extends Element implements InstantArticleInterface
     /*
        'lang' => 'en-US',
        'css-selector-prefix' => 'ia2amp-',
-       'header-logo-image-url' => 'http://domain.com/someimage.png',
      */
     private $properties = array();
     private $hook;
@@ -144,22 +143,12 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         // Builds the content Header, with proper colors and image, adding to body
         $header = $context->createElement('header', $context->getBody(), array('class' => $this->buildClassName('header')));
-        if (isset($this->properties['header-logo-image-url'])) {
-            $imageURL = $this->properties['header-logo-image-url'];
-            if (isset($this->properties['header-logo-image-width']) && isset($this->properties['header-logo-image-height'])) {
-                $imageWidth = $this->properties['header-logo-image-width'];
-                $imageHeight = $this->properties['header-logo-image-height'];
-            }
-            else {
-                $imageDimmensions = getimagesize($imageURL);
-                $imageWidth = $imageDimmensions[0];
-                $imageHeight = $imageDimmensions[1];
-            }
-        }
-        else {
-            $imageURL = $this->logoURL;
-            $imageWidth = $this->imageWidth;
-            $imageHeight = $this->imageHeight;
+
+
+        if (isset($this->logoURL)) {
+            $logoURL = $this->logoURL;
+            $logoWidth = $this->logoWidth;
+            $logoHeight = $this->logoHeight;
         }
 
         // Creates the cover content for the header and appends to the header
@@ -174,11 +163,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampImage = $context->createElement(
             'amp-img',
             $ampImageContainer,
-            // TODO: Remove hardcoded image dimensions
             array(
-                'src' => $imageURL,
-                'width' => '200',
-                'height' => '40'
+                'src' => $logoURL,
+                'width' => $logoWidth,
+                'height' => $logoHeight
             ));
 
         // The kicker for article
@@ -664,8 +652,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         );
 
         $this->logoURL = $dataURL ? $dataURL : $fullResURL;
-        $this->logoWidth = $logoWidth * $resizeScale;
-        $this->logoHeight = $logoHeight * $resizeScale;
+        $this->logoWidth = (int) ($logoWidth * $resizeScale);
+        $this->logoHeight = (int) ($logoHeight * $resizeScale);
 
         return $barStyles;
     }

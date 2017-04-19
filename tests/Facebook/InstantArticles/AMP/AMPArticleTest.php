@@ -91,9 +91,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $propeties = array(
             'lang' => 'en-US',
-            'header-logo-image-url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/wod-expert-horizontal@033x.png',
-            'header-logo-image-width' => '132',
-            'header-logo-image-height' => '26',
             AMPArticle::STYLES_FOLDER_KEY => __DIR__,
         );
         if (!is_null($customProperties)) {
