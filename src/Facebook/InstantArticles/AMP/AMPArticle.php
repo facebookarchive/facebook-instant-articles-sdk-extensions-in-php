@@ -159,15 +159,17 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // Creates the header bar with image (maybe fb like?) and appends to header
         $headerBar = $context->createElement('div', $header, array('class' => $this->buildClassName('header-bar')));
-        $ampImageContainer = $context->createElement('div', $headerBar, array('class' => $this->buildClassName('header-bar-img-container')));
-        $ampImage = $context->createElement(
-            'amp-img',
-            $ampImageContainer,
-            array(
-                'src' => $logoURL,
-                'width' => $logoWidth,
-                'height' => $logoHeight
-            ));
+        if (isset($this->logoURL)) {
+            $ampImageContainer = $context->createElement('div', $headerBar, array('class' => $this->buildClassName('header-bar-img-container')));
+            $ampImage = $context->createElement(
+                'amp-img',
+                $ampImageContainer,
+                array(
+                    'src' => $logoURL,
+                    'width' => $logoWidth,
+                    'height' => $logoHeight
+                ));
+        }
 
         // The kicker for article
         if ($context->getInstantArticle()->getHeader()->getKicker()) {
