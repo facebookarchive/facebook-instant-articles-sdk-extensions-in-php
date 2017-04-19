@@ -191,6 +191,12 @@ class AMPArticle extends Element implements InstantArticleInterface
         $h1 = $context->createElement('h1', $header, array('class' => $this->buildClassName('header-h1')));
         $h1->appendChild($context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument()));
 
+        // The subtitle
+        if ($context->getInstantArticle()->getHeader()->getSubtitle()) {
+            $subtitle = $context->createElement('h2', $header, array('class' => $this->buildClassName('header-subtitle')));
+            $subtitle->appendChild($context->getInstantArticle()->getHeader()->getSubtitle()->textToDOMDocumentFragment($context->getDocument()));
+        }
+
         // The article authors
         $authors = $context->createElement('h3', $header, array('class' => $this->buildClassName('header-author')));
         $authorsElement = $context->getInstantArticle()->getHeader()->getAuthors();
@@ -643,10 +649,10 @@ class AMPArticle extends Element implements InstantArticleInterface
             return '';
         }
         $logoStyles = $headerStyles['logo'];
-        
+
         $dataURL = $logoStyles['dataURL'];
         $fullResURL = $logoStyles['full_resolution_url'];
-        
+
         $defaultLogoHeight = 90; // TODO: Move to other place
         $defaultLogoWidth = 475; // TODO: Move to other place
         $logoWidth = $logoStyles['full_resolution_width'];
@@ -656,7 +662,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $defaultLogoHeight / $logoHeight,
             $defaultLogoWidth / $logoWidth
         );
-        
+
         $this->logoURL = $dataURL ? $dataURL : $fullResURL;
         $this->logoWidth = $logoWidth * $resizeScale;
         $this->logoHeight = $logoHeight * $resizeScale;
