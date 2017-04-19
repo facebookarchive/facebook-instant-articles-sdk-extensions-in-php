@@ -137,7 +137,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->compareIgnoringStyles($ampExpected, $ampRendered);
 
         // Sets content into the file for fast testing
-        // file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted.html', $amp_rendered);
+        //file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted.html', $ampRendered);
 
         // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
         // AMP url for testing: https://search.google.com/search-console/amp

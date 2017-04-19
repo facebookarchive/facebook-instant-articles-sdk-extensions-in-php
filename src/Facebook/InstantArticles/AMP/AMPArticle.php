@@ -175,16 +175,19 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($context->getInstantArticle()->getHeader()->getKicker()) {
             $kicker = $context->createElement('h2', $header, array('class' => $this->buildClassName('header-category')));
             $kicker->appendChild($context->getInstantArticle()->getHeader()->getKicker()->textToDOMDocumentFragment($context->getDocument()));
+            $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
         }
 
         // The Title for article
         $h1 = $context->createElement('h1', $header, array('class' => $this->buildClassName('header-h1')));
         $h1->appendChild($context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument()));
+        $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
 
         // The subtitle
         if ($context->getInstantArticle()->getHeader()->getSubtitle()) {
             $subtitle = $context->createElement('h2', $header, array('class' => $this->buildClassName('header-subtitle')));
             $subtitle->appendChild($context->getInstantArticle()->getHeader()->getSubtitle()->textToDOMDocumentFragment($context->getDocument()));
+            $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
         }
 
         // The article authors
@@ -195,11 +198,13 @@ class AMPArticle extends Element implements InstantArticleInterface
             $authorsString[] = $author->getName();
         }
         $authors->appendChild($context->getDocument()->createTextNode('BY '.implode($authorsString, ', ')));
+        $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
 
         // Aritcle publish date
         $publishDate = $context->createElement('h3', $header, array('class' => $this->buildClassName('header-date')));
         $datetime = $context->getInstantArticle()->getHeader()->getPublished()->getDatetime();
         $publishDate->appendChild($context->getDocument()->createTextNode(date_format($datetime, $this->dateFormat)));
+        $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
 
         return $header;
     }
@@ -341,6 +346,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
                 $context->addItem($childElement);
                 $article->appendChild($childElement);
+                $context->createElement('div', $article, array('class' => $this->buildClassName('spacing')));
             }
         }
 
