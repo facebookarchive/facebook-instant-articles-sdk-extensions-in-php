@@ -1,7 +1,4 @@
 /*Global Styles*/
-.ia2amp-header {
-    margin-bottom: 26.4px;
-}
 .ia2amp-header-bar {
     margin: -5px 0 12px 0;
     height: 55px;
@@ -108,6 +105,10 @@
 
 .ia2amp-header-author + .ia2amp-spacing {
     height: 0;
+}
+
+.ia2amp-header-date + .ia2amp-spacing {
+    height: 26.4px;
 }
 
 /* Different element family spacing */
