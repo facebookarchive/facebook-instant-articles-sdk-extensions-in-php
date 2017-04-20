@@ -144,9 +144,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         // $this->uploadToS3(__DIR__.'/articles/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
     }
 
-    public function testArticleHasSingleLdJsonScript()
+    private function getRenderedMarkupXPathQuery($test, $xPathExpression)
     {
-        $amp_rendered = $this->getRenderedAMP('test1');
+        $amp_rendered = $this->getRenderedAMP($test);
 
         libxml_use_internal_errors(true);
         $renderedDocument = new \DOMDocument();
@@ -154,7 +154,13 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         libxml_use_internal_errors(false);
         $xPath = new \DOMXPath($renderedDocument);
 
-        $this->assertEquals(1, $xPath->query('//script[@type="application/ld+json"]')->length);
+        return $xPath->query($xPathExpression);
+    }
+
+    public function testArticleHasSingleLdJsonScript()
+    {
+        $xPathQuery = $this->getRenderedMarkupXPathQuery('test1', '//script[@type="application/ld+json"]');
+        $this->assertEquals(1, $xPathQuery->length);
     }
 
     private function getDiscoveryMetadata($test)
@@ -235,6 +241,43 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->verifySchemaOrgHasExpectedValue('image', $expectedImage);
+    }
+
+    private function getRenderedLogoElement($test = 'test1')
+    {
+        $xPathQuery = $this->getRenderedMarkupXPathQuery(
+            $test,
+            '//div[@class=\'ia2amp-header-bar-img-container\']/amp-img'
+        );
+        
+        return $xPathQuery->item(0);
+    }
+
+    public function testLogoURL()
+    {
+        $logoElement = $this->getRenderedLogoElement();
+        $src = $logoElement->getAttribute('src');
+
+        $this->assertEquals(
+            'https://fb-s-c-a.akamaihd.net/h-ak-xpa1/v/t39.5687-6/17351511_1229084560538118_5982709905105092608_n.png?_nc_log=1&oh=c8337650a88e7fdb6d31088a15a7d9d8&oe=599B24B5&__gda__=1502041799_7139cf314c7cdaa52fa44ba26fd253f8',
+            $src
+        );
+    }
+
+    public function testLogoWidth()
+    {
+        $logoElement = $this->getRenderedLogoElement();
+        $width = $logoElement->getAttribute('width');
+
+        $this->assertEquals(457, $width);
+    }
+
+    public function testLogoHeight()
+    {
+        $logoElement = $this->getRenderedLogoElement();
+        $height = $logoElement->getAttribute('height');
+
+        $this->assertEquals(90, $height);
     }
 
     /**
