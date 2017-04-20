@@ -141,7 +141,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
         // AMP url for testing: https://search.google.com/search-console/amp
-        // $this->uploadToS3(__DIR__.'/articles/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
+        $this->uploadToS3(__DIR__.'/articles/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
     }
 
     private function getRenderedMarkupXPathQuery($test, $xPathExpression)
@@ -269,7 +269,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $logoElement = $this->getRenderedLogoElement();
         $width = $logoElement->getAttribute('width');
 
-        $this->assertEquals(457, $width);
+        $this->assertEquals(223, $width);
     }
 
     public function testLogoHeight()
@@ -277,7 +277,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $logoElement = $this->getRenderedLogoElement();
         $height = $logoElement->getAttribute('height');
 
-        $this->assertEquals(90, $height);
+        $this->assertEquals(44, $height);
     }
 
     /**

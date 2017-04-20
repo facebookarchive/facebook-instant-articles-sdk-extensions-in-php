@@ -649,8 +649,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         $dataURL = $logoStyles['dataURL'];
         $fullResURL = $logoStyles['full_resolution_url'];
 
-        $defaultLogoHeight = 90; // TODO: Move to other place
-        $defaultLogoWidth = 475; // TODO: Move to other place
+        $defaultLogoHeight = 44; // TODO: Move to other place
+        $defaultLogoWidth = 230; // TODO: Move to other place
         $logoWidth = $logoStyles['full_resolution_width'];
         $logoHeight = $logoStyles['full_resolution_height'];
         $resizeScale = $headerStyles['logo_scale'] || 1.0;
