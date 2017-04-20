@@ -144,7 +144,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         // $this->uploadToS3(__DIR__.'/articles/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
     }
 
-    public function testArticleHasSingleLdJsonScript() {
+    public function testArticleHasSingleLdJsonScript()
+    {
         $amp_rendered = $this->getRenderedAMP('test1');
 
         libxml_use_internal_errors(true);
@@ -156,55 +157,66 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $xPath->query('//script[@type="application/ld+json"]')->length);
     }
 
-    private function getDiscoveryMetadata($test) {
+    private function getDiscoveryMetadata($test)
+    {
         $renderer = $this->getRenderer($test);
 
         $discoveryMetadataContent = $renderer->buildSchemaOrgMetadata();
         return json_decode($discoveryMetadataContent, true);
     }
 
-    private function verifySchemaOrgHasExpectedValue($key, $expectedValue, $test = 'test1') {
+    private function verifySchemaOrgHasExpectedValue($key, $expectedValue, $test = 'test1')
+    {
         $discoveryMetadata = $this->getDiscoveryMetadata($test);
 
         $this->assertArrayHasKey($key, $discoveryMetadata, "Could not find $key key in Schema.org metadata");
         $this->assertEquals($expectedValue, $discoveryMetadata[$key], "Unexpected value found for $key");
     }
 
-    private function verifySchemaOrgDoesNotHaveKey($key, $test = 'test1') {
+    private function verifySchemaOrgDoesNotHaveKey($key, $test = 'test1')
+    {
         $discoveryMetadata = $this->getDiscoveryMetadata($test);
 
         $this->assertFalse(array_key_exists($key, $discoveryMetadata), "Found unexpected $key key in Schema.org metadata");
     }
 
-    public function testSchemaOrgContext() {
+    public function testSchemaOrgContext()
+    {
         $this->verifySchemaOrgHasExpectedValue('@content', 'http://schema.org');
     }
 
-    public function testSchemaOrgType() {
+    public function testSchemaOrgType()
+    {
         $this->verifySchemaOrgHasExpectedValue('@type', 'NewsArticle');
     }
 
-    public function testSchemaOrgMainEntityOfPage() {
+    public function testSchemaOrgMainEntityOfPage()
+    {
         $this->verifySchemaOrgHasExpectedValue('mainEntityOfPage', 'http://blog.wod.expert/very-first-wod/');
     }
 
-    public function testSchemaOrgHeadline() {
+    public function testSchemaOrgHeadline()
+    {
         $this->verifySchemaOrgHasExpectedValue('headline', 'Very First WOD!');
     }
 
-    public function testSchemaOrgDatePublished() {
+    public function testSchemaOrgDatePublished()
+    {
         $this->verifySchemaOrgHasExpectedValue('datePublished', '2016-05-10T18:05:36+00:00');
     }
 
-    public function testSchemaOrgDateModified() {
+    public function testSchemaOrgDateModified()
+    {
         $this->verifySchemaOrgHasExpectedValue('dateModified', '2017-03-17T16:46:07+00:00');
     }
 
-    public function testSchemaOrgNoDateModified() {
+    public function testSchemaOrgNoDateModified()
+    {
         $this->verifySchemaOrgDoesNotHaveKey('dateModified', 'natgeo');
     }
 
-    public function testSchemaOrgAuthor() {
+    public function testSchemaOrgAuthor()
+    {
         $expectedAuthor = array(
             '@type' => 'Person',
             'name' => 'Éverton Rosário',
@@ -213,7 +225,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->verifySchemaOrgHasExpectedValue('author', $expectedAuthor);
     }
 
-    public function testSchemaOrgImage() {
+    public function testSchemaOrgImage()
+    {
         $expectedImage = array(
             '@type' => 'ImageObject',
             'url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg',
