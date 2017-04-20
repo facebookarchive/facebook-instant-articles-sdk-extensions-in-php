@@ -80,14 +80,6 @@
 
 /* Same element family spacing */
 
-.ia2amp-spacing-kicker-title, .ia2amp-spacing-title-subtitle {
-    height: 13.2px;
-}
-
-.ia2amp-spacing-h1-h2 {
-    height: 13.2px;
-}
-
 .ia2amp-spacing-li-li {
     height: 13.2px;
 }
@@ -112,6 +104,10 @@
 
 .ia2amp-header-h1 + .ia2amp-spacing, .ia2amp-header-category + .ia2amp-spacing {
     height: 13.2px;
+}
+
+.ia2amp-header-author + .ia2amp-spacing {
+    height: 0;
 }
 
 /* Different element family spacing */
