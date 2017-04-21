@@ -933,7 +933,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         // TODO: Finish implementation
         $metadata = array(
             '@content' => 'http://schema.org',
-            // TODO: Should we always use NewsArticle as Type? Some of the fields below depend on the type
             '@type' => 'NewsArticle',
             'mainEntityOfPage' => $this->instantArticle->getCanonicalURL(),
             'headline' => $this->instantArticle->getHeader()->getTitle()->getPlainText(),
