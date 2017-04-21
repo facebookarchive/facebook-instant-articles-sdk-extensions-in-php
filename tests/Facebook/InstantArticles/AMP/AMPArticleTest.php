@@ -249,7 +249,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             $test,
             '//div[@class=\'ia2amp-header-bar-img-container\']/amp-img'
         );
-        
+
         return $xPathQuery->item(0);
     }
 

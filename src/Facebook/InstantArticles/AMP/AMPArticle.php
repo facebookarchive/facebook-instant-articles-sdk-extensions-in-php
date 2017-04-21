@@ -159,6 +159,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // Creates the header bar with image (maybe fb like?) and appends to header
         $headerBar = $context->createElement('div', $header, array('class' => $this->buildClassName('header-bar')));
+        $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
         if (isset($this->logoURL)) {
             $ampImageContainer = $context->createElement('div', $headerBar, array('class' => $this->buildClassName('header-bar-img-container')));
             $ampImage = $context->createElement(
@@ -921,11 +922,9 @@ class AMPArticle extends Element implements InstantArticleInterface
             // TODO: Should we always use NewsArticle as Type? Some of the fields below depend on the type
             '@type' => 'NewsArticle',
             'mainEntityOfPage' => $this->instantArticle->getCanonicalURL(),
-            // TODO: Is there a better way to get the text?
-            'headline' => $this->instantArticle->getHeader()->getTitle()->getTextChildren()[0],
+            'headline' => $this->instantArticle->getHeader()->getTitle()->getPlainText(),
             'datePublished' => date_format($published->getDatetime(), 'c'),
-            // TODO: How can we define a description?
-            // 'description' => 'Lorem ipsum',
+            'description' => $this->instantArticle->getFirstParagraph()->getPlainText(),
         );
 
         if ($modified) {
