@@ -166,8 +166,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     private function getDiscoveryMetadata($test, $customProperties = null)
     {
         $renderer = $this->getRenderer($test, $customProperties);
+        $context = AMPContext::create(new \DOMDocument(), $renderer->getInstantArticle(), 'ia2amp-');
 
-        $discoveryMetadataContent = $renderer->buildSchemaOrgMetadata();
+        $discoveryMetadataContent = $renderer->buildSchemaOrgMetadata($context);
         return json_decode($discoveryMetadataContent, true);
     }
 

@@ -273,7 +273,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // Builds Schema.org metadata and appends to head
         $discoveryScript = $context->createElement('script', $head, null, array('type' => 'application/ld+json'));
-        $discoveryScriptContent = $this->buildSchemaOrgMetadata();
+        $discoveryScriptContent = $this->buildSchemaOrgMetadata($context);
         $discoveryScript->appendChild($context->getDocument()->createTextNode($discoveryScriptContent));
 
         // Builds title and append to head
@@ -925,7 +925,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             :  'rgba(' . implode(",", $rgb) . ',' . $opacity . ')';
     }
 
-    public function buildSchemaOrgMetadata() {
+    public function buildSchemaOrgMetadata($context) {
         $header = $this->instantArticle->getHeader();
         $published = $header->getPublished();
         $modified = $header->getModified();
@@ -968,7 +968,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             // TODO: Should we take the the first image from a slideshow?
         }
 
-        $publisher = $this->getPublisher();
+        $publisher = $this->hook->call('HOOK_AMP_GETPUBLISHER', array($this, 'getPublisher'), array($this->properties));
         if ($publisher) {
             if (Type::is($publisher, Type::STRING)) {
                 // String values will be treated as organization names
@@ -984,8 +984,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         return json_encode($metadata, JSON_UNESCAPED_SLASHES);
     }
 
-    public function getPublisher()
+    public function getPublisher($properties)
     {
-        return array_key_exists('publisher', $this->properties) ? $this->properties['publisher'] : null;
+        return array_key_exists('publisher', $properties) ? $properties['publisher'] : null;
     }
 }
