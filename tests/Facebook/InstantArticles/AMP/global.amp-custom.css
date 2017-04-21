@@ -114,6 +114,10 @@
     height: 18.8px;
 }
 
+.ia2amp-slideshow + .ia2amp-spacing, .ia2amp-interactive + .ia2amp-spacing, .ia2amp-image + .ia2amp-spacing {
+    height: 26.4px;
+}
+
 /* Different element family spacing */
 
 .ia2amp-spacing-covermedia-kicker {
@@ -130,10 +134,6 @@
 
 .ia2amp-spacing-blockquote-p {
     height: 18.8px;
-}
-
-.ia2amp-spacing-photo-p, .ia2amp-spacing-video-p, .ia2amp-spacing-slideshow-p {
-    height: 26.4px;
 }
 
 .ia2amp-spacing-h1-p, .ia2amp-spacing-h2-p, .ia2amp-spacing-h3-p {
