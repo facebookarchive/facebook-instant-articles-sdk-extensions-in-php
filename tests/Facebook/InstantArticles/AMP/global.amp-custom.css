@@ -67,7 +67,6 @@
     line-height: 20px;
     padding: 0px 13.2px 0px 18.8px;
     margin-top: 18.8px;
-    margin-bottom: 18.8px;
 }
 
 .ia2amp-spacing {
@@ -109,6 +108,10 @@
 
 .ia2amp-header-date + .ia2amp-spacing {
     height: 26.4px;
+}
+
+.ia2amp-blockquote + .ia2amp-spacing {
+    height: 18.8px;
 }
 
 /* Different element family spacing */
