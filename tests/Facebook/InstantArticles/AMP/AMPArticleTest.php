@@ -163,17 +163,17 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $xPathQuery->length);
     }
 
-    private function getDiscoveryMetadata($test)
+    private function getDiscoveryMetadata($test, $customProperties = null)
     {
-        $renderer = $this->getRenderer($test);
+        $renderer = $this->getRenderer($test, $customProperties);
 
         $discoveryMetadataContent = $renderer->buildSchemaOrgMetadata();
         return json_decode($discoveryMetadataContent, true);
     }
 
-    private function verifySchemaOrgHasExpectedValue($key, $expectedValue, $test = 'test1')
+    private function verifySchemaOrgHasExpectedValue($key, $expectedValue, $test = 'test1', $customProperties = null)
     {
-        $discoveryMetadata = $this->getDiscoveryMetadata($test);
+        $discoveryMetadata = $this->getDiscoveryMetadata($test, $customProperties);
 
         $this->assertArrayHasKey($key, $discoveryMetadata, "Could not find $key key in Schema.org metadata");
         $this->assertEquals($expectedValue, $discoveryMetadata[$key], "Unexpected value found for $key");
@@ -246,6 +246,35 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     public function testSchemaOrgDescription()
     {
         $this->verifySchemaOrgHasExpectedValue('description', 'The first WOD we never forget! Just to be sure we are talking about same thing, WOD stands for “Workout of the Day”.  You feel you’re already gone on the warm up session.');
+    }
+
+    public function testSchemaOrgPublisherName()
+    {
+        $publisherName = 'The Publisher';
+        $customProperties = array('publisher' => $publisherName);
+
+        $expectedPublisher = array(
+            '@type' => 'Organization',
+            'name' => $publisherName,
+        );
+
+        $this->verifySchemaOrgHasExpectedValue('publisher', $expectedPublisher, 'test1', $customProperties);
+    }
+
+    public function testSchemaOrgPublisherArray()
+    {
+        $publisher = array(
+            '@type' => 'Robot',
+            'name' => 'The Robot',
+        );
+        $customProperties = array('publisher' => $publisher);
+
+        $this->verifySchemaOrgHasExpectedValue('publisher', $publisher, 'test1', $customProperties);
+    }
+
+    public function testSchemaOrgNoPublisher()
+    {
+        $this->verifySchemaOrgDoesNotHaveKey('publisher');
     }
 
     private function getRenderedLogoElement($test = 'test1')

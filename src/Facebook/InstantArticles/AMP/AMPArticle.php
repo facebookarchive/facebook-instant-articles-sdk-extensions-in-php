@@ -968,7 +968,24 @@ class AMPArticle extends Element implements InstantArticleInterface
             // TODO: Should we take the the first image from a slideshow?
         }
 
+        $publisher = $this->getPublisher();
+        if ($publisher) {
+            if (Type::is($publisher, Type::STRING)) {
+                // String values will be treated as organization names
+                $publisher = array(
+                    '@type' => 'Organization',
+                    'name' => $publisher,
+                );
+            }
+            $metadata['publisher'] = $publisher;
+        }
+
         // Prevent URL slashes to be escaped
         return json_encode($metadata, JSON_UNESCAPED_SLASHES);
+    }
+
+    public function getPublisher()
+    {
+        return array_key_exists('publisher', $this->properties) ? $this->properties['publisher'] : null;
     }
 }
