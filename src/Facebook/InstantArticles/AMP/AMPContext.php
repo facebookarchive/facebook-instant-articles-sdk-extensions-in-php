@@ -32,6 +32,9 @@ class AMPContext
     private $articleItems = array();
     private $footer;
 
+    private $cssPrefix;
+    private $previousElementIdentifier;
+
     /**
      * Private constructor. Use self::create($document, $instantArticle)
      */
@@ -42,12 +45,14 @@ class AMPContext
      * Factory method to create the AMPContext
      * @param DOMDocument $document The root document used on the context. If null informed, a new one will be created.
      * @param InstantArticle $instantArticle The Element InstantArticle that will be used during conversion.
+     * @param string $cssPrefix The css prefix for building element classes.
      */
-    public static function create($document, $instantArticle)
+    public static function create($document, $instantArticle, $cssPrefix)
     {
         $context = new self();
         return $context->withDocument($document)
-                       ->withInstantArticle($instantArticle);
+                       ->withInstantArticle($instantArticle)
+                       ->withCssPrefix($cssPrefix);
     }
 
     /**
@@ -66,6 +71,20 @@ class AMPContext
     }
 
     /**
+     * Sets the css prefix. Private method since this should be unmodifiable.
+     * @param string $cssPrefix The css prefix to construct element classes.
+     * @return $this reference.
+     */
+    private function withCssPrefix($cssPrefix)
+    {
+        Type::enforce($cssPrefix, Type::STRING);
+        $this->cssPrefix = $cssPrefix;
+        return $this;
+    }
+
+
+
+    /**
      * Gets the root document being used in this context.
      * @return DOMDocument $document The root document.
      */
@@ -78,17 +97,23 @@ class AMPContext
      * Creates an element named by $tagName using the $document.
      * @param string $tagName The tag name that will be used: <tagName>
      * @param array(<string>=><string>) $attributes mapped array of attributes to be set to this Element being created.
+     * @param string $cssClass The element class for styling purposes.
      * @param $DOMNode $container The container element where the new created element will be appended. Optional.
      * @return DOMElement <$tagName> element using the DOMDocument $document from context.
      */
-    public function createElement($tagName, $container = null, $attributes = null)
+    public function createElement($tagName, $container = null, $cssClass = null, $attributes = null)
     {
         $element = $this->getDocument()->createElement($tagName);
-        if (isset($attributes) && $attributes) {
-            foreach ($attributes as $name => $value) {
-                $element->setAttribute($name, $value);
-            }
+        if (!isset($attributes) || !$attributes) {
+            $attributes = array();
         }
+        if (!Type::isTextEmpty($cssClass)) {
+            $attributes['class'] = $this->buildCssClass($cssClass);
+        }
+        foreach ($attributes as $name => $value) {
+            $element->setAttribute($name, $value);
+        }
+        $this->withPreviousElementIdentifier($cssClass);
 
         if (isset($container) && $container) {
             Type::enforce($container, get_class(new \DOMNode()));
@@ -96,6 +121,32 @@ class AMPContext
         }
 
         return $element;
+    }
+
+
+    public function buildCssClass($cssClassName)
+    {
+        return $this->cssPrefix.$cssClassName;
+    }
+
+    public function buildCssSelector($cssClassName)
+    {
+        return '.'.$this->buildCssClass($cssClassName);
+    }
+
+    public function withPreviousElementIdentifier($identifier)
+    {
+        $this->previousElementIdentifier = $identifier;
+    }
+
+    /**
+     * This will create a div with spacing, telling on class about the previous element.
+     * @param \DOMElement $container where this spacing will be appended to.
+     */
+    public function buildSpacingDiv($container)
+    {
+        $previousClass = Type::isTextEmpty($this->previousElementIdentifier) ? '' : ' after-'.$this->previousElementIdentifier;
+        $this->createElement('div', $container, 'spacing'.$previousClass);
     }
 
     /**

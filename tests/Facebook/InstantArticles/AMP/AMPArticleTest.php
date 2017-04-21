@@ -261,6 +261,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     public function testLogoURL()
     {
         $logoElement = $this->getRenderedLogoElement();
+        $this->assertNotNull($logoElement);
         $src = $logoElement->getAttribute('src');
 
         $this->assertEquals(
@@ -272,6 +273,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     public function testLogoWidth()
     {
         $logoElement = $this->getRenderedLogoElement();
+        $this->assertNotNull($logoElement);
         $width = $logoElement->getAttribute('width');
 
         $this->assertEquals(223, $width);
@@ -280,6 +282,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     public function testLogoHeight()
     {
         $logoElement = $this->getRenderedLogoElement();
+        $this->assertNotNull($logoElement);
         $height = $logoElement->getAttribute('height');
 
         $this->assertEquals(44, $height);
@@ -323,7 +326,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
 
         $renderer = $this->getRenderer('test1', $customProperties);
-        $css = $renderer->getCustomCSS();
+        $context = AMPContext::create(new \DOMDocument(), $renderer->getInstantArticle(), 'ia2amp-');
+        $css = $renderer->getCustomCSS($context);
 
         // Escape parenthesis before using regex
         $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
@@ -718,7 +722,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
 
         $renderer = $this->getRenderer('test1', $customProperties);
-        $css = $renderer->getCustomCSS();
+        $context = AMPContext::create(new \DOMDocument(), $renderer->getInstantArticle(), 'ia2amp-');
+        $css = $renderer->getCustomCSS($context);
 
         // Look for the expected CSS
         $this->validateCSSRule($css, $cssSelector, $cssProperty, $expectedCSSValue);

@@ -56,17 +56,14 @@ class AMPArticle extends Element implements InstantArticleInterface
     private $logoWidth;
     private $logoHeight;
 
-    private function __construct($instantArticle, $properties = array(), $hook = null)
+    private function __construct($instantArticle, $properties, $hook)
     {
         $this->instantArticle = $instantArticle;
         $this->properties = $properties;
-        if ($hook == null) {
-            $hook = Hook::create();
-        }
         $this->hook = $hook;
     }
 
-    public static function create($instantArticleString, $properties = array())
+    public static function create($instantArticleString, $properties = array(), $hook = null)
     {
         libxml_use_internal_errors(true);
         $document = new \DOMDocument();
@@ -75,12 +72,26 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $parser = new Parser();
         $instant_article = $parser->parse($document);
-        return new self($instant_article, $properties);
+
+        if ($properties === null) {
+            $properties = array();
+        }
+
+        if ($hook == null) {
+            $hook = Hook::create();
+        }
+
+        return new self($instant_article, $properties, $hook);
     }
 
     public function getHook()
     {
         return $this->hook;
+    }
+
+    public function getInstantArticle()
+    {
+        return $this->instantArticle;
     }
 
     public function render($doctype = '<!doctype html>', $format = false)
@@ -99,14 +110,21 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function toDOMElement($document = null)
     {
-        $context = AMPContext::create($document, $this->instantArticle);
+        if (isset($this->properties['css-selector-prefix'])) {
+            $prefix = $this->properties['css-selector-prefix'];
+        }
+        else {
+            $prefix = self::DEFAULT_CSS_PREFIX;
+        }
+        $context = AMPContext::create($document, $this->instantArticle, $prefix);
+
         $ampDocument = $this->hook->call('HOOK_AMP_DOCUMENT', array($this, 'transformInstantArticle'), array($context));
         return $ampDocument;
     }
 
     public function transformInstantArticle($context) {
         // Builds and appends head to the HTML document
-        $html = $context->createElement('html', null, array("amp" => ""));
+        $html = $context->createElement('html', null, null, array("amp" => ""));
         if ($context->getInstantArticle()->isRTLEnabled()) {
             $html->setAttribute('dir', 'rtl');
         }
@@ -136,13 +154,13 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function buildBody($context)
     {
-        return $context->createElement('body', $context->getHtml(), array('class' => $this->buildClassName('body')));
+        return $context->createElement('body', $context->getHtml(), 'body');
     }
 
     public function transformArticleHeader($context)
     {
         // Builds the content Header, with proper colors and image, adding to body
-        $header = $context->createElement('header', $context->getBody(), array('class' => $this->buildClassName('header')));
+        $header = $context->createElement('header', $context->getBody(), 'header');
 
 
         if (isset($this->logoURL)) {
@@ -153,18 +171,19 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // Creates the cover content for the header and appends to the header
         if ($context->getInstantArticle()->getHeader()->getCover()) {
-            $headerCover = $this->buildCover($context->getInstantArticle()->getHeader()->getCover(), $context->getDocument());
+            $headerCover = $this->buildCover($context->getInstantArticle()->getHeader()->getCover(), $context);
             $header->appendChild($headerCover);
         }
 
         // Creates the header bar with image (maybe fb like?) and appends to header
-        $headerBar = $context->createElement('div', $header, array('class' => $this->buildClassName('header-bar')));
-        $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
+        $headerBar = $context->createElement('div', $header, 'header-bar');
+        $context->buildSpacingDiv($header);
         if (isset($this->logoURL)) {
-            $ampImageContainer = $context->createElement('div', $headerBar, array('class' => $this->buildClassName('header-bar-img-container')));
+            $ampImageContainer = $context->createElement('div', $headerBar, 'header-bar-img-container');
             $ampImage = $context->createElement(
                 'amp-img',
                 $ampImageContainer,
+                null,
                 array(
                     'src' => $logoURL,
                     'width' => $logoWidth,
@@ -174,38 +193,38 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // The kicker for article
         if ($context->getInstantArticle()->getHeader()->getKicker()) {
-            $kicker = $context->createElement('h2', $header, array('class' => $this->buildClassName('header-category')));
+            $kicker = $context->createElement('h2', $header, 'header-category');
             $kicker->appendChild($context->getInstantArticle()->getHeader()->getKicker()->textToDOMDocumentFragment($context->getDocument()));
-            $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
+            $context->buildSpacingDiv($header);
         }
 
         // The Title for article
-        $h1 = $context->createElement('h1', $header, array('class' => $this->buildClassName('header-h1')));
+        $h1 = $context->createElement('h1', $header, 'header-h1');
         $h1->appendChild($context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument()));
-        $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
+        $context->buildSpacingDiv($header);
 
         // The subtitle
         if ($context->getInstantArticle()->getHeader()->getSubtitle()) {
-            $subtitle = $context->createElement('h2', $header, array('class' => $this->buildClassName('header-subtitle')));
+            $subtitle = $context->createElement('h2', $header, 'header-subtitle');
             $subtitle->appendChild($context->getInstantArticle()->getHeader()->getSubtitle()->textToDOMDocumentFragment($context->getDocument()));
-            $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
+            $context->buildSpacingDiv($header);
         }
 
         // The article authors
-        $authors = $context->createElement('h3', $header, array('class' => $this->buildClassName('header-author')));
+        $authors = $context->createElement('h3', $header, 'header-author');
         $authorsElement = $context->getInstantArticle()->getHeader()->getAuthors();
         $authorsString = [];
         foreach($authorsElement as $author) {
             $authorsString[] = $author->getName();
         }
         $authors->appendChild($context->getDocument()->createTextNode('BY '.implode($authorsString, ', ')));
-        $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
+        $context->buildSpacingDiv($header);
 
         // Aritcle publish date
-        $publishDate = $context->createElement('h3', $header, array('class' => $this->buildClassName('header-date')));
+        $publishDate = $context->createElement('h3', $header, 'header-date');
         $datetime = $context->getInstantArticle()->getHeader()->getPublished()->getDatetime();
         $publishDate->appendChild($context->getDocument()->createTextNode(date_format($datetime, $this->dateFormat)));
-        $context->createElement('div', $header, array('class' => $this->buildClassName('spacing')));
+        $context->buildSpacingDiv($header);
 
         return $header;
     }
@@ -218,41 +237,42 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // Builds meta charset and append to head
         if ($context->getInstantArticle()->getCharset()) {
-            $context->createElement('meta', $head, array('charset' => $context->getInstantArticle()->getCharset()));
+            $context->createElement('meta', $head, null, array('charset' => $context->getInstantArticle()->getCharset()));
         }
 
         // Builds meta viewport and append to head
         $context->createElement(
             'meta',
             $head,
+            null,
             array(
                 'name' => 'viewport',
                 'content' => 'width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no'
             ));
 
         // Builds ampjs script and append to head
-        $context->createElement('script', $head, array('src' => 'https://cdn.ampproject.org/v0.js', 'async' => ''));
+        $context->createElement('script', $head, null, array('src' => 'https://cdn.ampproject.org/v0.js', 'async' => ''));
 
         // Builds boilerplate css style and append to head
-        $boilerplate = $context->createElement('style', $head, array('amp-boilerplate' => ''));
+        $boilerplate = $context->createElement('style', $head, null, array('amp-boilerplate' => ''));
         $boilerplateContent = $context->getDocument()->createTextNode('body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}');
         $boilerplate->appendChild($boilerplateContent);
 
         // Builds noscript css style and append to head
         $noscript = $context->createElement('noscript', $head);
-        $noscriptBoilerplate = $context->createElement('style', $noscript, array('amp-boilerplate' => ''));
+        $noscriptBoilerplate = $context->createElement('style', $noscript, null, array('amp-boilerplate' => ''));
         $noscriptBoilerplateContent = $context->getDocument()->createTextNode('body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}');
         $noscriptBoilerplate->appendChild($noscriptBoilerplateContent);
 
         // Builds canonical link and append to head
-        $link = $context->createElement('link', $head, array('rel' => 'canonical', 'href' => $context->getInstantArticle()->getCanonicalURL()));
+        $link = $context->createElement('link', $head, null, array('rel' => 'canonical', 'href' => $context->getInstantArticle()->getCanonicalURL()));
 
         // Builds custom css style and append to head
-        $ampCustomCSS = $this->buildCustomCSS($context->getDocument());
+        $ampCustomCSS = $this->buildCustomCSS($context);
         $head->appendChild($ampCustomCSS);
 
         // Builds Schema.org metadata and appends to head
-        $discoveryScript = $context->createElement('script', $head, array('type' => 'application/ld+json'));
+        $discoveryScript = $context->createElement('script', $head, null, array('type' => 'application/ld+json'));
         $discoveryScriptContent = $this->buildSchemaOrgMetadata();
         $discoveryScript->appendChild($context->getDocument()->createTextNode($discoveryScriptContent));
 
@@ -266,7 +286,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function transformArticleContent($context)
     {
-        $article = $context->createElement('article', $context->getBody(), array('class' => $this->buildClassName('article')));
+        $article = $context->createElement('article', $context->getBody(), 'article');
 
         $containsIframe = false;
         $containsSlideshow = false;
@@ -284,74 +304,86 @@ class AMPArticle extends Element implements InstantArticleInterface
                         }
                     }
                 }
-                $childElement = $child->toDOMElement($context->getDocument());
                 if (Type::is($child, Paragraph::getClassName())) {
-                    $childElement->setAttribute('class', $this->buildClassName('p'));
+                    $childElement = $this->buildRegularDomElement($context, $child, 'p');
                 }
                 else if (Type::is($child, Blockquote::getClassName())) {
-                    $childElement->setAttribute('class', $this->buildClassName('blockquote'));
+                    $childElement = $this->buildRegularDomElement($context, $child, 'blockquote');
                 }
                 else if (Type::is($child, H1::getClassName())) {
-                    $childElement->setAttribute('class', $this->buildClassName('h1'));
+                    $childElement = $this->buildRegularDomElement($context, $child, 'h1');
                 }
                 else if (Type::is($child, H2::getClassName())) {
-                    $childElement->setAttribute('class', $this->buildClassName('h2'));
+                    $childElement = $this->buildRegularDomElement($context, $child, 'h2');
                 }
                 else if (Type::is($child, ListElement::getClassName())) {
-                    $childElement->setAttribute('class', $this->buildClassName('list'));
+                    $childElement = $this->buildRegularDomElement($context, $child, 'list');
                 }
                 else if (Type::is($child, Pullquote::getClassName())) {
-                    $childElement->setAttribute('class', $this->buildClassName('pullquote'));
+                    $childElement = $this->buildRegularDomElement($context, $child, 'pullquote');
                 }
                 else if (Type::is($child, Image::getClassName())) {
-                    $childElement = $this->buildImage($child, $context->getDocument(), 'image');
+                    $childElement = $this->buildImage($child, $context, 'image');
                 }
                 else if (Type::is($child, AnimatedGIF::getClassName())) {
-                    $childElement = $this->buildGIF($child, $context->getDocument(), 'gif');
+                    $childElement = $this->buildGIF($child, $context, 'gif');
                 }
                 else if (Type::is($child, Video::getClassName())) {
-                    $childElement = $this->buildVideo($child, $context->getDocument(), 'video');
+                    $childElement = $this->buildVideo($child, $context, 'video');
                 }
                 else if (Type::is($child, Audio::getClassName())) {
                     if (!$containsAudio) {
                         $containsAudio = true;
-                        $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-audio', 'https://cdn.ampproject.org/v0/amp-audio-0.1.js', $context->getDocument()));
+                        $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-audio', 'https://cdn.ampproject.org/v0/amp-audio-0.1.js', $context));
                     }
-                    $childElement = $this->buildAudio($child, $context->getDocument(), 'audio');
+                    $childElement = $this->buildAudio($child, $context, 'audio');
                 }
                 else if (Type::is($child, Slideshow::getClassName())) {
                     if (!$containsSlideshow) {
                         $containsSlideshow = true;
-                        $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-carousel', 'https://cdn.ampproject.org/v0/amp-carousel-0.1.js', $context->getDocument()));
+                        $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-carousel', 'https://cdn.ampproject.org/v0/amp-carousel-0.1.js', $context));
                     }
-                    $childElement = $this->buildSlideshow($child, $context->getDocument(), 'slideshow');
+                    $childElement = $this->buildSlideshow($child, $context, 'slideshow');
                 }
                 else if (Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
-                        $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context->getDocument()));
+                        $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
                     }
-                    $childElement = $this->buildIframe($child, $context->getDocument(), 'interactive');
+                    $childElement = $this->buildIframe($child, $context, 'interactive');
                 }
                 else if (Type::is($child, Map::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
-                        $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context->getDocument()));
+                        $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
                     }
-                    $childElement = $this->buildMaps($child, $context->getDocument(), 'map');
+                    $childElement = $this->buildMaps($child, $context, 'map');
                 }
                 else if (Type::is($child, RelatedArticles::getClassName())) {
-                    $childElement->setAttribute('class', $this->buildClassName('related-articles'));
+                    $childElement->setAttribute('class', $context->buildCssClass('related-articles'));
                     // TODO RelatedArticles
+                }
+                else {
+                    // Not a know element, bypasses it
+                    continue;
                 }
 
                 $context->addItem($childElement);
                 $article->appendChild($childElement);
-                $context->createElement('div', $article, array('class' => $this->buildClassName('spacing')));
+                $context->buildSpacingDiv($article);
             }
         }
 
         return $article;
+    }
+
+    public function buildRegularDomElement($context, $child, $cssClass)
+    {
+        $element = $child->toDOMElement($context->getDocument());
+        $element->setAttribute('class', $context->buildCssClass($cssClass));
+        $context->withPreviousElementIdentifier($cssClass);
+
+        return $element;
     }
 
     public function transformArticleFooter()
@@ -362,36 +394,35 @@ class AMPArticle extends Element implements InstantArticleInterface
         return null;
     }
 
-    private function buildCover($media, $document)
+    private function buildCover($media, $context)
     {
         if (Type::is($media, Image::getClassName())) {
-            return $this->buildImage($media, $document, 'cover-image', false);
+            return $this->buildImage($media, $context, 'cover-image', false);
         }
         else if (Type::is($media, Slideshow::getClassName())) {
-            return $this->buildSlideshow($media, $document, 'cover-slideshow');
+            return $this->buildSlideshow($media, $context, 'cover-slideshow');
         }
         else if (Type::is($media, Video::getClassName())) {
-            return $this->buildVideo($media, $document, 'cover-video');
+            return $this->buildVideo($media, $context, 'cover-video');
         }
     }
 
-    public function buildCustomElementScriptEntry($customElementName, $src, $document)
+    public function buildCustomElementScriptEntry($customElementName, $src, $context)
     {
-        $script = $document->createElement('script');
+        $script = $context->getDocument()->createElement('script');
         $script->setAttribute('async', '');
         $script->setAttribute('custom-element', $customElementName);
         $script->setAttribute('src', $src);
         return $script;
     }
 
-    private function buildImage($image, $document, $cssClass, $withContainer = true)
+    private function buildImage($image, $context, $cssClass, $withContainer = true)
     {
         if ($withContainer) {
-            $ampImgContainer = $document->createElement('div');
-            $ampImgContainer->setAttribute('class', $this->buildClassName($cssClass));
+            $ampImgContainer = $context->createElement('div', null, $cssClass);
         }
 
-        $ampImg = $document->createElement('amp-img');
+        $ampImg = $context->getDocument()->createElement('amp-img');
         if ($withContainer) {
             $ampImgContainer->appendChild($ampImg);
         }
@@ -413,14 +444,13 @@ class AMPArticle extends Element implements InstantArticleInterface
         return ($withContainer) ? $ampImgContainer : $ampImg;
     }
 
-    private function buildGIF($image, $document, $cssClass, $withContainer = true)
+    private function buildGIF($image, $context, $cssClass, $withContainer = true)
     {
         if ($withContainer) {
-            $ampImgContainer = $document->createElement('div');
-            $ampImgContainer->setAttribute('class', $this->buildClassName($cssClass));
+            $ampImgContainer = $context->createElement('div', null, $cssClass);
         }
 
-        $ampImg = $document->createElement('amp-anim');
+        $ampImg = $context->getDocument()->createElement('amp-anim');
         if ($withContainer) {
             $ampImgContainer->appendChild($ampImg);
         }
@@ -437,12 +467,11 @@ class AMPArticle extends Element implements InstantArticleInterface
         return ($withContainer) ? $ampImgContainer : $ampImg;
     }
 
-    private function buildVideo($video, $document, $cssClass)
+    private function buildVideo($video, $context, $cssClass)
     {
-        $ampVideoContainer = $document->createElement('div');
-        $ampVideoContainer->setAttribute('class', $this->buildClassName($cssClass));
+        $ampVideoContainer = $context->createElement('div', null, $cssClass);
 
-        $ampVideo = $document->createElement('amp-video');
+        $ampVideo = $context->getDocument()->createElement('amp-video');
         $ampVideoContainer->appendChild($ampVideo);
         $videoUrl = $video->getUrl();
 
@@ -457,26 +486,24 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $ampVideoContainer;
     }
 
-    private function buildAudio($video, $document, $cssClass)
+    private function buildAudio($video, $context, $cssClass)
     {
-        $ampAudio = $document->createElement('div');
-        $ampAudio->setAttribute('class', $this->buildClassName($cssClass));
+        $ampAudio = $context->createElement('div', null, $cssClass);
 
         // TODO
 
         return $ampAudio;
     }
 
-    private function buildSlideshow($slideshow, $document, $cssClass)
+    private function buildSlideshow($slideshow, $context, $cssClass)
     {
-      $ampCarouselContainer = $document->createElement('div');
-      $ampCarouselContainer->setAttribute('class', $this->buildClassName($cssClass));
+      $ampCarouselContainer = $context->createElement('div', null, $cssClass);
 
-      $ampCarousel = $document->createElement('amp-carousel');
+      $ampCarousel = $context->getDocument()->createElement('amp-carousel');
       $ampCarouselContainer->appendChild($ampCarousel);
 
       foreach ($slideshow->getArticleImages() as $image) {
-          $ampImage = $this->buildImage($image, $document, 'slideshow-image', true);
+          $ampImage = $this->buildImage($image, $context, 'slideshow-image', true);
           $ampCarousel->appendChild($ampImage);
 
           // if (!isset($imageWidth) && !isset($imageHeight)) {
@@ -489,10 +516,12 @@ class AMPArticle extends Element implements InstantArticleInterface
       $ampCarousel->setAttribute('width', (string) self::DEFAULT_WIDTH);
       $ampCarousel->setAttribute('height', (string) self::DEFAULT_HEIGHT);
 
+      $context->withPreviousElementIdentifier($cssClass);
+
       return $ampCarouselContainer;
     }
 
-    private function buildIframe($interactive, $document, $cssClass)
+    private function buildIframe($interactive, $context, $cssClass)
     {
         $srcUrl = $interactive->getSource();
 
@@ -506,10 +535,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         // TODO check URLs for playbuzz
         // TODO check URLs for soundcloud
 
-        $iframeContainer = $document->createElement('div');
-        $iframeContainer->setAttribute('class', $this->buildClassName($cssClass));
+        $iframeContainer = $context->createElement('div', null, $cssClass);
 
-        $ampIframe = $document->createElement('amp-iframe');
+        $ampIframe = $context->getDocument()->createElement('amp-iframe');
         $iframeContainer->appendChild($ampIframe);
         $ampIframe->setAttribute('src', $srcUrl);
         $ampIframe->setAttribute('width', self::DEFAULT_WIDTH);
@@ -521,35 +549,23 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $iframeContainer;
     }
 
-    private function buildMaps($map, $document, $cssClass)
+    private function buildMaps($map, $context, $cssClass)
     {
         // TODO google maps requires a key to embed
         // The URL should be: https://www.google.com/maps/embed/v1/place?key=<API_GOOGLE_KEY>q=%2244.0,122.0%22
-        return $document->createElement('div');
+        return $context->createElement('div');
     }
 
-    private function buildClassName($selectorName, $prefix = null) {
-        if (isset($prefix) || !$prefix) {
-            if (isset($this->properties['css-selector-prefix'])) {
-                $prefix = $this->properties['css-selector-prefix'];
-            }
-            else {
-                $prefix = self::DEFAULT_CSS_PREFIX;
-            }
-        }
-        return $prefix.$selectorName;
-    }
-
-    private function buildCustomCSS($document) {
-      $ampCustomCSS = $document->createElement('style');
+    private function buildCustomCSS($context) {
+      $ampCustomCSS = $context->getDocument()->createElement('style');
       $ampCustomCSS->setAttribute('amp-custom','');
-      $cssDeclarationss = $this->getCustomCSS();
-      $cssTextContent = $document->createTextNode($cssDeclarationss);
+      $cssDeclarations = $this->getCustomCSS($context);
+      $cssTextContent = $context->getDocument()->createTextNode($cssDeclarations);
       $ampCustomCSS->appendChild($cssTextContent);
       return $ampCustomCSS;
     }
 
-    public function getCustomCSS()
+    public function getCustomCSS($context)
     {
         $stylesFolder = (array_key_exists(AMPArticle::STYLES_FOLDER_KEY, $this->properties)
             ? $this->properties[AMPArticle::STYLES_FOLDER_KEY]
@@ -578,32 +594,32 @@ class AMPArticle extends Element implements InstantArticleInterface
         $customCSSFile = file_get_contents($stylesFolder . $styleName . '.amp-custom.css');
         $customCSSFile = str_replace(array("\r", "\n"), ' ', $customCSSFile);
 
-        return $this->articleColorsStyles($styles) .
-            $this->articleHeadStyles($styles) .
-            $this->articleBodyStyles($styles) .
-            $this->articleQuoteStyles($styles) .
-            $this->articleCaptionStyles($styles) .
-            $this->articleAdditionalCaptionStyles($styles) .
-            $this->articleFooterStyles($styles) .
+        return $this->articleColorsStyles($styles, $context) .
+            $this->articleHeadStyles($styles, $context) .
+            $this->articleBodyStyles($styles, $context) .
+            $this->articleQuoteStyles($styles, $context) .
+            $this->articleCaptionStyles($styles, $context) .
+            $this->articleAdditionalCaptionStyles($styles, $context) .
+            $this->articleFooterStyles($styles, $context) .
             $globalCSSFile .
             $customCSSFile;
     }
 
-    private function articleColorsStyles($styles)
+    private function articleColorsStyles($styles, $context)
     {
       $backgroundColor = AMPArticle::toRGB($styles['background_color']);
       return "html {background-color: $backgroundColor;}";
     }
 
-    private function articleHeadStyles($styles)
+    private function articleHeadStyles($styles, $context)
     {
         $mappings = array(
             // TODO: Logo
             // TODO: Shoud this class be 'ia2amp-header-kicker'
-            '.'.$this->buildClassName('header-category') => 'kicker',
-            '.'.$this->buildClassName('header-h1') => 'title',
-            '.'.$this->buildClassName('header-h2') => 'subtitle',
-            '.'.$this->buildClassName('header h3') => 'byline'
+            $context->buildCssSelector('header-category') => 'kicker',
+            $context->buildCssSelector('header-h1') => 'title',
+            $context->buildCssSelector('header-h2') => 'subtitle',
+            $context->buildCssSelector('header h3') => 'byline'
         );
 
         // Move to constant/static
@@ -621,11 +637,11 @@ class AMPArticle extends Element implements InstantArticleInterface
             }
         }
 
-        return $this->buildCSSRulesFromMappings($mappings, $styles) .
-            $this->articleLogo($styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles, $context) .
+            $this->articleLogo($styles, $context);
     }
 
-    private function articleLogo($styles) {
+    private function articleLogo($styles, $context) {
         $headerStyles = $styles['header'];
         // TODO: Add style for Like button
         // TODO: Build class name
@@ -665,28 +681,28 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $barStyles;
     }
 
-    private function articleBodyStyles($styles)
+    private function articleBodyStyles($styles, $context)
     {
         $mappings = array(
-            '.'.$this->buildClassName('h1') => 'primary_heading',
-            '.'.$this->buildClassName('h2') => 'secondary_heading',
-            '.'.$this->buildClassName('p') => 'body_text',
-            '.'.$this->buildClassName('article a') => 'inline_link',
+            $context->buildCssSelector('h1') => 'primary_heading',
+            $context->buildCssSelector('h2') => 'secondary_heading',
+            $context->buildCssSelector('p') => 'body_text',
+            $context->buildCssSelector('article a') => 'inline_link',
         );
-        return $this->buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
-    private function articleQuoteStyles($styles)
+    private function articleQuoteStyles($styles, $context)
     {
         $mappings = array(
-            '.'.$this->buildClassName('blockquote') => 'block_quote',
-            '.'.$this->buildClassName('pullquote') => 'pull_quote',
-            '.'.$this->buildClassName('pullquote cite') => 'pull_quote_attribution',
+            $context->buildCssSelector('blockquote') => 'block_quote',
+            $context->buildCssSelector('pullquote') => 'pull_quote',
+            $context->buildCssSelector('pullquote cite') => 'pull_quote_attribution',
         );
-        return $this->buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
-    private function articleCaptionStyles($styles)
+    private function articleCaptionStyles($styles, $context)
     {
         $mappings = array(
             // TODO: Validate selectors
@@ -694,26 +710,26 @@ class AMPArticle extends Element implements InstantArticleInterface
             'figcaption h2' => 'caption_description_small',
             'figcaption cite' => 'caption_credit',
         );
-        return $this->buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
-    private function articleAdditionalCaptionStyles($styles)
+    private function articleAdditionalCaptionStyles($styles, $context)
     {
         $mappings = array(
             // TODO: Define mappings for additional styles
         );
-        return $this->buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
-    private function articleFooterStyles($styles)
+    private function articleFooterStyles($styles, $context)
     {
       $mappings = array(
-            '.'.$this->buildClassName('footer') => 'footer',
+            $context->buildCssSelector('footer') => 'footer',
         );
-        return $this->buildCSSRulesFromMappings($mappings, $styles);
+        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
-    private function buildTextCSSDeclarationBlock($textStyles, $textType)
+    private function buildTextCSSDeclarationBlock($textStyles, $textType, $context)
     {
         // TODO: Move to constant
         // TODO: Determine how we want to handle this. React components use screen size and resolution to generate styles dynamically
@@ -831,12 +847,12 @@ class AMPArticle extends Element implements InstantArticleInterface
         return array($spacingType => implode(' ', $spacings));
     }
 
-    private function buildCSSRulesFromMappings($mappings, $styles)
+    private function buildCSSRulesFromMappings($mappings, $styles, $context)
     {
         $rule = '';
         foreach ($mappings as $selector => $objectKey) {
             if (array_key_exists($objectKey, $styles)) {
-                $declarationBlock = $this->buildTextCSSDeclarationBlock($styles[$objectKey], $objectKey);
+                $declarationBlock = $this->buildTextCSSDeclarationBlock($styles[$objectKey], $objectKey, $context);
                 $rule = $rule . AMPArticle::buildCssRule($selector, $declarationBlock);
             }
         }
