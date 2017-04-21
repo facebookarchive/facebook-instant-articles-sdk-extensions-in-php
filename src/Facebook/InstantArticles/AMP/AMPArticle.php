@@ -486,10 +486,8 @@ class AMPArticle extends Element implements InstantArticleInterface
           //     $imageHeight = $imageDimensions[1];
           // }
       }
-      if (isset($imageWidth) && isset($imageHeight)) {
-          $ampCarousel->setAttribute('width', self::DEFAULT_WIDTH);
-          $ampCarousel->setAttribute('height', self::DEFAULT_HEIGHT);
-      }
+      $ampCarousel->setAttribute('width', (string) self::DEFAULT_WIDTH);
+      $ampCarousel->setAttribute('height', (string) self::DEFAULT_HEIGHT);
 
       return $ampCarouselContainer;
     }
