@@ -970,13 +970,6 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $publisher = $this->hook->call('HOOK_AMP_GETPUBLISHER', array($this, 'getPublisher'), array($this->properties));
         if ($publisher) {
-            if (Type::is($publisher, Type::STRING)) {
-                // String values will be treated as organization names
-                $publisher = array(
-                    '@type' => 'Organization',
-                    'name' => $publisher,
-                );
-            }
             $metadata['publisher'] = $publisher;
         }
 
@@ -986,6 +979,16 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function getPublisher($properties)
     {
-        return array_key_exists('publisher', $properties) ? $properties['publisher'] : null;
+        $publisher = array_key_exists('publisher', $properties) ? $properties['publisher'] : null;
+
+        if ($publisher && Type::is($publisher, Type::STRING)) {
+            // String values will be treated as organization names
+            $publisher = array(
+                '@type' => 'Organization',
+                'name' => $publisher,
+            );
+        }
+
+        return $publisher;
     }
 }
