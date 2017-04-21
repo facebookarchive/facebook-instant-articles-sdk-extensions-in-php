@@ -243,6 +243,11 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->verifySchemaOrgHasExpectedValue('image', $expectedImage);
     }
 
+    public function testSchemaOrgDescription()
+    {
+        $this->verifySchemaOrgHasExpectedValue('description', 'The first WOD we never forget! Just to be sure we are talking about same thing, WOD stands for “Workout of the Day”.  You feel you’re already gone on the warm up session.');
+    }
+
     private function getRenderedLogoElement($test = 'test1')
     {
         $xPathQuery = $this->getRenderedMarkupXPathQuery(
