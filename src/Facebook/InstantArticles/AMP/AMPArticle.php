@@ -953,18 +953,9 @@ class AMPArticle extends Element implements InstantArticleInterface
             break; // TODO: How to define multiple authors?
         }
 
-        $cover = $header->getCover();
+        $cover = $this->hook->call('HOOK_AMP_GETMETADATAIMAGE', array($this, 'getMetadataImage'), array($this->properties));
         if ($cover) {
-            if (Type::is($cover, Image::getClassName())) {
-                $metadata['image'] = array(
-                    '@type' => 'ImageObject',
-                    'url' => $cover->getUrl(),
-                    // TODO: Get image dimensions
-                    'width' => 380,
-                    'height' => 240,
-                );
-            }
-            // TODO: Should we take the the first image from a slideshow?
+            $metadata['image'] = $cover;
         }
 
         $publisher = $this->hook->call('HOOK_AMP_GETPUBLISHER', array($this, 'getPublisher'), array($this->properties));
@@ -989,5 +980,36 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         return $publisher;
+    }
+
+    public function getMetadataImage($properties) {
+        $imageURL = null;
+
+        $header = $this->instantArticle->getHeader();
+        $cover = $header->getCover();
+        if ($cover) {
+            if (Type::is($cover, Image::getClassName())) {
+                $imageURL = $cover->getUrl();
+            }
+            else if (Type::is($cover, Slideshow::getClassName())) {
+                // TODO: Add Unit test
+                foreach ($cover->getArticleImages() as $articleImage) {
+                    if ($articleImage->isValid()) {
+                        $imageURL = $articleImage->getUrl();
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return $imageURL ?
+            array(
+                '@type' => 'ImageObject',
+                'url' => $imageURL,
+                // TODO: Get image dimensions
+                'width' => 380,
+                'height' => 240,
+            )
+            : null;
     }
 }
