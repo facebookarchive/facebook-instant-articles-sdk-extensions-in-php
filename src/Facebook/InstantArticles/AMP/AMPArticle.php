@@ -984,20 +984,18 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function getMetadataImage($properties) {
         $imageURL = null;
-
         $header = $this->instantArticle->getHeader();
+        
         $cover = $header->getCover();
         if ($cover) {
-            if (Type::is($cover, Image::getClassName())) {
-                $imageURL = $cover->getUrl();
-            }
-            else if (Type::is($cover, Slideshow::getClassName())) {
-                // TODO: Add Unit test
-                foreach ($cover->getArticleImages() as $articleImage) {
-                    if ($articleImage->isValid()) {
-                        $imageURL = $articleImage->getUrl();
-                        break;
-                    }
+            $imageURL = $this->getImageURLFromElement($cover);
+        }
+        if (!$imageURL) {
+            // Article does not have cover image, look for the first suitable children
+            foreach ($this->instantArticle->getChildren() as $child) {
+                $imageURL = $this->getImageURLFromElement($child);
+                if ($imageURL) {
+                    break;
                 }
             }
         }
@@ -1011,5 +1009,21 @@ class AMPArticle extends Element implements InstantArticleInterface
                 'height' => 240,
             )
             : null;
+    }
+
+    private function getImageURLFromElement($element) {
+        if (Type::is($element, Image::getClassName())) {
+            return $element->getUrl();
+        }
+        else if (Type::is($element, Slideshow::getClassName())) {
+            // TODO: Add Unit test
+            foreach ($element->getArticleImages() as $articleImage) {
+                if ($articleImage->isValid()) {
+                    return $articleImage->getUrl();
+                }
+            }
+        }
+
+        return null;
     }
 }
