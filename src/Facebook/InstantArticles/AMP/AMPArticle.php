@@ -42,11 +42,16 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     const STYLES_FOLDER_KEY = 'styles-folder';
     const OVERRIDE_STYLES_KEY = 'override-styles';
+    const MEDIA_CACHE_FOLDER_KEY = 'media-cache-folder';
+    const ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY = 'enable-download-for-media-sizing';
 
     private $instantArticle;
     /*
        'lang' => 'en-US',
        'css-selector-prefix' => 'ia2amp-',
+       // TODO: Is the value below the expected default value?
+       'media-cache-folder' => '/articles/media',
+       'enable-download-for-media-sizing' => FALSE
      */
     private $properties = array();
     private $hook;
@@ -428,10 +433,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $imageURL = $image->getUrl();
 
-        // $imageDimmensions = getimagesize($imageURL);
-        $imageDimmensions = array(380, 240);
-        $imageWidth = $imageDimmensions[0];
-        $imageHeight = $imageDimmensions[1];
+        $imageDimensions = $this->getImageDimensions($imageURL);
+        $imageWidth = $imageDimensions[0];
+        $imageHeight = $imageDimensions[1];
 
         // Somehow the full width on mobile is 380, so I resize image height on same ratio
         $resizedWidthFactor = (double) (380 / (int) $imageWidth);
@@ -456,13 +460,13 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $imageURL = $image->getUrl();
 
-        // $imageDimmensions = getimagesize($imageURL);
-        // $imageWidth = $imageDimmensions[0];
-        // $imageHeight = $imageDimmensions[1];
+        $imageDimensions = $this->getImageDimensions($imageURL);
+        $imageWidth = $imageDimensions[0];
+        $imageHeight = $imageDimensions[1];
 
         $ampImg->setAttribute('src', $imageURL);
-        $ampImg->setAttribute('width', self::DEFAULT_WIDTH);
-        $ampImg->setAttribute('height', self::DEFAULT_HEIGHT);
+        $ampImg->setAttribute('width', $imageWidth);
+        $ampImg->setAttribute('height', $imageHeight);
 
         return ($withContainer) ? $ampImgContainer : $ampImg;
     }
@@ -506,15 +510,15 @@ class AMPArticle extends Element implements InstantArticleInterface
           $ampImage = $this->buildImage($image, $context, 'slideshow-image', true);
           $ampCarousel->appendChild($ampImage);
 
-          // if (!isset($imageWidth) && !isset($imageHeight)) {
-          //     $imageUrl = $image->getUrl();
-          //     $imageDimensions = getimagesize($imageUrl);
-          //     $imageWidth = $imageDimensions[0];
-          //     $imageHeight = $imageDimensions[1];
-          // }
+          if (!isset($imageWidth) && !isset($imageHeight)) {
+              $imageUrl = $image->getUrl();
+              $imageDimensions = $this->getImageDimensions($imageUrl);
+              $imageWidth = $imageDimensions[0];
+              $imageHeight = $imageDimensions[1];
+          }
       }
-      $ampCarousel->setAttribute('width', (string) self::DEFAULT_WIDTH);
-      $ampCarousel->setAttribute('height', (string) self::DEFAULT_HEIGHT);
+      $ampCarousel->setAttribute('width', (string) $imageWidth);
+      $ampCarousel->setAttribute('height', (string) $imageHeight);
 
       $context->withPreviousElementIdentifier($cssClass);
 
@@ -563,6 +567,45 @@ class AMPArticle extends Element implements InstantArticleInterface
       $cssTextContent = $context->getDocument()->createTextNode($cssDeclarations);
       $ampCustomCSS->appendChild($cssTextContent);
       return $ampCustomCSS;
+    }
+
+    public function getImageDimensions($imageURL)
+    {
+        $imageDimensions = $this->getImageDimensionsFromCache($imageURL);
+        if ($imageDimensions) {
+            return $imageDimensions;
+        }
+
+        if (array_key_exists(self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY, $this->properties) &&
+                $this->properties[self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] === TRUE) {
+            return getimagesize($imageURL);
+        }
+
+        return array(self::DEFAULT_WIDTH, self::DEFAULT_HEIGHT);
+    }
+
+    private function getImageDimensionsFromCache($imageURL)
+    {
+        if (!array_key_exists(self::MEDIA_CACHE_FOLDER_KEY, $this->properties)) {
+            return NULL;
+        }
+
+        $mediaCacheFolder = $this->properties[self::MEDIA_CACHE_FOLDER_KEY];
+        if (!file_exists($mediaCacheFolder)) {
+            return NULL;
+        }
+
+        $fileName = basename($imageURL);
+        if (!$fileName) {
+            return NULL;
+        }
+
+        $cachedFile = $mediaCacheFolder . DIRECTORY_SEPARATOR . $fileName;
+        if (!file_exists($cachedFile)) {
+            return NULL;
+        }
+
+        return getimagesize($cachedFile);
     }
 
     public function getCustomCSS($context)

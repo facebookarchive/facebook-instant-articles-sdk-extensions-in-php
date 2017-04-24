@@ -92,6 +92,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $propeties = array(
             'lang' => 'en-US',
             AMPArticle::STYLES_FOLDER_KEY => __DIR__,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
         );
         if (!is_null($customProperties)) {
             $propeties = array_merge($propeties, $customProperties);
@@ -144,9 +145,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->uploadToS3(__DIR__.'/articles/'.$test.'-amp-converted.html', ''.$test.'-amp-converted-everton.html');
     }
 
-    private function getRenderedMarkupXPathQuery($test, $xPathExpression)
+    private function getRenderedMarkupXPathQuery($test, $xPathExpression, $customProperties = null)
     {
-        $amp_rendered = $this->getRenderedAMP($test);
+        $amp_rendered = $this->getRenderedAMP($test, $customProperties);
 
         libxml_use_internal_errors(true);
         $renderedDocument = new \DOMDocument();
@@ -316,6 +317,59 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $height = $logoElement->getAttribute('height');
 
         $this->assertEquals(44, $height);
+    }
+
+    public function testCachedImageHeight()
+    {
+        $expectedHeight = 215;
+        $customProperties = array(
+            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/images',
+        );
+
+        $coverImageXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'test1',
+            '//header[@class=\'ia2amp-header\']/amp-img',
+            $customProperties
+        );
+        $coverImageElement = $coverImageXPathQuery->item(0);
+
+        $this->assertEquals($expectedHeight, $coverImageElement->getAttribute('height'));
+    }
+
+    public function testImageHeightDownloadDisabled()
+    {
+        $expectedHeight = 240;
+        $customProperties = array(
+            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/images',
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+        );
+
+        $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'test1',
+            '//div[@class=\'ia2amp-slideshow-image\']/amp-img',
+            $customProperties
+        );
+        $firstArticleImageElement = $imageXPathQuery->item(0);
+
+        $this->assertEquals($expectedHeight, $firstArticleImageElement->getAttribute('height'));
+    }
+
+    public function testImageHeightDownloadEnabled()
+    {
+        $expectedHeight = 243;
+        $customProperties = array(
+            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/images',
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => TRUE,
+        );
+
+        $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'test1',
+            '//div[@class=\'ia2amp-slideshow-image\']/amp-img',
+            $customProperties
+        );
+        $firstArticleImageElement = $imageXPathQuery->item(0);
+
+        $this->assertEquals($expectedHeight, $firstArticleImageElement->getAttribute('height'));
     }
 
     /**
