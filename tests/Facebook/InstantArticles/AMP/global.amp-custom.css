@@ -1,6 +1,6 @@
 /*Global Styles*/
 .ia2amp-header-bar {
-    margin: -5px 0 12px 0;
+    margin: -5px 0 0 0;
     height: 55px;
     font: 0/0 a;
 }
@@ -20,7 +20,6 @@
     line-height: 12px;
     display: block;
     font-weight: normal;
-    margin-top: 18.8px;
 }
 .ia2amp-header-h1 {
     font-size: 30px;
@@ -33,7 +32,6 @@
     line-height: 20px;
     display: block;
     font-weight: normal;
-    margin-bottom: 18.8px;
 }
 .ia2amp-header h3 {
     font-size: 8px;
@@ -66,7 +64,6 @@
     font-size: 14px;
     line-height: 20px;
     padding: 0px 13.2px 0px 18.8px;
-    margin-top: 18.8px;
 }
 
 .ia2amp-spacing {
