@@ -233,7 +233,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->verifySchemaOrgHasExpectedValue('author', $expectedAuthor);
     }
 
-    public function testSchemaOrgImage()
+    public function testSchemaOrgImageNoCache()
     {
         $expectedImage = array(
             '@type' => 'ImageObject',
@@ -243,6 +243,21 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->verifySchemaOrgHasExpectedValue('image', $expectedImage);
+    }
+
+    public function testSchemaOrgImageWithCache()
+    {
+        $expectedImage = array(
+            '@type' => 'ImageObject',
+            'url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg',
+            'width' => 400,
+            'height' => 227,
+        );
+        $customProperties = array(
+            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/images',
+        );
+
+        $this->verifySchemaOrgHasExpectedValue('image', $expectedImage, 'test1', $customProperties);
     }
 
     public function testSchemaOrgDescription()

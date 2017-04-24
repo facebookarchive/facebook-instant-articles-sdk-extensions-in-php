@@ -1043,15 +1043,18 @@ class AMPArticle extends Element implements InstantArticleInterface
             }
         }
         
-        return $imageURL ?
-            array(
+        if ($imageURL) {
+            $imageDimensions = $this->getImageDimensions($imageURL);
+
+            return array(
                 '@type' => 'ImageObject',
                 'url' => $imageURL,
-                // TODO: Get image dimensions
-                'width' => 380,
-                'height' => 240,
-            )
-            : null;
+                'width' => $imageDimensions[0],
+                'height' => $imageDimensions[1],
+            );
+        }
+
+        return null;
     }
 
     private function getImageURLFromElement($element) {
