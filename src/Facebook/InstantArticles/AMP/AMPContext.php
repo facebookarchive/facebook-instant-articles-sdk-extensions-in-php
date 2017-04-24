@@ -47,7 +47,7 @@ class AMPContext
      * @param InstantArticle $instantArticle The Element InstantArticle that will be used during conversion.
      * @param string $cssPrefix The css prefix for building element classes.
      */
-    public static function create($document, $instantArticle, $cssPrefix)
+    public static function create($document, $instantArticle, $cssPrefix = "ia2amp-")
     {
         $context = new self();
         return $context->withDocument($document)
