@@ -428,9 +428,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         $ampImg = $context->getDocument()->createElement('amp-img');
-        if ($withContainer) {
-            $ampImgContainer->appendChild($ampImg);
-        }
         $imageURL = $image->getUrl();
 
         $imageDimensions = $this->getImageDimensions($imageURL);
@@ -444,6 +441,22 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampImg->setAttribute('src', $imageURL);
         $ampImg->setAttribute('width', '380');
         $ampImg->setAttribute('height', (string) $newHeight);
+
+        $caption = $image->getCaption();
+        if ($caption) {
+            $ampFigure = $context->createElement('figure');
+            $ampFigure->appendChild($ampImg);
+
+            $ampCaption = $this->buildCaption($caption, $context, $ampFigure);
+            //$ampFigure->appendChild($ampCaption);
+
+            // Replace the top level image element with the figure
+            $ampImg = $ampFigure;
+        }
+
+        if ($withContainer) {
+            $ampImgContainer->appendChild($ampImg);
+        }
 
         return ($withContainer) ? $ampImgContainer : $ampImg;
     }
@@ -523,6 +536,48 @@ class AMPArticle extends Element implements InstantArticleInterface
       $context->withPreviousElementIdentifier($cssClass);
 
       return $ampCarouselContainer;
+    }
+
+    private function buildCaption($caption, $context, $container)
+    {
+        $fontSize = $caption->getFontSize();
+        $cssClass = 'figcaption-' . ($fontSize ? $fontSize : 'small');
+
+        $ampCaption = $context->createElement('figcaption', $container, $cssClass);
+
+        // Title
+        $title = $caption->getTitle();
+        if ($title) {
+            $ampCaptionTitle = $context->createElement('h1', $ampCaption);
+            $ampTitleText = $context->getDocument()->createTextNode($title->getPlainText());
+            $ampCaptionTitle->appendChild($ampTitleText);
+        }
+
+        // SubTitle
+        $subTitle = $caption->getSubTitle();
+        if ($subTitle) {
+            $ampCaptionSubTitle = $context->createElement('h2', $ampCaption);
+            $ampSubTitleText = $context->getDocument()->createTextNode($subTitle->getPlainText());
+            $ampCaptionSubTitle->appendChild($ampSubTitleText);
+        }
+
+        // Text
+        $ampCaptionText = $context->getDocument()->createTextNode($caption->getPlainText());
+        $ampCaption->appendChild($ampCaptionText);
+
+        // Credit
+        $credit = $caption->getCredit();
+        if ($credit) {
+            $ampCaptionCredit = $context->createElement('cite', $ampCaption);
+            $ampCreditText = $context->getDocument()->createTextNode($credit->getPlainText());
+            $ampCaptionCredit->appendChild($amoCreditText);
+        }
+
+        // TODO: textAlignment, verticalAlignment, position
+
+        // TODO: Add unit tests once the Caption element is fixed
+        
+        return $ampCaption;
     }
 
     private function buildIframe($interactive, $context, $cssClass)
@@ -748,10 +803,10 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function articleCaptionStyles($styles, $context)
     {
         $mappings = array(
-            // TODO: Validate selectors
-            'figcaption h1' => 'caption_title_small',
-            'figcaption h2' => 'caption_description_small',
-            'figcaption cite' => 'caption_credit',
+            '.ia2amp-figcaption-small h1' => 'caption_title_small',
+            // TODO: Validate selector. Should it be the same for h2 and inner text?
+            'ia2amp-figcaption-small' => 'caption_description_small',
+            'ia2amp-figcaption-small cite' => 'caption_credit',
         );
         return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }

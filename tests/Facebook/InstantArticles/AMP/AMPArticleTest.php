@@ -343,7 +343,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $coverImageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
-            '//header[@class=\'ia2amp-header\']/amp-img',
+            '//header[@class=\'ia2amp-header\']/figure/amp-img',
             $customProperties
         );
         $coverImageElement = $coverImageXPathQuery->item(0);
@@ -361,7 +361,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
-            '//div[@class=\'ia2amp-slideshow-image\']/amp-img',
+            '//div[@class=\'ia2amp-slideshow-image\']/figure/amp-img',
             $customProperties
         );
         $firstArticleImageElement = $imageXPathQuery->item(0);
@@ -379,7 +379,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
-            '//div[@class=\'ia2amp-slideshow-image\']/amp-img',
+            '//div[@class=\'ia2amp-slideshow-image\']/figure/amp-img',
             $customProperties
         );
         $firstArticleImageElement = $imageXPathQuery->item(0);
@@ -454,9 +454,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             $this->getTextStylesTestData('pull_quote_attribution', '.ia2amp-pullquote cite'),
 
             // Captions
-            $this->getTextStylesTestData('caption_title_small', 'figcaption h1'),
-            $this->getTextStylesTestData('caption_description_small', 'figcaption h2'),
-            $this->getTextStylesTestData('caption_credit', 'figcaption cite'),
+            $this->getTextStylesTestData('caption_title_small', '.ia2amp-figcaption-small h1'),
+            $this->getTextStylesTestData('caption_description_small', 'ia2amp-figcaption-small'),
+            $this->getTextStylesTestData('caption_credit', 'ia2amp-figcaption-small cite'),
 
             // TODO: Additional Caption Sizes
 
