@@ -542,9 +542,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function buildCaption($caption, $context, $container)
     {
         $fontSize = $caption->getFontSize();
-        $cssClass = 'figcaption-' . ($fontSize ? $fontSize : 'small');
-        
-        $ampCaption = $context->createElement('figcaption', $container, $cssClass);        
+        $ampCaption = $context->createElement('figcaption', $container);
         $container->appendChild($ampCaption);
 
         // Title
@@ -575,7 +573,25 @@ class AMPArticle extends Element implements InstantArticleInterface
             $ampCaptionCredit->appendChild($ampCreditText);
         }
 
-        // TODO: textAlignment, verticalAlignment, position
+        $ampCSSClasses = array();
+        $ampCSSClasses[] = $context->buildCssClass('figcaption');
+
+        // Get fontSize, textAlignment, verticalAlignment and position CSS classes
+        if ($caption->getFontSize()) {
+            $ampCSSClasses[] = $caption->getFontSize();
+        }
+        if ($caption->getTextAlignment()) {
+            $ampCSSClasses[] = $caption->getTextAlignment();
+        }
+        if ($caption->getPosition()) {
+            $ampCSSClasses[] = $caption->getPosition();
+        }
+        if ($caption->getPosition()) {
+            $ampCSSClasses[] = $caption->getPosition();
+        }
+        // TODO: Vertical Alignment once getter is available
+
+        $ampCaption->setAttribute('class', implode(' ', $ampCSSClasses));
 
         return $ampCaption;
     }
