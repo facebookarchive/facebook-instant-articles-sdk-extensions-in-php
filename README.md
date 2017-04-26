@@ -1,17 +1,17 @@
 # Facebook Instant Articles PHP SDK Extensions #
 
-[![Build Status](https://travis-ci.org/facebook/facebook-instant-articles-sdk-extensions-php.svg?branch=master)](https://travis-ci.org/facebook/facebook-instant-articles-sdk-extensions-php)
-[![Latest Stable Version](https://poser.pugx.org/facebook/facebook-instant-articles-sdk-php/v/stable)](https://packagist.org/packages/facebook/facebook-instant-articles-sdk-extensions-php)
+[![Build Status](https://travis-ci.org/facebook/facebook-instant-articles-sdk-extensions-in-php.svg?branch=master)](https://travis-ci.org/facebook/facebook-instant-articles-sdk-extensions-in-php)
+[![Latest Stable Version](https://poser.pugx.org/facebook/facebook-instant-articles-sdk-extensions-in-php/v/stable)](https://packagist.org/packages/facebook/facebook-instant-articles-sdk-extensions-in-php)
 
-The Facebook Instant Articles SDK Extensions for PHP provides a native PHP interface for creating AMP, Apple News from a given Instant Articles. This will give developers the ability to have AMP and Apple News right after getting his own Instant Article markup format.
+The Facebook Instant Articles SDK Extensions in PHP provides a native PHP interface for converting valid Instant Articles into AMP and Apple News(Coming soon). This gives developers the ability to have AMP and Apple News right after getting his own Instant Article markup format.
 
 The Extension package consists of:
-- **Dependencies**: It relies solely on the [Instant Articles SDK](https://github.com/Facebook/facebook-instant-articles-sdk-php) to get the Instant Article markup format available into the Elements object tree structure.
+- **Dependencies**: It relies solely on the [Instant Articles SDK](https://github.com/Facebook/facebook-instant-articles-sdk-php) and its dependencies to get the Instant Article markup format available into the Elements object tree structure.
 - **AMP**: The AMP transformation was based on the current implementation and definition from [AMP project](https://www.ampproject.org/).
 - **Apple News**: The Apple News transformation was based on the current implementation and definition from [Apple News Project](https://developer.apple.com/news-publisher/).
 
 ## Quick Start
-TBD
+You can find examples on how to use the different components of this SDK to integrate with your CMS in the [Getting Started section](https://developers.facebook.com/docs/instant-articles/other-formats/#getting-started) of the documentation.
 
 ## Installation
 
