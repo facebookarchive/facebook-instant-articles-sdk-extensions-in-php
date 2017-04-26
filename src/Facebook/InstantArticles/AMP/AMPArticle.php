@@ -542,14 +542,15 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         $fontSize = $caption->getFontSize();
         $cssClass = 'figcaption-' . ($fontSize ? $fontSize : 'small');
-
-        $ampCaption = $context->createElement('figcaption', $container, $cssClass);
+        
+        $ampCaption = $context->createElement('figcaption', $container, $cssClass);        
+        $container->appendChild($ampCaption);
 
         // Title
         $title = $caption->getTitle();
         if ($title) {
             $ampCaptionTitle = $context->createElement('h1', $ampCaption);
-            $ampTitleText = $context->getDocument()->createTextNode($title->getPlainText());
+            $ampTitleText = $title->textToDOMDocumentFragment($context->getDocument());
             $ampCaptionTitle->appendChild($ampTitleText);
         }
 
@@ -557,25 +558,23 @@ class AMPArticle extends Element implements InstantArticleInterface
         $subTitle = $caption->getSubTitle();
         if ($subTitle) {
             $ampCaptionSubTitle = $context->createElement('h2', $ampCaption);
-            $ampSubTitleText = $context->getDocument()->createTextNode($subTitle->getPlainText());
+            $ampSubTitleText = $subTitle->textToDOMDocumentFragment($context->getDocument());
             $ampCaptionSubTitle->appendChild($ampSubTitleText);
         }
 
         // Text
-        $ampCaptionText = $context->getDocument()->createTextNode($caption->getPlainText());
+        $ampCaptionText = $caption->textToDOMDocumentFragment($context->getDocument());
         $ampCaption->appendChild($ampCaptionText);
 
         // Credit
         $credit = $caption->getCredit();
         if ($credit) {
             $ampCaptionCredit = $context->createElement('cite', $ampCaption);
-            $ampCreditText = $context->getDocument()->createTextNode($credit->getPlainText());
-            $ampCaptionCredit->appendChild($amoCreditText);
+            $ampCreditText = $credit->textToDOMDocumentFragment($context->getDocument());
+            $ampCaptionCredit->appendChild($ampCreditText);
         }
 
         // TODO: textAlignment, verticalAlignment, position
-
-        // TODO: Add unit tests once the Caption element is fixed
 
         return $ampCaption;
     }
