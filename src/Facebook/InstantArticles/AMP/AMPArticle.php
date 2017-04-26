@@ -49,6 +49,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     /*
        'lang' => 'en-US',
        'css-selector-prefix' => 'ia2amp-',
+       'styles-folder' => '/articles/styles'
        // TODO: Is the value below the expected default value?
        'media-cache-folder' => '/articles/media',
        'enable-download-for-media-sizing' => FALSE
@@ -679,17 +680,31 @@ class AMPArticle extends Element implements InstantArticleInterface
             $styles = $this->properties[AMPArticle::OVERRIDE_STYLES_KEY];
         }
         else {
-
-            $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
-            $styles = json_decode($stylesFile, true);
+            if (!file_exists($stylesFolder . $styleName . '.style.json')) {
+                $stylesFile = file_get_contents(__DIR__ . '/configuration/default-amp.style.json');
+                $styles = json_decode($stylesFile, true);
+            }
+            else {
+                $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
+                $styles = json_decode($stylesFile, true);
+            }
         }
 
         // TODO: Refactor this logic for custom CSS (global and style specific)
-        $globalCSSFile = file_get_contents($stylesFolder . 'global.amp-custom.css');
-        $globalCSSFile = str_replace(array("\r", "\n"), ' ', $globalCSSFile);
+        if (file_exists($stylesFolder . 'global.amp-custom.css')) {
+            $globalCSSFile = file_get_contents($stylesFolder . 'global.amp-custom.css');
+            $globalCSSFile = str_replace(array("\r", "\n"), ' ', $globalCSSFile);
+        }
 
-        $customCSSFile = file_get_contents($stylesFolder . $styleName . '.amp-custom.css');
-        $customCSSFile = str_replace(array("\r", "\n"), ' ', $customCSSFile);
+        if (file_exists($stylesFolder . $styleName . '.amp-custom.css')) {
+            $customCSSFile = file_get_contents($stylesFolder . $styleName . '.amp-custom.css');
+            $customCSSFile = str_replace(array("\r", "\n"), ' ', $customCSSFile);
+        }
+
+        if (!isset($globalCSSFile) && !isset($customCSSFile)) {
+            $defaultCSSFile = file_get_contents(__DIR__ . '/configuration/global.amp.css');
+            $defaultCSSFile = str_replace(array("\r", "\n"), ' ', $defaultCSSFile);
+        }
 
         return $this->articleColorsStyles($styles, $context) .
             $this->articleHeadStyles($styles, $context) .
@@ -698,8 +713,9 @@ class AMPArticle extends Element implements InstantArticleInterface
             $this->articleCaptionStyles($styles, $context) .
             $this->articleAdditionalCaptionStyles($styles, $context) .
             $this->articleFooterStyles($styles, $context) .
-            $globalCSSFile .
-            $customCSSFile;
+            (isset($globalCSSFile) ? $globalCSSFile : '').
+            (isset($customCSSFile) ? $customCSSFile : '').
+            (!isset($globalCSSFile) && !isset($customCSSFile) ? $defaultCSSFile : '');
     }
 
     private function articleColorsStyles($styles, $context)

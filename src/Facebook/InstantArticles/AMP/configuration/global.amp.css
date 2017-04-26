@@ -1,0 +1,138 @@
+/*Global Styles*/
+.ia2amp-header-bar {
+    margin: -5px 0 0 0;
+    height: 55px;
+    font: 0/0 a;
+}
+.ia2amp-header-bar:before {
+    content: ' ';
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+    width: 16.4px;
+}
+.ia2amp-header-bar-img-container {
+    display: inline-block;
+    vertical-align: middle;
+}
+.ia2amp-header-category {
+    font-size: 10px;
+    line-height: 12px;
+    display: block;
+    font-weight: normal;
+}
+.ia2amp-header-h1 {
+    font-size: 30px;
+    line-height: 30px;
+    display: block;
+    font-weight: normal;
+}
+.ia2amp-header-h2 {
+    font-size: 16px;
+    line-height: 20px;
+    display: block;
+    font-weight: normal;
+}
+.ia2amp-header h3 {
+    font-size: 8px;
+    line-height: 12px;
+    display: block;
+    font-weight: normal;
+}
+
+.ia2amp-h1, .ia2amp-h2, .ia2amp-h3 {
+    display: block;
+    font-weight: normal;
+}
+
+.ia2amp-h1 {
+    font-size: 19px;
+    line-height: 23px;
+}
+
+.ia2amp-h2 {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.ia2amp-p {
+    font-size: 14px;
+    line-height: 20px;
+    display: inline-block;
+}
+.ia2amp-blockquote {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 0px 13.2px 0px 18.8px;
+}
+
+.ia2amp-spacing {
+    display: block;
+    height: 18.8px;
+}
+
+/* Same element family spacing */
+
+.ia2amp-spacing-li-li {
+    height: 13.2px;
+}
+
+.ia2amp-spacing-footer-footer {
+    height: 18.8px;
+}
+
+.ia2amp-spacing-covermedia-logo {
+    height: 0;
+}
+
+.ia2amp-spacing-annotationtitle-annotationdesription {
+    height: 0;
+}
+
+.ia2amp-spacing-storycard {
+    height: 0;
+}
+
+/* Spacing */
+
+.ia2amp-header-h1 + .ia2amp-spacing, .ia2amp-header-category + .ia2amp-spacing {
+    height: 13.2px;
+}
+
+.ia2amp-header-author + .ia2amp-spacing {
+    height: 0;
+}
+
+.ia2amp-header-date + .ia2amp-spacing {
+    height: 26.4px;
+}
+
+.ia2amp-blockquote + .ia2amp-spacing {
+    height: 18.8px;
+}
+
+.ia2amp-slideshow + .ia2amp-spacing, .ia2amp-interactive + .ia2amp-spacing, .ia2amp-image + .ia2amp-spacing {
+    height: 26.4px;
+}
+
+/* Different element family spacing */
+
+.ia2amp-spacing-covermedia-kicker {
+    height: 13.2px;
+}
+
+.ia2amp-spacing-title-byline, .ia2amp-spacing-subtitle-byline {
+    height: 18.8px;
+}
+
+.ia2amp-spacing-byline-h1, .ia2amp-spacing-byline-p {
+    height: 26.4px;
+}
+
+.ia2amp-spacing-blockquote-p {
+    height: 18.8px;
+}
+
+.ia2amp-spacing-h1-p, .ia2amp-spacing-h2-p, .ia2amp-spacing-h3-p {
+    height: 18.8px;
+}
