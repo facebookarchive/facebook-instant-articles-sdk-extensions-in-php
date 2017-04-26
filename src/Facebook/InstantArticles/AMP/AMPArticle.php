@@ -99,7 +99,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $this->instantArticle;
     }
 
-    public function render($doctype = '<!doctype html>', $format = false)
+    public function render($doctype = '<!doctype html>', $format = true)
     {
         $doctype = is_null($doctype) ? '<!doctype html>' : $doctype;
         $rendered = parent::render($doctype, $format);
@@ -576,7 +576,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         // TODO: textAlignment, verticalAlignment, position
 
         // TODO: Add unit tests once the Caption element is fixed
-        
+
         return $ampCaption;
     }
 
@@ -1083,7 +1083,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     public function getMetadataImage($properties) {
         $imageURL = null;
         $header = $this->instantArticle->getHeader();
-        
+
         $cover = $header->getCover();
         if ($cover) {
             $imageURL = $this->getImageURLFromElement($cover);
@@ -1097,7 +1097,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                 }
             }
         }
-        
+
         if ($imageURL) {
             $imageDimensions = $this->getImageDimensions($imageURL);
 
