@@ -138,11 +138,11 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->compareIgnoringStyles($ampExpected, $ampRendered);
 
         // Sets content into the file for fast testing
-        //file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted.html', $ampRendered);
+        // file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted.html', $ampRendered);
 
         // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
         // AMP url for testing: https://search.google.com/search-console/amp
-        // $this->uploadToS3(__DIR__.'/articles/'.$test.'-amp-converted.html', ''.$test.'-amp-converted.html');
+        // $this->uploadToS3(__DIR__.'/articles/'.$test.'-amp-converted.html', ''.$test.'-amp-converted-everton.html');
     }
 
     private function getRenderedMarkupXPathQuery($test, $xPathExpression, $customProperties = null)
@@ -868,6 +868,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
                     str_pad(dechex($blue), 2, '0', STR_PAD_LEFT);
     }
 
+    /*
+    TODO remove this before release and before squash
+    */
     public function uploadToS3($fileToUpload, $fileNameToStoreAtS3)
     {
         $awsClient = S3Client::factory(array(
