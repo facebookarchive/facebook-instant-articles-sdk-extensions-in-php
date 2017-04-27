@@ -476,9 +476,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         $ampImg = $context->getDocument()->createElement('amp-anim');
-        if ($withContainer) {
-            $ampImgContainer->appendChild($ampImg);
-        }
         $imageURL = $image->getUrl();
 
         $imageDimensions = $this->getMediaDimensions($imageURL);
@@ -488,6 +485,18 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampImg->setAttribute('src', $imageURL);
         $ampImg->setAttribute('width', $imageWidth);
         $ampImg->setAttribute('height', $imageHeight);
+
+        $caption = $image->getCaption();
+        if ($caption) {
+            $ampFigure = $this->buildCaption($caption, $context, $image);
+
+            // Replace the top level image with the figure
+            $ampImg = $ampFigure;
+        }
+
+        if ($withContainer) {
+            $ampImgContainer->appendChild($ampImg);
+        }
 
         return ($withContainer) ? $ampImgContainer : $ampImg;
     }
