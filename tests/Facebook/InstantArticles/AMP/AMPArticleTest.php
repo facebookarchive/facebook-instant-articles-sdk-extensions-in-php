@@ -387,6 +387,24 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedHeight, $firstArticleImageElement->getAttribute('height'));
     }
 
+    public function testImageHeightDefaultProperty()
+    {
+        $expectedHeight = 120;
+        $customProperties = array(
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::DEFAULT_MEDIA_HEIGHT_KEY => $expectedHeight,
+        );
+
+        $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'test1',
+            '//div[@class=\'ia2amp-slideshow-image\']/figure/amp-img',
+            $customProperties
+        );
+        $firstArticleImageElement = $imageXPathQuery->item(0);
+
+        $this->assertEquals($expectedHeight, $firstArticleImageElement->getAttribute('height'));
+    }
+
     /**
     * @dataProvider testToRGBDataProvider
     */

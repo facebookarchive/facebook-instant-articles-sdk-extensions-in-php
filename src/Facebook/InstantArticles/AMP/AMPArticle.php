@@ -46,6 +46,8 @@ class AMPArticle extends Element implements InstantArticleInterface
     const OVERRIDE_STYLES_KEY = 'override-styles';
     const MEDIA_CACHE_FOLDER_KEY = 'media-cache-folder';
     const ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY = 'enable-download-for-media-sizing';
+    const DEFAULT_MEDIA_WIDTH_KEY = 'default-media-width';
+    const DEFAULT_MEDIA_HEIGHT_KEY = 'default-media-height';
 
     private $instantArticle;
     /*
@@ -54,7 +56,9 @@ class AMPArticle extends Element implements InstantArticleInterface
        'styles-folder' => '/articles/styles'
        // TODO: Is the value below the expected default value?
        'media-cache-folder' => '/articles/media',
-       'enable-download-for-media-sizing' => FALSE
+       'enable-download-for-media-sizing' => FALSE,
+       'default-media-width' => 380,
+       'default-media-height' => 240,
      */
     private $properties = array();
     private $hook;
@@ -436,7 +440,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampImg = $context->getDocument()->createElement('amp-img');
         $imageURL = $image->getUrl();
 
-        $imageDimensions = $this->getImageDimensions($imageURL);
+        $imageDimensions = $this->getMediaDimensions($imageURL);
         $imageWidth = $imageDimensions[0];
         $imageHeight = $imageDimensions[1];
 
@@ -475,7 +479,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $imageURL = $image->getUrl();
 
-        $imageDimensions = $this->getImageDimensions($imageURL);
+        $imageDimensions = $this->getMediaDimensions($imageURL);
         $imageWidth = $imageDimensions[0];
         $imageHeight = $imageDimensions[1];
 
@@ -527,7 +531,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
           if (!isset($imageWidth) && !isset($imageHeight)) {
               $imageUrl = $image->getUrl();
-              $imageDimensions = $this->getImageDimensions($imageUrl);
+              $imageDimensions = $this->getMediaDimensions($imageUrl);
               $imageWidth = $imageDimensions[0];
               $imageHeight = $imageDimensions[1];
           }
@@ -682,22 +686,29 @@ class AMPArticle extends Element implements InstantArticleInterface
       return $ampCustomCSS;
     }
 
-    public function getImageDimensions($imageURL)
+    public function getMediaDimensions($mediaURL)
     {
-        $imageDimensions = $this->getImageDimensionsFromCache($imageURL);
-        if ($imageDimensions) {
-            return $imageDimensions;
+        $mediaDimensions = $this->getMediaDimensionsFromCache($mediaURL);
+        if ($mediaDimensions) {
+            return $mediaDimensions;
         }
 
         if (array_key_exists(self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY, $this->properties) &&
                 $this->properties[self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] === TRUE) {
-            return getimagesize($imageURL);
+            return getimagesize($mediaURL);
         }
 
-        return array(self::DEFAULT_WIDTH, self::DEFAULT_HEIGHT);
+        $width = array_key_exists(self::DEFAULT_MEDIA_WIDTH_KEY, $this->properties)
+            ? $this->properties[self::DEFAULT_MEDIA_WIDTH_KEY]
+            : self::DEFAULT_WIDTH;
+        $height = array_key_exists(self::DEFAULT_MEDIA_HEIGHT_KEY, $this->properties)
+            ? $this->properties[self::DEFAULT_MEDIA_HEIGHT_KEY]
+            : self::DEFAULT_HEIGHT;
+
+        return array($width, $height);
     }
 
-    private function getImageDimensionsFromCache($imageURL)
+    private function getMediaDimensionsFromCache($mediaURL)
     {
         if (!array_key_exists(self::MEDIA_CACHE_FOLDER_KEY, $this->properties)) {
             return NULL;
@@ -708,7 +719,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             return NULL;
         }
 
-        $fileName = basename($imageURL);
+        $fileName = basename($mediaURL);
         if (!$fileName) {
             return NULL;
         }
@@ -1151,7 +1162,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         if ($imageURL) {
-            $imageDimensions = $this->getImageDimensions($imageURL);
+            $imageDimensions = $this->getMediaDimensions($imageURL);
 
             return array(
                 '@type' => 'ImageObject',
