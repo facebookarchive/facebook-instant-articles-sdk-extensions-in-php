@@ -450,12 +450,8 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $caption = $image->getCaption();
         if ($caption) {
-            $ampFigure = $context->createElement('figure', null, 'figure');
-            $ampFigure->appendChild($ampImg);
-
-            $ampCaption = $this->buildCaption($caption, $context, $ampFigure);
-            //$ampFigure->appendChild($ampCaption);
-
+            $ampFigure = $this->buildCaption($caption, $context, $ampImg);
+            
             // Replace the top level image element with the figure
             $ampImg = $ampFigure;
         }
@@ -544,13 +540,24 @@ class AMPArticle extends Element implements InstantArticleInterface
       return $ampCarouselContainer;
     }
 
-    private function buildCaption($caption, $context, $container)
+    private function buildCaption($caption, $context, $ampCaptionedElement)
     {
+        $container = $context->createElement('figure', null, 'figure');     
+
         $fontSize = $caption->getFontSize();
         $cssClass = 'figcaption-' . ($fontSize ? $fontSize : 'small');
 
         $ampCaption = $context->createElement('figcaption', $container, $cssClass);
-        $container->appendChild($ampCaption);
+
+        $position = $caption->getPosition();
+        if ($position === Caption::POSITION_BELOW) {
+            $container->appendChild($ampCaptionedElement);
+            $container->appendChild($ampCaption);
+        }
+        else {
+            $container->appendChild($ampCaption);
+            $container->appendChild($ampCaptionedElement);
+        }
 
         // Title
         $title = $caption->getTitle();
@@ -601,7 +608,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $ampCaption->setAttribute('class', implode(' ', $ampCSSClasses));
 
-        return $ampCaption;
+        return $container;
     }
 
     private function buildIframe($interactive, $context, $cssClass)

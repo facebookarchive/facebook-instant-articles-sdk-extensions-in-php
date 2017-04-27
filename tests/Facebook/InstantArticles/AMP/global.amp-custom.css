@@ -116,6 +116,15 @@ header figure figcaption {
     text-align: right;
 }
 
+.ia2amp-figure {
+    position: relative;
+}
+
+figcaption.ia2amp-op-vertical-center {
+    position: absolute;
+    z-index: 1000;
+}
+
 /* Same element family spacing */
 
 .ia2amp-spacing-li-li {
