@@ -688,8 +688,6 @@ class AMPArticle extends Element implements InstantArticleInterface
             ? $this->properties[AMPArticle::STYLES_FOLDER_KEY]
             : __DIR__) . '/';
 
-        // TODO: Make sure you don't have double slashes in the path above
-
         $styleName = $this->instantArticle->getStyle();
         if ($styleName == NULL) {
             $styleName = 'default';
@@ -746,14 +744,13 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         $mappings = array(
             // TODO: Logo
-            // TODO: Shoud this class be 'ia2amp-header-kicker'
             $context->buildCssSelector('header-category') => 'kicker',
             $context->buildCssSelector('header-h1') => 'title',
             $context->buildCssSelector('header-h2') => 'subtitle',
             $context->buildCssSelector('header h3') => 'byline'
         );
 
-        // Move to constant/static
+        // TODO: Move to constant/static
         $dateFormatMappings = array(
             'MONTH_AND_DAY' => 'F d',
             'MONTH_AND_YEAR' => 'F Y',
@@ -864,29 +861,12 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function buildTextCSSDeclarationBlock($textStyles, $textType, $context)
     {
         // TODO: Move to constant
-        // TODO: Determine how we want to handle this. React components use screen size and resolution to generate styles dynamically
-
-        // $textSizes = array(
-        //     'title' => 60,
-        //     'subtitle' => 38,
-        //     'body_text' => 34,
-        //     'block_quote' => 34,
-        //     'pull_quote' => 46,
-        //     // TODO: Add all
-        // );
-
-        // TODO: Move to constant
         $mappings = array(
             'font-family' => 'font',
             'text-align' => 'text_alignment',
             'display' => 'display',
-            // TODO: Implement
         );
         $filteredMappings = AMPArticle::filterMappings($mappings, $textStyles);
-
-        // $textSize = ((array_key_exists($textType, $textSizes) ? $textSizes[$textType] : 25) * $textStyles['text_size_scale']) . 'px';
-        // $filteredMappings['font-size'] = $textSize;
-        // $filteredMappings['line-height'] = ($textStyles['line_height_scale'] * 100) . '%';
 
         $textTransformMappings = array(
             'ALL_CAPS' => 'uppercase',
@@ -1062,7 +1042,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         $published = $header->getPublished();
         $modified = $header->getModified();
 
-        // TODO: Finish implementation
         $metadata = array(
             '@content' => 'http://schema.org',
             '@type' => 'NewsArticle',
@@ -1082,7 +1061,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                 '@type' => 'Person',
                 'name' => $author->getName(),
             );
-            break; // TODO: How to define multiple authors?
+            break;
         }
 
         $cover = $this->hook->call('HOOK_AMP_GETMETADATAIMAGE', array($this, 'getMetadataImage'), array($this->properties));
