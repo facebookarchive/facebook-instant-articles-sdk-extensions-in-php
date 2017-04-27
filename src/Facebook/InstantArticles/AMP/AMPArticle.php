@@ -32,7 +32,7 @@ use Facebook\InstantArticles\Elements\InstantArticleInterface;
 
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
-use Facebook\InstantArticles\Hook\Hook;
+use Facebook\InstantArticles\Utils\Hook;
 
 class AMPArticle extends Element implements InstantArticleInterface
 {
@@ -498,7 +498,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         // $videoWidth = $videoDimensions[0];
         // $videoHeight = $videoDimensions[1];
 
-        $ampVideo->setAttribute('src', $videoUrl);
+        $ampVideo->setAttribute('src', $this->ensureHttps($videoUrl));
         $ampVideo->setAttribute('width', self::DEFAULT_WIDTH);
         $ampVideo->setAttribute('height', self::DEFAULT_HEIGHT);
 
@@ -629,7 +629,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $ampIframe = $context->getDocument()->createElement('amp-iframe');
         $iframeContainer->appendChild($ampIframe);
-        $ampIframe->setAttribute('src', $srcUrl);
+        $ampIframe->setAttribute('src', $this->ensureHttps($srcUrl));
         $ampIframe->setAttribute('width', self::DEFAULT_WIDTH);
         $ampIframe->setAttribute('height', self::DEFAULT_HEIGHT);
         $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
@@ -650,7 +650,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampAd = $context->createElement('amp-iframe', $ampAdContainer);
 
         if (!Type::isTextEmpty($srcUrl)) {
-            $ampAd->setAttribute('src', $srcUrl);
+            $ampAd->setAttribute('src', $this->ensureHttps($srcUrl));
         }
         $ampAd->setAttribute('width', $width ? $width : self::DEFAULT_WIDTH);
         $ampAd->setAttribute('height', $height ? $height : self::DEFAULT_HEIGHT);
@@ -1178,5 +1178,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         return null;
+    }
+
+    private function ensureHttps($url)
+    {
+        return Type::isTextEmpty($url) ? $url : preg_replace("/^http:/i", "https:", $url);
     }
 }
