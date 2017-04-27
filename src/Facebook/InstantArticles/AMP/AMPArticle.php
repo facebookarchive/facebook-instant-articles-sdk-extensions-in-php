@@ -707,7 +707,17 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         // TODO google maps requires a key to embed
         // The URL should be: https://www.google.com/maps/embed/v1/place?key=<API_GOOGLE_KEY>q=%2244.0,122.0%22
-        return $context->createElement('div');
+        $ampMap = $context->createElement('div');
+
+        $caption = $map->getCaption();
+        if ($caption) {
+            $ampFigure = $this->buildCaption($caption, $context, $ampMap);
+
+            // Replace the top level map with the figure
+            $ampMap = $ampFigure;
+        }
+
+        return $ampMap;
     }
 
     private function buildCustomCSS($context) {
