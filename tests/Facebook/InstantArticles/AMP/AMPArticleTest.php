@@ -435,7 +435,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
             'natgeo',
-            '//div[@class=\'ia2amp-video\']/amp-video',
+            '//amp-video',
             $customProperties
         );
         $firstArticleVideoElement = $videoXPathQuery->item(0);
@@ -455,7 +455,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
             'natgeo',
-            '//div[@class=\'ia2amp-video\']/amp-video',
+            '//amp-video',
             $customProperties
         );
         $firstArticleVideoElement = $videoXPathQuery->item(0);
@@ -475,7 +475,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
             'natgeo',
-            '//div[@class=\'ia2amp-video\']/amp-video',
+            '//amp-video',
             $customProperties
         );
         $firstArticleVideoElement = $videoXPathQuery->item(0);

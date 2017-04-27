@@ -497,7 +497,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampVideoContainer = $context->createElement('div', null, $cssClass);
 
         $ampVideo = $context->getDocument()->createElement('amp-video');
-        $ampVideoContainer->appendChild($ampVideo);
         $videoUrl = $video->getUrl();
 
         $videoDimensions = $this->getMediaDimensions($videoUrl);
@@ -507,6 +506,16 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampVideo->setAttribute('src', $this->ensureHttps($videoUrl));
         $ampVideo->setAttribute('width', $videoWidth);
         $ampVideo->setAttribute('height', $videoHeight);
+
+        $caption = $video->getCaption();
+        if ($caption) {
+            $ampFigure = $this->buildCaption($caption, $context, $ampVideo);
+
+            // Replace the top level video with the figure
+            $ampVideo = $ampFigure;
+        }
+
+        $ampVideoContainer->appendChild($ampVideo);
 
         return $ampVideoContainer;
     }
