@@ -364,7 +364,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                         $containsIframe = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
                     }
-                    $childElement = $this->buildIframe($child, $context, 'interactive');
+                    $childElement = $this->buildIframe($child, $context, 'interactive', true);
                 }
                 else if (Type::is($child, Map::getClassName())) {
                     if (!$containsIframe) {
@@ -648,7 +648,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $container;
     }
 
-    private function buildIframe($interactive, $context, $cssClass)
+    private function buildIframe($interactive, $context, $cssClass, $isCaptionable)
     {
         $srcUrl = $interactive->getSource();
 
@@ -665,13 +665,24 @@ class AMPArticle extends Element implements InstantArticleInterface
         $iframeContainer = $context->createElement('div', null, $cssClass);
 
         $ampIframe = $context->getDocument()->createElement('amp-iframe');
-        $iframeContainer->appendChild($ampIframe);
         $ampIframe->setAttribute('src', $this->ensureHttps($srcUrl));
         $ampIframe->setAttribute('width', self::DEFAULT_WIDTH);
         $ampIframe->setAttribute('height', self::DEFAULT_HEIGHT);
         $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
         $ampIframe->setAttribute('layout', 'responsive');
         $ampIframe->setAttribute('frameborder', '0');
+
+        if ($isCaptionable) {
+            $caption = $interactive->getCaption();
+            if ($caption) {
+                $ampFigure = $this->buildCaption($caption, $context, $ampIframe);
+
+                // Replace the top level iframe with the figure
+                $ampIframe = $ampFigure;
+            }
+        }
+
+        $iframeContainer->appendChild($ampIframe);
 
         return $iframeContainer;
     }
