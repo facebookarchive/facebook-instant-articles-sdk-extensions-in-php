@@ -11,6 +11,7 @@ namespace Facebook\InstantArticles\AMP;
 use Facebook\InstantArticles\Elements\Element;
 use Facebook\InstantArticles\Elements\Paragraph;
 use Facebook\InstantArticles\Elements\Blockquote;
+use Facebook\InstantArticles\Elements\Ad;
 use Facebook\InstantArticles\Elements\H1;
 use Facebook\InstantArticles\Elements\H2;
 use Facebook\InstantArticles\Elements\ListElement;
@@ -370,6 +371,9 @@ class AMPArticle extends Element implements InstantArticleInterface
                     $childElement->setAttribute('class', $context->buildCssClass('related-articles'));
                     // TODO RelatedArticles
                 }
+                else if (Type::is($child, Ad::getClassName())) {
+                    $childElement = $this->buildAd($child, $context, 'ad');
+                }
                 else {
                     // Not a know element, bypasses it
                     continue;
@@ -543,7 +547,9 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function buildCaption($caption, $context, $container)
     {
         $fontSize = $caption->getFontSize();
-        $ampCaption = $context->createElement('figcaption', $container);
+        $cssClass = 'figcaption-' . ($fontSize ? $fontSize : 'small');
+
+        $ampCaption = $context->createElement('figcaption', $container, $cssClass);
         $container->appendChild($ampCaption);
 
         // Title
@@ -624,6 +630,33 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampIframe->setAttribute('frameborder', '0');
 
         return $iframeContainer;
+    }
+
+    private function buildAd($ad, $context, $cssClass)
+    {
+        $srcUrl = $ad->getSource();
+        $html = $ad->getHtml();
+        $height = $ad->getHeight();
+        $width = $ad->getWidth();
+
+        $ampAdContainer = $context->createElement('div', null, $cssClass);
+        $ampAd = $context->createElement('amp-iframe', $ampAdContainer);
+
+        if (!Type::isTextEmpty($srcUrl)) {
+            $ampAd->setAttribute('src', $srcUrl);
+        }
+        $ampAd->setAttribute('width', $width ? $width : self::DEFAULT_WIDTH);
+        $ampAd->setAttribute('height', $height ? $height : self::DEFAULT_HEIGHT);
+        $ampAd->setAttribute('sandbox', 'allow-scripts allow-same-origin');
+        $ampAd->setAttribute('layout', 'responsive');
+        $ampAd->setAttribute('frameborder', '0');
+
+        if ($html) {
+            $iframeBody = $context->getDocument()->importNode($html, true);
+            $ampAd->appendChild($iframeBody);
+        }
+
+        return $ampAdContainer;
     }
 
     private function buildMaps($map, $context, $cssClass)
@@ -834,10 +867,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         $mappings = array(
             '.ia2amp-op-small h1' => 'caption_title_small',
             '.ia2amp-op-small h2' => 'caption_description_small',
-            
+
             '.ia2amp-op-medium h1' => 'caption_title',
             '.ia2amp-op-medium h2' => 'caption_description',
-            
+
             '.ia2amp-op-large h1' => 'caption_title_large',
             '.ia2amp-op-large h2' => 'caption_description_large',
 

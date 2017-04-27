@@ -138,7 +138,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->compareIgnoringStyles($ampExpected, $ampRendered);
 
         // Sets content into the file for fast testing
-        // file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted.html', $ampRendered);
+        //file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted.html', $ampRendered);
 
         // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
         // AMP url for testing: https://search.google.com/search-console/amp
@@ -454,15 +454,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             $this->getTextStylesTestData('pull_quote_attribution', '.ia2amp-pullquote cite'),
 
             // Captions
-            $this->getTextStylesTestData('caption_title_small', '.ia2amp-op-small h1'),
-            $this->getTextStylesTestData('caption_description_small', '.ia2amp-op-small h2'),
-            $this->getTextStylesTestData('caption_title', '.ia2amp-op-medium h1'),
-            $this->getTextStylesTestData('caption_description', '.ia2amp-op-medium h2'),
-            $this->getTextStylesTestData('caption_title_large', '.ia2amp-op-large h1'),
-            $this->getTextStylesTestData('caption_description_large', '.ia2amp-op-large h2'),
-            $this->getTextStylesTestData('caption_title_extra_large', '.ia2amp-op-extra-large h1'),
-            $this->getTextStylesTestData('caption_description_extra_large', '.ia2amp-op-extra-large h2'),
-            $this->getTextStylesTestData('caption_credit', '.ia2amp-figcaption cite'),
+            $this->getTextStylesTestData('caption_title_small', '.ia2amp-figcaption-small h1'),
+            $this->getTextStylesTestData('caption_description_small', 'ia2amp-figcaption-small'),
+            $this->getTextStylesTestData('caption_credit', 'ia2amp-figcaption-small cite'),
 
             // TODO: Additional Caption Sizes
 
