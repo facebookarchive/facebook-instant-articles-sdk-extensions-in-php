@@ -565,6 +565,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampCaption = $context->createElement('figcaption', $container, $cssClass);
 
         $position = $caption->getPosition();
+        if (!$position) {
+            $position = Caption::POSITION_BELOW;
+        }
+
         if ($position === Caption::POSITION_BELOW) {
             $container->appendChild($ampCaptionedElement);
             $container->appendChild($ampCaption);
