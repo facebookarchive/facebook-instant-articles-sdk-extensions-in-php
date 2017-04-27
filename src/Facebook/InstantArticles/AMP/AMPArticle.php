@@ -500,13 +500,13 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampVideoContainer->appendChild($ampVideo);
         $videoUrl = $video->getUrl();
 
-        // $videoDimensions = getimagesize($videoUrl);
-        // $videoWidth = $videoDimensions[0];
-        // $videoHeight = $videoDimensions[1];
+        $videoDimensions = $this->getMediaDimensions($videoUrl);
+        $videoWidth = $videoDimensions[0];
+        $videoHeight = $videoDimensions[1];
 
         $ampVideo->setAttribute('src', $this->ensureHttps($videoUrl));
-        $ampVideo->setAttribute('width', self::DEFAULT_WIDTH);
-        $ampVideo->setAttribute('height', self::DEFAULT_HEIGHT);
+        $ampVideo->setAttribute('width', $videoWidth);
+        $ampVideo->setAttribute('height', $videoHeight);
 
         return $ampVideoContainer;
     }

@@ -254,7 +254,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             'height' => 227,
         );
         $customProperties = array(
-            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/images',
+            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
         );
 
         $this->verifySchemaOrgHasExpectedValue('image', $expectedImage, 'test1', $customProperties);
@@ -338,7 +338,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $expectedHeight = 215;
         $customProperties = array(
-            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/images',
+            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
         );
 
         $coverImageXPathQuery = $this->getRenderedMarkupXPathQuery(
@@ -355,7 +355,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $expectedHeight = 240;
         $customProperties = array(
-            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/images',
+            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
         );
 
@@ -373,7 +373,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $expectedHeight = 243;
         $customProperties = array(
-            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/images',
+            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => TRUE,
         );
 
@@ -423,6 +423,64 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $firstArticleImageElement = $imageXPathQuery->item(0);
 
         $this->assertEquals($expectedHeight, $firstArticleImageElement->getAttribute('height'));
+    }
+
+    public function testVideoHeightDefaultProperty()
+    {
+        $expectedHeight = 120;
+        $customProperties = array(
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::DEFAULT_MEDIA_HEIGHT_KEY => $expectedHeight,
+        );
+
+        $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'natgeo',
+            '//div[@class=\'ia2amp-video\']/amp-video',
+            $customProperties
+        );
+        $firstArticleVideoElement = $videoXPathQuery->item(0);
+
+        $this->assertEquals($expectedHeight, $firstArticleVideoElement->getAttribute('height'));
+    }
+
+    public function testVideoWidthFromMediaSizes()
+    {
+        $expectedWidth = 90;
+        $customProperties = array(
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::MEDIA_SIZES_KEY => array(
+                "http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mov" => array($expectedWidth, 60),
+            ),
+        );
+
+        $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'natgeo',
+            '//div[@class=\'ia2amp-video\']/amp-video',
+            $customProperties
+        );
+        $firstArticleVideoElement = $videoXPathQuery->item(0);
+
+        $this->assertEquals($expectedWidth, $firstArticleVideoElement->getAttribute('width'));
+    }
+
+    public function testVideoHeightFromMediaSizes()
+    {
+        $expectedHeight = 60;
+        $customProperties = array(
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::MEDIA_SIZES_KEY => array(
+                "http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mov" => array(90, $expectedHeight),
+            ),
+        );
+
+        $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'natgeo',
+            '//div[@class=\'ia2amp-video\']/amp-video',
+            $customProperties
+        );
+        $firstArticleVideoElement = $videoXPathQuery->item(0);
+
+        $this->assertEquals($expectedHeight, $firstArticleVideoElement->getAttribute('height'));
     }
 
     /**
