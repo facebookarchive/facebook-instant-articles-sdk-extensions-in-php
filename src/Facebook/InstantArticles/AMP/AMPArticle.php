@@ -589,10 +589,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($caption->getPosition()) {
             $ampCSSClasses[] = $context->buildCssClass($caption->getPosition());
         }
-        if ($caption->getPosition()) {
-            $ampCSSClasses[] = $context->buildCssClass($caption->getPosition());
+        if ($caption->getVerticalAlignment()) {
+            $ampCSSClasses[] = $context->buildCssClass($caption->getVerticalAlignment());
         }
-        // TODO: Vertical Alignment once getter is available
 
         $ampCaption->setAttribute('class', implode(' ', $ampCSSClasses));
 

@@ -104,6 +104,18 @@ header figure figcaption {
     display: block;
 }
 
+.ia2amp-op-left {
+    text-align: left;
+}
+
+.ia2amp-op-center {
+    text-align: center;
+}
+
+.ia2amp-op-right {
+    text-align: right;
+}
+
 /* Same element family spacing */
 
 .ia2amp-spacing-li-li {
