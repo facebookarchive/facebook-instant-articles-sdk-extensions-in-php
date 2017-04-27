@@ -540,28 +540,37 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function buildSlideshow($slideshow, $context, $cssClass)
     {
-      $ampCarouselContainer = $context->createElement('div', null, $cssClass);
+        $ampCarouselContainer = $context->createElement('div', null, $cssClass);
 
-      $ampCarousel = $context->getDocument()->createElement('amp-carousel');
-      $ampCarouselContainer->appendChild($ampCarousel);
+        $ampCarousel = $context->getDocument()->createElement('amp-carousel');
+        
+        foreach ($slideshow->getArticleImages() as $image) {
+            $ampImage = $this->buildImage($image, $context, 'slideshow-image', true);
+            $ampCarousel->appendChild($ampImage);
 
-      foreach ($slideshow->getArticleImages() as $image) {
-          $ampImage = $this->buildImage($image, $context, 'slideshow-image', true);
-          $ampCarousel->appendChild($ampImage);
+            if (!isset($imageWidth) && !isset($imageHeight)) {
+                $imageUrl = $image->getUrl();
+                $imageDimensions = $this->getMediaDimensions($imageUrl);
+                $imageWidth = $imageDimensions[0];
+                $imageHeight = $imageDimensions[1];
+            }
+        }
+        $ampCarousel->setAttribute('width', (string) $imageWidth);
+        $ampCarousel->setAttribute('height', (string) $imageHeight);
 
-          if (!isset($imageWidth) && !isset($imageHeight)) {
-              $imageUrl = $image->getUrl();
-              $imageDimensions = $this->getMediaDimensions($imageUrl);
-              $imageWidth = $imageDimensions[0];
-              $imageHeight = $imageDimensions[1];
-          }
-      }
-      $ampCarousel->setAttribute('width', (string) $imageWidth);
-      $ampCarousel->setAttribute('height', (string) $imageHeight);
+        $caption = $slideshow->getCaption();
+        if ($caption) {
+            $ampFigure = $this->buildCaption($caption, $context, $ampCarousel);
 
-      $context->withPreviousElementIdentifier($cssClass);
+            // Replace the top level carousel with the figure
+            $ampCarousel = $ampFigure;
+        }
 
-      return $ampCarouselContainer;
+        $ampCarouselContainer->appendChild($ampCarousel);
+
+        $context->withPreviousElementIdentifier($cssClass);
+
+        return $ampCarouselContainer;
     }
 
     private function buildCaption($caption, $context, $ampCaptionedElement)
