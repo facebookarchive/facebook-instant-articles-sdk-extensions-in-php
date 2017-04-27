@@ -34,6 +34,7 @@ class AMPContext
 
     private $cssPrefix;
     private $previousElementIdentifier;
+    private $previousSpacing;
 
     /**
      * Private constructor. Use self::create($document, $instantArticle)
@@ -145,8 +146,15 @@ class AMPContext
      */
     public function buildSpacingDiv($container)
     {
+        if ($this->previousSpacing) {
+            if (!Type::isTextEmpty($this->previousElementIdentifier)) {
+                $class = $this->previousSpacing->getAttribute('class');
+                $class = $class.' before-'.$this->previousElementIdentifier;
+                $this->previousSpacing->setAttribute('class', $class);
+            }
+        }
         $previousClass = Type::isTextEmpty($this->previousElementIdentifier) ? '' : ' after-'.$this->previousElementIdentifier;
-        $this->createElement('div', $container, 'spacing'.$previousClass);
+        $this->previousSpacing = $this->createElement('div', $container, 'spacing'.$previousClass);
     }
 
     /**
