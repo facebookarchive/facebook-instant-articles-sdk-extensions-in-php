@@ -71,6 +71,39 @@
     height: 18.8px;
 }
 
+header figure figcaption {
+    display: none;
+}
+
+.ia2amp-figure {
+    margin: 0;
+}
+
+.ia2amp-op-small h1, .ia2amp-op-small h2 {
+    font-size: 10px;
+    display: block;
+}
+
+.ia2amp-op-medium h1, .ia2amp-op-medium h2 {
+    font-size: 14px;
+    display: block;
+}
+
+.ia2amp-op-large h1, .ia2amp-op-large h2 {
+    font-size: 16px;
+    display: block;
+}
+
+.ia2amp-op-extra-large h1, .ia2amp-op-extra-large h2 {
+    font-size: 23px;
+    display: block;
+}
+
+.ia2amp-figcaption cite {
+    font-size: 8px;
+    display: block;
+}
+
 /* Same element family spacing */
 
 .ia2amp-spacing-li-li {

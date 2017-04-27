@@ -16,6 +16,7 @@ use Facebook\InstantArticles\Elements\H2;
 use Facebook\InstantArticles\Elements\ListElement;
 use Facebook\InstantArticles\Elements\Pullquote;
 use Facebook\InstantArticles\Elements\Image;
+use Facebook\InstantArticles\Elements\Caption;
 use Facebook\InstantArticles\Elements\AnimatedGIF;
 use Facebook\InstantArticles\Elements\Video;
 use Facebook\InstantArticles\Elements\Audio;
@@ -445,7 +446,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $caption = $image->getCaption();
         if ($caption) {
-            $ampFigure = $context->createElement('figure');
+            $ampFigure = $context->createElement('figure', null, 'figure');
             $ampFigure->appendChild($ampImg);
 
             $ampCaption = $this->buildCaption($caption, $context, $ampFigure);
@@ -576,18 +577,20 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampCSSClasses = array();
         $ampCSSClasses[] = $context->buildCssClass('figcaption');
 
-        // Get fontSize, textAlignment, verticalAlignment and position CSS classes
         if ($caption->getFontSize()) {
-            $ampCSSClasses[] = $caption->getFontSize();
+            $ampCSSClasses[] = $context->buildCssClass($caption->getFontSize());
+        }
+        else {
+            $ampCSSClasses[] = $context->buildCssClass(Caption::SIZE_SMALL);
         }
         if ($caption->getTextAlignment()) {
-            $ampCSSClasses[] = $caption->getTextAlignment();
+            $ampCSSClasses[] = $context->buildCssClass($caption->getTextAlignment());
         }
         if ($caption->getPosition()) {
-            $ampCSSClasses[] = $caption->getPosition();
+            $ampCSSClasses[] = $context->buildCssClass($caption->getPosition());
         }
         if ($caption->getPosition()) {
-            $ampCSSClasses[] = $caption->getPosition();
+            $ampCSSClasses[] = $context->buildCssClass($caption->getPosition());
         }
         // TODO: Vertical Alignment once getter is available
 
@@ -727,7 +730,6 @@ class AMPArticle extends Element implements InstantArticleInterface
             $this->articleBodyStyles($styles, $context) .
             $this->articleQuoteStyles($styles, $context) .
             $this->articleCaptionStyles($styles, $context) .
-            $this->articleAdditionalCaptionStyles($styles, $context) .
             $this->articleFooterStyles($styles, $context) .
             (isset($globalCSSFile) ? $globalCSSFile : '').
             (isset($customCSSFile) ? $customCSSFile : '').
@@ -834,18 +836,19 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function articleCaptionStyles($styles, $context)
     {
         $mappings = array(
-            '.ia2amp-figcaption-small h1' => 'caption_title_small',
-            // TODO: Validate selector. Should it be the same for h2 and inner text?
-            'ia2amp-figcaption-small' => 'caption_description_small',
-            'ia2amp-figcaption-small cite' => 'caption_credit',
-        );
-        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
-    }
+            '.ia2amp-op-small h1' => 'caption_title_small',
+            '.ia2amp-op-small h2' => 'caption_description_small',
+            
+            '.ia2amp-op-medium h1' => 'caption_title',
+            '.ia2amp-op-medium h2' => 'caption_description',
+            
+            '.ia2amp-op-large h1' => 'caption_title_large',
+            '.ia2amp-op-large h2' => 'caption_description_large',
 
-    private function articleAdditionalCaptionStyles($styles, $context)
-    {
-        $mappings = array(
-            // TODO: Define mappings for additional styles
+            '.ia2amp-op-extra-large h1' => 'caption_title_extra_large',
+            '.ia2amp-op-extra-large h2' => 'caption_description_extra_large',
+
+            '.ia2amp-figcaption cite' => 'caption_credit',
         );
         return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
