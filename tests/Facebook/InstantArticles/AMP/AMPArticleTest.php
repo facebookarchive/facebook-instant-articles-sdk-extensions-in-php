@@ -405,6 +405,26 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedHeight, $firstArticleImageElement->getAttribute('height'));
     }
 
+    public function testImageHeightFromMediaSizes()
+    {
+        $expectedHeight = 253;
+        $customProperties = array(
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::MEDIA_SIZES_KEY => array(
+                "http://blog.wod.expert/wp-content/uploads/2017/03/fail2.jpg" => array(90, 60),
+            ),
+        );
+
+        $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'test1',
+            '//div[@class=\'ia2amp-slideshow-image\']/figure/amp-img',
+            $customProperties
+        );
+        $firstArticleImageElement = $imageXPathQuery->item(0);
+
+        $this->assertEquals($expectedHeight, $firstArticleImageElement->getAttribute('height'));
+    }
+
     /**
     * @dataProvider testToRGBDataProvider
     */

@@ -48,6 +48,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     const ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY = 'enable-download-for-media-sizing';
     const DEFAULT_MEDIA_WIDTH_KEY = 'default-media-width';
     const DEFAULT_MEDIA_HEIGHT_KEY = 'default-media-height';
+    const MEDIA_SIZES_KEY = 'media-sizes';
 
     private $instantArticle;
     /*
@@ -59,6 +60,7 @@ class AMPArticle extends Element implements InstantArticleInterface
        'enable-download-for-media-sizing' => FALSE,
        'default-media-width' => 380,
        'default-media-height' => 240,
+       'media-sizes' => array(),
      */
     private $properties = array();
     private $hook;
@@ -688,6 +690,11 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function getMediaDimensions($mediaURL)
     {
+        if (array_key_exists(self::MEDIA_SIZES_KEY,  $this->properties) &&
+                array_key_exists($mediaURL, $this->properties[self::MEDIA_SIZES_KEY])) {
+            return $this->properties[self::MEDIA_SIZES_KEY][$mediaURL];
+        }
+
         $mediaDimensions = $this->getMediaDimensionsFromCache($mediaURL);
         if ($mediaDimensions) {
             return $mediaDimensions;
