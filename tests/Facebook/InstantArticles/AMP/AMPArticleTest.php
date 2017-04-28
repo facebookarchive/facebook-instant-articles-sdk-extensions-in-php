@@ -483,6 +483,30 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedHeight, $firstArticleVideoElement->getAttribute('height'));
     }
 
+    public function testFooterCredits()
+    {
+        $creditsXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'test1',
+            '//article/footer/aside'
+        );
+
+        $creditsElement = $creditsXPathQuery->item(0);
+
+        $this->assertEquals('WOD Expert', trim($creditsElement->textContent));
+    }
+
+    public function testFooterCopyright()
+    {
+        $copyrightXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'test1',
+            '//article/footer/small'
+        );
+
+        $copyrightElement = $copyrightXPathQuery->item(0);
+
+        $this->assertEquals('© 2017 WOD Expert', trim($copyrightElement->textContent));
+    }
+
     /**
     * @dataProvider testToRGBDataProvider
     */
@@ -559,8 +583,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             $this->getTextStylesTestData('caption_title_extra_large', '.ia2amp-op-extra-large h1'),
             $this->getTextStylesTestData('caption_description_extra_large', '.ia2amp-op-extra-large h2'),
             $this->getTextStylesTestData('caption_credit', '.ia2amp-figcaption cite'),
-
-            // TODO: Additional Caption Sizes
 
             // Footer
             $this->getTextStylesTestData('footer', '.ia2amp-footer')

@@ -403,11 +403,36 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $element;
     }
 
-    public function transformArticleFooter()
+    public function transformArticleFooter($context)
     {
-        // if ($instantArticle->getFooter() && $this->instantArticle->getFooter()->isValid()) {
-        //     $article->appendChild($this->instantArticle->getFooter()->toDOMElement($context->getDocument()));
-        // }
+        $footer = $this->instantArticle->getFooter();
+        if ($footer && $footer->isValid()) {
+            $ampFooter = $context->createElement('footer', null, 'footer');
+            $context->getArticle()->appendChild($ampFooter);
+
+            // Credits
+            $credits = $footer->getCredits();
+            if ($credits) {
+                $ampCredits = $context->createElement('aside', $ampFooter);
+                if (is_array($credits)) {
+                    foreach ($credits as $paragraph) {
+                        $ampCredits->appendChild($paragraph->toDOMElement($context->getDocument()));
+                    }
+                }
+                else {
+                    $ampCredits->appendChild($context->getDocument()->createTextNode($credits));
+                }
+            }
+
+            // Copyright
+            $copyright = $footer->getCopyright();
+            if ($copyright) {
+                $ampCopyright = $context->createElement('small', $ampFooter);
+                $ampCopyright->appendChild($copyright->textToDOMDocumentFragment($context->getDocument()));
+            }
+
+            return $ampFooter;
+        }
         return null;
     }
 

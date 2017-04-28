@@ -125,6 +125,16 @@ figcaption.ia2amp-op-vertical-center {
     z-index: 1000;
 }
 
+.ia2amp-footer {
+    display: block;
+    font-size: 12px;
+    line-height: 17px;
+}
+
+.ia2amp-footer aside p {
+    margin: 0;
+}
+
 /* Same element family spacing */
 
 .ia2amp-spacing-li-li {
