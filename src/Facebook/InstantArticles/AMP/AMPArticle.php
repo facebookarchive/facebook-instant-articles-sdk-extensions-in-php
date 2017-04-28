@@ -49,6 +49,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     const DEFAULT_MEDIA_WIDTH_KEY = 'default-media-width';
     const DEFAULT_MEDIA_HEIGHT_KEY = 'default-media-height';
     const MEDIA_SIZES_KEY = 'media-sizes';
+    const PUBLISHER_KEY = 'publisher';
 
     private $instantArticle;
     /*
@@ -61,6 +62,7 @@ class AMPArticle extends Element implements InstantArticleInterface
        'default-media-width' => 380,
        'default-media-height' => 240,
        'media-sizes' => array(),
+       'publisher' => array(),
      */
     private $properties = array();
     private $hook;
@@ -1177,7 +1179,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $modified = $header->getModified();
 
         $metadata = array(
-            '@content' => 'http://schema.org',
+            '@context' => 'http://schema.org',
             '@type' => 'NewsArticle',
             'mainEntityOfPage' => $this->instantArticle->getCanonicalURL(),
             'headline' => $this->instantArticle->getHeader()->getTitle()->getPlainText(),
@@ -1214,7 +1216,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function getPublisher($properties)
     {
-        $publisher = array_key_exists('publisher', $properties) ? $properties['publisher'] : null;
+        $publisher = array_key_exists(self::PUBLISHER_KEY, $properties) ? $properties[self::PUBLISHER_KEY] : null;
 
         if ($publisher && Type::is($publisher, Type::STRING)) {
             // String values will be treated as organization names

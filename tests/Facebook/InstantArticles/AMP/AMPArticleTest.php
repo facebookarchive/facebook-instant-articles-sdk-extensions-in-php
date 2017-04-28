@@ -57,27 +57,44 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testTransformIAtoAMPTest1()
     {
-        $this->runIAtoAMPTest('test1');
+        $this->runWodExpertTransformIAtoAMPTest('test1');
     }
 
     public function testTransformIAtoAMPTest2()
     {
-        $this->runIAtoAMPTest('test2');
+        $this->runWodExpertTransformIAtoAMPTest('test2');
     }
 
     public function testTransformIAtoAMPTest3()
     {
-        $this->runIAtoAMPTest('test3');
+        $this->runWodExpertTransformIAtoAMPTest('test3');
     }
 
     public function testTransformIAtoAMPTest4()
     {
-        $this->runIAtoAMPTest('test4');
+        $this->runWodExpertTransformIAtoAMPTest('test4');
     }
 
     public function testTransformIAtoAMPTest5()
     {
-        $this->runIAtoAMPTest('test5');
+        $this->runWodExpertTransformIAtoAMPTest('test5');
+    }
+
+    private function runWodExpertTransformIAtoAMPTest($test)
+    {
+        $customProperties = array(
+            AMPArticle::PUBLISHER_KEY => array(
+                '@type' => 'Organization',
+                'name' => 'WOD Expert',
+                'logo' => array(
+                    '@type' => 'ImageObject',
+                    'url' => 'http://blog.wod.expert/wp-content/uploads/2017/04/wod-expert-amp-org-logo.png',
+                    'width' => 600,
+                    'height' => 60,
+                ),
+            )
+        );
+        $this->runIAtoAMPTest($test, $customProperties);
     }
 
     public function testTransformIAtoAMPTestNatGeo()
@@ -130,9 +147,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($ampExpectedNoStyles, $ampRenderedNoStyles);
     }
 
-    public function runIAtoAMPTest($test)
+    public function runIAtoAMPTest($test, $customProperties = null)
     {
-        $ampRendered = $this->getRenderedAMP($test);
+        $ampRendered = $this->getRenderedAMP($test, $customProperties);
 
         $ampExpected = file_get_contents(__DIR__.'/articles/'.$test.'-amp-converted.html');
         $this->compareIgnoringStyles($ampExpected, $ampRendered);
@@ -190,7 +207,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testSchemaOrgContext()
     {
-        $this->verifySchemaOrgHasExpectedValue('@content', 'http://schema.org');
+        $this->verifySchemaOrgHasExpectedValue('@context', 'http://schema.org');
     }
 
     public function testSchemaOrgType()
@@ -268,7 +285,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     public function testSchemaOrgPublisherName()
     {
         $publisherName = 'The Publisher';
-        $customProperties = array('publisher' => $publisherName);
+        $customProperties = array(AMPArticle::PUBLISHER_KEY => $publisherName);
 
         $expectedPublisher = array(
             '@type' => 'Organization',
@@ -284,7 +301,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             '@type' => 'Robot',
             'name' => 'The Robot',
         );
-        $customProperties = array('publisher' => $publisher);
+        $customProperties = array(AMPArticle::PUBLISHER_KEY => $publisher);
 
         $this->verifySchemaOrgHasExpectedValue('publisher', $publisher, 'test1', $customProperties);
     }
