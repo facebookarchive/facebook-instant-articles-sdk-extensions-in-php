@@ -67,16 +67,18 @@ class AMPArticle extends Element implements InstantArticleInterface
        'publisher' => array(),
      */
     private $properties = array();
+<<<<<<< 55d004dfe13ffb562985b47d84e871d5efdd7e06
 
     /**
      * @var Observer The instance for Observing and Hooking system for extensions
      */
     private $observer;
 
+=======
+    private $hook;
+>>>>>>> Refactoring AMPArticle->transformArticleHeader
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
-    private $logoURL;
-    private $logoWidth;
-    private $logoHeight;
+    private $logo;
 
     private function __construct($instantArticle, $properties, $observer)
     {
@@ -184,71 +186,14 @@ class AMPArticle extends Element implements InstantArticleInterface
         // Builds the content Header, with proper colors and image, adding to body
         $header = $context->createElement('header', $context->getBody(), 'header');
 
-
-        if (isset($this->logoURL)) {
-            $logoURL = $this->logoURL;
-            $logoWidth = $this->logoWidth;
-            $logoHeight = $this->logoHeight;
-        }
-
         // Creates the cover content for the header and appends to the header
         if ($context->getInstantArticle()->getHeader()->getCover()) {
             $headerCover = $this->buildCover($context->getInstantArticle()->getHeader()->getCover(), $context);
             $header->appendChild($headerCover);
         }
 
-        // Creates the header bar with image (maybe fb like?) and appends to header
-        $headerBar = $context->createElement('div', $header, 'header-bar');
-        $context->buildSpacingDiv($header);
-        if (isset($this->logoURL)) {
-            $ampImageContainer = $context->createElement('div', $headerBar, 'header-bar-img-container');
-            $ampImage = $context->createElement(
-                'amp-img',
-                $ampImageContainer,
-                null,
-                array(
-                    'src' => $logoURL,
-                    'width' => $logoWidth,
-                    'height' => $logoHeight
-                ));
-        }
-
-        // The kicker for article
-        if ($context->getInstantArticle()->getHeader()->getKicker()) {
-            $kicker = $context->createElement('h2', $header, 'header-category');
-            $kicker->appendChild($context->getInstantArticle()->getHeader()->getKicker()->textToDOMDocumentFragment($context->getDocument()));
-            $context->buildSpacingDiv($header);
-        }
-
-        // The Title for article
-        $h1 = $context->createElement('h1', $header, 'header-h1');
-        $h1->appendChild($context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument()));
-        $context->buildSpacingDiv($header);
-
-        // The subtitle
-        if ($context->getInstantArticle()->getHeader()->getSubtitle()) {
-            $subtitle = $context->createElement('h2', $header, 'header-subtitle');
-            $subtitle->appendChild($context->getInstantArticle()->getHeader()->getSubtitle()->textToDOMDocumentFragment($context->getDocument()));
-            $context->buildSpacingDiv($header);
-        }
-
-        // The article authors
-        $authors = $context->createElement('h3', $header, 'header-author');
-        $authorsElement = $context->getInstantArticle()->getHeader()->getAuthors();
-        $authorsString = [];
-        foreach($authorsElement as $author) {
-            $authorsString[] = $author->getName();
-        }
-        $authors->appendChild($context->getDocument()->createTextNode('BY '.implode($authorsString, ', ')));
-        $context->buildSpacingDiv($header);
-
-        // Aritcle publish date
-        $publishDate = $context->createElement('h3', $header, 'header-date');
-        $datetime = $context->getInstantArticle()->getHeader()->getPublished()->getDatetime();
-        $publishDate->appendChild($context->getDocument()->createTextNode(date_format($datetime, $this->dateFormat)));
-        $context->buildSpacingDiv($header);
-
-        return $header;
+        $ampHeader = new AMPHeader($header, $this->logo, $context);
+        return $ampHeader->build();
     }
 
     public function transformMetaInfoHead($context)
@@ -1027,9 +972,10 @@ class AMPArticle extends Element implements InstantArticleInterface
             $defaultLogoWidth / $logoWidth
         );
 
-        $this->logoURL = $dataURL ? $dataURL : $fullResURL;
-        $this->logoWidth = (int) ($logoWidth * $resizeScale);
-        $this->logoHeight = (int) ($logoHeight * $resizeScale);
+        $logoURL = $dataURL ? $dataURL : $fullResURL;
+        $scaledLogoWidth = (int) ($logoWidth * $resizeScale);
+        $scaledLogoHeight = (int) ($logoHeight * $resizeScale);
+        $this->logo = new AMPLogo($logoURL, $scaledLogoWidth, $scaledLogoHeight);
 
         return $barStyles;
     }
