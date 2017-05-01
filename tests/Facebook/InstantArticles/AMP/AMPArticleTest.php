@@ -57,32 +57,37 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testTransformIAtoAMPTest1()
     {
-        $this->runWodExpertTransformIAtoAMPTest('test1');
+        $customProperties = $this->getWodExpertCustomProperties();
+        $this->runIAtoAMPTest('test1', $customProperties);
     }
 
     public function testTransformIAtoAMPTest2()
     {
-        $this->runWodExpertTransformIAtoAMPTest('test2');
+        $customProperties = $this->getWodExpertCustomProperties();
+        $this->runIAtoAMPTest('test2', $customProperties);
     }
 
     public function testTransformIAtoAMPTest3()
     {
-        $this->runWodExpertTransformIAtoAMPTest('test3');
+        $customProperties = $this->getWodExpertCustomProperties();
+        $this->runIAtoAMPTest('test3', $customProperties);
     }
 
     public function testTransformIAtoAMPTest4()
     {
-        $this->runWodExpertTransformIAtoAMPTest('test4');
+        $customProperties = $this->getWodExpertCustomProperties();
+        $this->runIAtoAMPTest('test4', $customProperties);
     }
 
     public function testTransformIAtoAMPTest5()
     {
-        $this->runWodExpertTransformIAtoAMPTest('test5');
+        $customProperties = $this->getWodExpertCustomProperties();
+        $this->runIAtoAMPTest('test5', $customProperties);
     }
 
-    private function runWodExpertTransformIAtoAMPTest($test)
+    private function getWodExpertCustomProperties()
     {
-        $customProperties = array(
+        return array(
             AMPArticle::PUBLISHER_KEY => array(
                 '@type' => 'Organization',
                 'name' => 'WOD Expert',
@@ -94,7 +99,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
                 ),
             )
         );
-        $this->runIAtoAMPTest($test, $customProperties);
     }
 
     public function testTransformIAtoAMPTestNatGeo()
