@@ -50,6 +50,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     const DEFAULT_MEDIA_HEIGHT_KEY = 'default-media-height';
     const MEDIA_SIZES_KEY = 'media-sizes';
     const PUBLISHER_KEY = 'publisher';
+    const GOOGLE_MAPS_KEY = 'google_maps_key';
 
     private $instantArticle;
     /*
@@ -747,19 +748,79 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function buildMaps($map, $context, $cssClass)
     {
-        // TODO google maps requires a key to embed
+        $mapJson = $map->getGeotag();
+        if (!$mapJson || Type::isTextEmpty($mapJson)) {
+            // TODO Create warning system on context
+            //$context->addWarning('Map::getGeotag returned an empty map definition.', $map);
+        }
+
+        $coordinates = $this->extractCoordinatesFromGeotag($mapJson);
+        if (!$coordinates || empty($coordinates)) {
+            // TODO Create warning system on context
+            //$context->addWarning('Map::getGeotag invalid or incompatible. We could not extract latitud and/or longitud from it.', $mapJson);
+        }
+        $latitud = $coordinates['latitud'];
+        $longitud = $coordinates['longitud'];
+
+        // By default it will use Google Maps as mapping system
         // The URL should be: https://www.google.com/maps/embed/v1/place?key=<API_GOOGLE_KEY>q=%2244.0,122.0%22
-        $ampMap = $context->createElement('div');
+        $srcUrl = "https://www.google.com/maps/embed/v1/place?key=$googkeAPIKeyq=%22$latitud,$longitud%22";
+
+        // <amp-iframe
+        //   width="600"
+        //   height="400"
+        //   layout="responsive"
+        //   sandbox="allow-scripts allow-same-origin allow-popups"
+        //   frameborder="0"
+        //   src="https://www.google.com/maps/embed/v1/place?key=<key>&q="44.0,122.0">
+        // </amp-iframe>
+
+        $ampMap = $context->createElement('div', null, $cssClass);
+
+        $ampIframe = $context->getDocument()->createElement('amp-iframe');
+        $ampIframe->setAttribute('src', $srcUrl);
+        $ampIframe->setAttribute('width', self::DEFAULT_WIDTH);
+        $ampIframe->setAttribute('height', self::DEFAULT_HEIGHT);
+        $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups');
+        $ampIframe->setAttribute('layout', 'responsive');
+        $ampIframe->setAttribute('frameborder', '0');
 
         $caption = $map->getCaption();
         if ($caption) {
-            $ampFigure = $this->buildCaption($caption, $context, $ampMap);
-
-            // Replace the top level map with the figure
-            $ampMap = $ampFigure;
+            // Replace the top level map with the wrapped figure with caption
+            $ampMap = $this->buildCaption($caption, $context, $ampMap);
         }
 
         return $ampMap;
+    }
+
+    /**
+     * Extracts latitud and longitud from Geotag json.
+     * Example json expected on $mapJson:
+     * <code>
+     *      {
+     *          "type": "Feature",
+     *          "geometry": {
+     *               "type": "Point",
+     *               "coordinates": [23.166667, 89.216667]   // This is the content we are looking for.
+     *          },
+     *          "properties": {
+     *               "title": "Jessore, Bangladesh",
+     *               "radius": 750000,
+     *               "pivot": true,
+     *               "style": "satellite",
+     *           }
+     *       }
+     * </code>
+     * @param string $mapJson The geotag format json string. It will look for the geometry->coordinates attribute.
+     */
+    private function extractCoordinatesFromGeotag($mapJson)
+    {
+        $geotag = json_decode($mapJson, true);
+        if (isset($geotag['geometry']) && isset($geotag['geometry']['coordinates'])) {
+            return $geotag['geometry']['coordinates'];
+        }
+        return null;
     }
 
     private function buildCustomCSS($context) {
