@@ -325,66 +325,66 @@ class AMPArticle extends Element implements InstantArticleInterface
                     }
                 }
                 if (Type::is($child, Paragraph::getClassName())) {
-                    $childElement = $this->buildRegularDomElement($context, $child, 'p');
+                    $childElement = $this->observer->applyFilters('IA_PARAGRAPH', $this->buildRegularDomElement($context, $child, 'p'), $child, $context);
                 }
                 else if (Type::is($child, Blockquote::getClassName())) {
-                    $childElement = $this->buildRegularDomElement($context, $child, 'blockquote');
+                    $childElement = $this->observer->applyFilters('IA_BLOCKQUOTE', $this->buildRegularDomElement($context, $child, 'blockquote'), $child, $context);
                 }
                 else if (Type::is($child, H1::getClassName())) {
-                    $childElement = $this->buildRegularDomElement($context, $child, 'h1');
+                    $childElement = $this->observer->applyFilters('IA_H1', $this->buildRegularDomElement($context, $child, 'h1'), $child, $context);
                 }
                 else if (Type::is($child, H2::getClassName())) {
-                    $childElement = $this->buildRegularDomElement($context, $child, 'h2');
+                    $childElement = $this->observer->applyFilters('IA_H2', $this->buildRegularDomElement($context, $child, 'h2'), $child, $context);
                 }
                 else if (Type::is($child, ListElement::getClassName())) {
-                    $childElement = $this->buildRegularDomElement($context, $child, 'list');
+                    $childElement = $this->observer->applyFilters('IA_LIST', $this->buildRegularDomElement($context, $child, 'list'), $child, $context);
                 }
                 else if (Type::is($child, Pullquote::getClassName())) {
-                    $childElement = $this->buildRegularDomElement($context, $child, 'pullquote');
+                    $childElement = $this->observer->applyFilters('IA_PULLQUOTE', $this->buildRegularDomElement($context, $child, 'pullquote'), $child, $context);
                 }
                 else if (Type::is($child, Image::getClassName())) {
-                    $childElement = $this->buildImage($child, $context, 'image');
+                    $childElement = $this->observer->applyFilters('IA_IMAGE', $this->buildImage($child, $context, 'image'), $child, $context);
                 }
                 else if (Type::is($child, AnimatedGIF::getClassName())) {
-                    $childElement = $this->buildGIF($child, $context, 'gif');
+                    $childElement = $this->observer->applyFilters('IA_GIF', $this->buildGIF($child, $context, 'gif'), $child, $context);
                 }
                 else if (Type::is($child, Video::getClassName())) {
-                    $childElement = $this->buildVideo($child, $context, 'video');
+                    $childElement = $this->observer->applyFilters('IA_VIDEO', $this->buildVideo($child, $context, 'video'), $child, $context);
                 }
                 else if (Type::is($child, Audio::getClassName())) {
                     if (!$containsAudio) {
                         $containsAudio = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-audio', 'https://cdn.ampproject.org/v0/amp-audio-0.1.js', $context));
                     }
-                    $childElement = $this->buildAudio($child, $context, 'audio');
+                    $childElement = $this->observer->applyFilters('IA_AUDIO', $this->buildAudio($child, $context, 'audio'), $child, $context);
                 }
                 else if (Type::is($child, Slideshow::getClassName())) {
                     if (!$containsSlideshow) {
                         $containsSlideshow = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-carousel', 'https://cdn.ampproject.org/v0/amp-carousel-0.1.js', $context));
                     }
-                    $childElement = $this->buildSlideshow($child, $context, 'slideshow');
+                    $childElement = $this->observer->applyFilters('IA_SLIDESHOW', $this->buildSlideshow($child, $context, 'slideshow'), $child, $context);
                 }
                 else if (Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
                     }
-                    $childElement = $this->buildIframe($child, $context, 'interactive', true);
+                    $childElement = $this->observer->applyFilters('IA_INTERACTIVE', $this->buildIframe($child, $context, 'interactive', true), $child, $context);
                 }
                 else if (Type::is($child, Map::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
                     }
-                    $childElement = $this->buildMaps($child, $context, 'map');
+                    $childElement = $this->observer->applyFilters('IA_MAP', $this->buildMaps($child, $context, 'map'), $child, $context);
                 }
                 else if (Type::is($child, RelatedArticles::getClassName())) {
                     $childElement->setAttribute('class', $context->buildCssClass('related-articles'));
                     // TODO RelatedArticles
                 }
                 else if (Type::is($child, Ad::getClassName())) {
-                    $childElement = $this->buildAd($child, $context, 'ad');
+                    $childElement = $this->observer->applyFilters('IA_AD', $this->buildAd($child, $context, 'ad'), $child, $context);
                 }
                 else {
                     // Not a know element, bypasses it
