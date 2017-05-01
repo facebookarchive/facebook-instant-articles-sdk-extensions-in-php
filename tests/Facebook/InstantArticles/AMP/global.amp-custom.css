@@ -182,8 +182,11 @@ figcaption.ia2amp-op-vertical-center {
 }
 
 .ia2amp-spacing.after-slideshow,
+.ia2amp-spacing.before-slideshow,
 .ia2amp-spacing.after-interactive,
+.ia2amp-spacing.before-interactive,
 .ia2amp-spacing.after-image,
+.ia2amp-spacing.before-image,
 .ia2amp-spacing.after-figcaption-small,
 .ia2amp-spacing.after-figcaption-medium,
 .ia2amp-spacing.after-figcaption-large,
