@@ -67,16 +67,12 @@ class AMPArticle extends Element implements InstantArticleInterface
        'publisher' => array(),
      */
     private $properties = array();
-<<<<<<< 55d004dfe13ffb562985b47d84e871d5efdd7e06
 
     /**
      * @var Observer The instance for Observing and Hooking system for extensions
      */
     private $observer;
 
-=======
-    private $hook;
->>>>>>> Refactoring AMPArticle->transformArticleHeader
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
     private $logo;
 
@@ -975,7 +971,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $logoURL = $dataURL ? $dataURL : $fullResURL;
         $scaledLogoWidth = (int) ($logoWidth * $resizeScale);
         $scaledLogoHeight = (int) ($logoHeight * $resizeScale);
-        $this->logo = new AMPLogo($logoURL, $scaledLogoWidth, $scaledLogoHeight);
+        $this->logo = new AMPImage($logoURL, $scaledLogoWidth, $scaledLogoHeight);
 
         return $barStyles;
     }

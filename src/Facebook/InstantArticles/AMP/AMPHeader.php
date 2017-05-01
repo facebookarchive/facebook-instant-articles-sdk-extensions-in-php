@@ -56,7 +56,7 @@ class AMPHeader
     $headerBar = $this->context->createElement('div', $this->header, 'header-bar');
     $this->context->buildSpacingDiv($this->header);
 
-    if (isset($this->logo->logoURL)) {
+    if (isset($this->logo->url)) {
       $ampImageContainer = $this->context->createElement('div',
       $headerBar, 'header-bar-img-container');
       $ampImage = $this->context->createElement(
@@ -64,9 +64,9 @@ class AMPHeader
                $ampImageContainer,
                null,
                array(
-                   'src' => $this->logo->logoURL,
-                   'width' => $this->logo->logoWidth,
-                   'height' => $this->logo->logoHeight
+                   'src' => $this->logo->url,
+                   'width' => $this->logo->width,
+                   'height' => $this->logo->height
                ));
        }
  }
