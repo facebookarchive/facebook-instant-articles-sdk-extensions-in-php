@@ -32,7 +32,7 @@ use Facebook\InstantArticles\Elements\InstantArticleInterface;
 
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
-use Facebook\InstantArticles\Utils\Hook;
+use Facebook\InstantArticles\Utils\Observer;
 
 class AMPArticle extends Element implements InstantArticleInterface
 {
@@ -65,21 +65,25 @@ class AMPArticle extends Element implements InstantArticleInterface
        'publisher' => array(),
      */
     private $properties = array();
-    private $hook;
+
+    /**
+     * @var Observer The instance for Observing and Hooking system for extensions
+     */
+    private $observer;
 
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
     private $logoURL;
     private $logoWidth;
     private $logoHeight;
 
-    private function __construct($instantArticle, $properties, $hook)
+    private function __construct($instantArticle, $properties, $observer)
     {
         $this->instantArticle = $instantArticle;
         $this->properties = $properties;
-        $this->hook = $hook;
+        $this->observer = $observer;
     }
 
-    public static function create($instantArticleString, $properties = array(), $hook = null)
+    public static function create($instantArticleString, $properties = array(), $observer = null)
     {
         libxml_use_internal_errors(true);
         $document = new \DOMDocument();
@@ -93,16 +97,16 @@ class AMPArticle extends Element implements InstantArticleInterface
             $properties = array();
         }
 
-        if ($hook == null) {
-            $hook = Hook::create();
+        if ($observer == null) {
+            $observer = Observer::create();
         }
 
-        return new self($instant_article, $properties, $hook);
+        return new self($instant_article, $properties, $observer);
     }
 
-    public function getHook()
+    public function getObserver()
     {
-        return $this->hook;
+        return $this->observer;
     }
 
     public function getInstantArticle()
@@ -134,7 +138,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $context = AMPContext::create($document, $this->instantArticle, $prefix);
 
-        $ampDocument = $this->hook->call('HOOK_AMP_DOCUMENT', array($this, 'transformInstantArticle'), array($context));
+        $ampDocument = $this->observer->applyFilters('AMP_DOCUMENT', $this->transformInstantArticle($context), $context);
         return $ampDocument;
     }
 
@@ -149,20 +153,20 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $context->withHtml($html);
 
-        $head = $this->hook->call('HOOK_AMP_HEAD', array($this, 'transformMetaInfoHead'), array($context));
+        $head = $this->observer->applyFilters('AMP_HEAD', $this->transformMetaInfoHead($context), $context);
         $context->withHead($head);
 
         // Build and append body and article tags to the HTML document
-        $body = $this->hook->call('HOOK_AMP_BODY', array($this, 'buildBody'), array($context));
+        $body = $this->observer->applyFilters('AMP_BODY', $this->buildBody($context), $context);
         $context->withBody($body);
 
-        $header = $this->hook->call('HOOK_AMP_HEADER', array($this, 'transformArticleHeader'), array($context));
+        $header = $this->observer->applyFilters('AMP_HEADER', $this->transformArticleHeader($context), $context);
         $context->withHeader($header);
 
-        $article = $this->hook->call('HOOK_AMP_ARTICLE', array($this, 'transformArticleContent'), array($context));
+        $article = $this->observer->applyFilters('AMP_ARTICLE', $this->transformArticleContent($context), $context);
         $context->withArticle($article);
 
-        $footer = $this->hook->call('HOOK_AMP_FOOTER', array($this, 'transformArticleFooter'), array($context));
+        $footer = $this->observer->applyFilters('AMP_FOOTER', $this->transformArticleFooter($context), $context);
         //$context->withFooter($footer);
 
         return $html;
@@ -484,7 +488,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $caption = $image->getCaption();
         if ($caption) {
             $ampFigure = $this->buildCaption($caption, $context, $ampImg);
-            
+
             // Replace the top level image element with the figure
             $ampImg = $ampFigure;
         }
@@ -570,7 +574,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampCarouselContainer = $context->createElement('div', null, $cssClass);
 
         $ampCarousel = $context->getDocument()->createElement('amp-carousel');
-        
+
         foreach ($slideshow->getArticleImages() as $image) {
             $ampImage = $this->buildImage($image, $context, 'slideshow-image', true);
             $ampCarousel->appendChild($ampImage);
@@ -602,7 +606,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function buildCaption($caption, $context, $ampCaptionedElement)
     {
-        $container = $context->createElement('figure', null, 'figure');     
+        $container = $context->createElement('figure', null, 'figure');
 
         $fontSize = $caption->getFontSize();
         $cssClass = 'figcaption-' . ($fontSize ? $fontSize : 'small');
@@ -1200,12 +1204,12 @@ class AMPArticle extends Element implements InstantArticleInterface
             break;
         }
 
-        $cover = $this->hook->call('HOOK_AMP_GETMETADATAIMAGE', array($this, 'getMetadataImage'), array($this->properties));
+        $cover = $this->observer->applyFilters('AMP_GETMETADATAIMAGE', $this->getMetadataImage($this->properties), $this->properties);
         if ($cover) {
             $metadata['image'] = $cover;
         }
 
-        $publisher = $this->hook->call('HOOK_AMP_GETPUBLISHER', array($this, 'getPublisher'), array($this->properties));
+        $publisher = $this->observer->applyFilters('AMP_GETPUBLISHER', $this->getPublisher($this->properties), $this->properties);
         if ($publisher) {
             $metadata['publisher'] = $publisher;
         }
