@@ -8,15 +8,16 @@
  */
 namespace Facebook\InstantArticles\AMP;
 
-class AMPImage {
-  public $url;
-  public $width;
-  public $height;
+class AMPImage
+{
+    public $url;
+    public $width;
+    public $height;
 
-  function __construct($url, $width, $height)
-  {
-    $this->url = $url;
-    $this->width = $width;
-    $this->height = $height;
-  }
+    public function __construct($url, $width, $height)
+    {
+        $this->url = $url;
+        $this->width = $width;
+        $this->height = $height;
+    }
 }
