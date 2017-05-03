@@ -33,6 +33,7 @@ use Facebook\InstantArticles\Elements\InstantArticleInterface;
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
 use Facebook\InstantArticles\Utils\Observer;
+use Facebook\InstantArticles\Utils\Warning;
 
 class AMPArticle extends Element implements InstantArticleInterface
 {
@@ -748,23 +749,31 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function buildMaps($map, $context, $cssClass)
     {
-        $mapJson = $map->getGeotag();
-        if (!$mapJson || Type::isTextEmpty($mapJson)) {
-            // TODO Create warning system on context
-            //$context->addWarning('Map::getGeotag returned an empty map definition.', $map);
+        $geoTag = $map->getGeotag();
+        if (!$geoTag) {
+            $context->addWarning('Map::getGeotag() returned an empty map definition.', $map);
+            return $context->createElement('div');
         }
 
-        $coordinates = $this->extractCoordinatesFromGeotag($mapJson);
-        if (!$coordinates || empty($coordinates)) {
-            // TODO Create warning system on context
-            //$context->addWarning('Map::getGeotag invalid or incompatible. We could not extract latitud and/or longitud from it.', $mapJson);
+        $googleAPIKey = isset($this->properties[self::GOOGLE_MAPS_KEY]) ? $this->properties[self::GOOGLE_MAPS_KEY] : null;
+        $googleAPIKey = $this->getObserver()->applyFilters('GET_GOOGLE_MAPS_KEY', $googleAPIKey, $this->properties, $context);
+
+        if (Type::isTextEmpty($googleAPIKey)) {
+            $context->addWarning('Map by default converts Facebook Instant Article Maps into Google Maps. To accomplish that, you will need to inform into your $properties parameter the "google_maps_key" => "<your key>". Find more here how to get your Google Maps key: https://developers.google.com/maps/documentation/javascript/get-api-key', $map);
+            return $context->createElement('div');
         }
-        $latitud = $coordinates['latitud'];
-        $longitud = $coordinates['longitud'];
+
+        $coordinates = $this->extractCoordinatesFromGeotag($geoTag->getScript());
+        if (!$coordinates || empty($coordinates)) {
+            $context->addWarning('Map::getGeotag invalid or incompatible. We could not extract latitud and/or longitud from it.', $geoTag->getScript());
+            return $context->createElement('div');
+        }
+        $latitud = $coordinates[0];
+        $longitud = $coordinates[1];
 
         // By default it will use Google Maps as mapping system
         // The URL should be: https://www.google.com/maps/embed/v1/place?key=<API_GOOGLE_KEY>q=%2244.0,122.0%22
-        $srcUrl = "https://www.google.com/maps/embed/v1/place?key=$googkeAPIKeyq=%22$latitud,$longitud%22";
+        $srcUrl = "https://www.google.com/maps/embed/v1/place?key=$googleAPIKey&q=%22$latitud,$longitud%22";
 
         // <amp-iframe
         //   width="600"
@@ -777,7 +786,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $ampMap = $context->createElement('div', null, $cssClass);
 
-        $ampIframe = $context->getDocument()->createElement('amp-iframe');
+        $ampIframe = $context->createElement('amp-iframe', $ampMap);
         $ampIframe->setAttribute('src', $srcUrl);
         $ampIframe->setAttribute('width', self::DEFAULT_WIDTH);
         $ampIframe->setAttribute('height', self::DEFAULT_HEIGHT);
@@ -817,8 +826,18 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function extractCoordinatesFromGeotag($mapJson)
     {
         $geotag = json_decode($mapJson, true);
-        if (isset($geotag['geometry']) && isset($geotag['geometry']['coordinates'])) {
-            return $geotag['geometry']['coordinates'];
+        if (isset($geotag['type'])) {
+            if ($geotag['type'] === 'FeatureCollection' && isset($geotag['features'])) {
+                $features = $geotag['features'];
+                foreach($features as $feature) {
+                    if (isset($feature['geometry']) && isset($feature['geometry']['coordinates'])) {
+                        return $feature['geometry']['coordinates'];
+                    }
+                }
+            }
+            else if (isset($geotag['geometry']) && isset($geotag['geometry']['coordinates'])) {
+                return $geotag['geometry']['coordinates'];
+            }
         }
         return null;
     }
