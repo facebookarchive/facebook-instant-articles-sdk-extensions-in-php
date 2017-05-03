@@ -12,6 +12,7 @@ use Facebook\InstantArticles\Elements\InstantArticle;
 
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
+use Facebook\InstantArticles\Utils\Warning;
 
 class AMPContext
 {
@@ -35,6 +36,8 @@ class AMPContext
     private $cssPrefix;
     private $previousElementIdentifier;
     private $previousSpacing;
+
+    private $warnings = array();
 
     /**
      * Private constructor. Use self::create($document, $instantArticle)
@@ -583,4 +586,23 @@ class AMPContext
         return $this->footer;
     }
 
+    /**
+     * Use this method to add a new warning message to the context when something unexpected happened.
+     * @param string $message The message warning.
+     * @param mixed $contextObj an object to be stringified to better understand the context where this warning was generated.
+     * @param Exception $exception **optional** The exception that generated this warning.
+     */
+    public function addWarning($message, $contextObj, $exception=null)
+    {
+        $this->warnings[] = new Warning($message, $contextObj, $exception);
+        return $this;
+    }
+
+    /**
+     * @return The warnings from the context.
+     */
+    public function getWarnings()
+    {
+        return $this->warnings;
+    }
 }
