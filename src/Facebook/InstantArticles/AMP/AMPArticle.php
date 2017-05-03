@@ -313,6 +313,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $containsIframe = false;
         $containsSlideshow = false;
         $containsAudio = false;
+        $containsVideo = false;
 
         if ($context->getInstantArticle()->getChildren()) {
             foreach ($context->getInstantArticle()->getChildren() as $child) {
@@ -351,6 +352,10 @@ class AMPArticle extends Element implements InstantArticleInterface
                     $childElement = $this->observer->applyFilters('IA_GIF', $this->buildGIF($child, $context, 'gif'), $child, $context);
                 }
                 else if (Type::is($child, Video::getClassName())) {
+                    if (!$containsVideo) {
+                        $containsVideo = true;
+                        $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-video', 'https://cdn.ampproject.org/v0/amp-video-0.1.js', $context));
+                    }
                     $childElement = $this->observer->applyFilters('IA_VIDEO', $this->buildVideo($child, $context, 'video'), $child, $context);
                 }
                 else if (Type::is($child, Audio::getClassName())) {
