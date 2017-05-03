@@ -8,31 +8,27 @@
  */
 namespace Facebook\InstantArticles\Utils;
 /**
- * CallbackHook class based on [WP_Hook](https://raw.github.com/WordPress/WordPress/master/wp-includes/class-wp-hook.php) from WordPress
+ * CallbackHook class. This is the helper class to get the hooks prioritized, called, removed and mantained.
  */
 class CallbackHook implements \Iterator, \ArrayAccess {
 
     /**
-     * Hook callbacks.
-     * @var array
+     * @var array Callback functions/instance->methods
      */
     public $callbacks = array();
 
     /**
-     * The priority keys of actively running iterations of a hook.
-     * @var array
+     * @var array The priority keys of actively running iterations of a hook.
      */
     private $iterations = array();
 
     /**
-     * The current priority of actively running iterations of a hook.
-     * @var array
+     * @var array The current priority of actively running iterations of a hook.
      */
     private $currentPriority = array();
 
     /**
-     * Number of levels this hook can be recursively called.
-     * @var int
+     * @var int Number of levels this hook can be recursively called.
      */
     private $nestingLevel = 0;
 
@@ -57,7 +53,7 @@ class CallbackHook implements \Iterator, \ArrayAccess {
       );
 
         // if we're adding a new priority to the list, put them back in sorted order
-        if (! $priorityExisted && count($this->callbacks) > 1) {
+        if (!$priorityExisted && count($this->callbacks) > 1) {
             ksort($this->callbacks, SORT_NUMERIC);
         }
 
@@ -229,7 +225,7 @@ class CallbackHook implements \Iterator, \ArrayAccess {
      */
     public function applyFilters($value, $args)
     {
-        if (! $this->callbacks) {
+        if (!$this->callbacks) {
             return $value;
         }
 
