@@ -4,3 +4,4 @@ composer.phar
 **/IgnoredTest.php
 .DS_Store
 .vscode
+**/ignored-*
