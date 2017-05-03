@@ -103,7 +103,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testTransformIAtoAMPTestNatGeo()
     {
-        $this->runIAtoAMPTest('natgeo');
+        $this->runIAtoAMPTest('natgeo', array('google_maps_key'=>'123'));
     }
 
     private function getRenderer($test, $customProperties = null)
