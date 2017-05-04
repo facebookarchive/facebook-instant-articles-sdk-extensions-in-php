@@ -12,14 +12,12 @@ class AMPHeader
 {
     private $header;
     private $context;
-    private $logo;
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
 
-    public function __construct($header, $logo, $context)
+    public function __construct($header, $context)
     {
         $this->header = $header;
         $this->context = $context;
-        $this->logo = $logo;
     }
 
     private function iaHeader()
@@ -52,27 +50,9 @@ class AMPHeader
 
     private function genHeaderBar()
     {
-
-        $headerBar = $this->context->createElement('div', $this->header, 'header-bar');
+        $this->headerBar = $this->context->createElement('div', $this->header, 'header-bar');
         $this->context->buildSpacingDiv($this->header);
-
-        if (isset($this->logo->url)) {
-            $ampImageContainer = $this->context->createElement(
-                'div',
-                $headerBar,
-                'header-bar-img-container'
-            );
-            $ampImage = $this->context->createElement(
-                'amp-img',
-                $ampImageContainer,
-                null,
-                array(
-                   'src' => $this->logo->url,
-                   'width' => $this->logo->width,
-                   'height' => $this->logo->height
-                )
-            );
-        }
+        // Note: The logo will be added after the whole article is processed
     }
 
     private function genSubtitle()
@@ -104,6 +84,29 @@ class AMPHeader
         }
         $authors->appendChild($this->context->getDocument()->createTextNode('BY '.implode($authorsString, ', ')));
         $this->context->buildSpacingDiv($this->header);
+    }
+
+    public function genHeaderLogo($logo)
+    {
+        if (!isset($logo->url)) {
+            return;
+        }
+
+        $ampImageContainer = $this->context->createElement(
+            'div',
+            $this->headerBar,
+            'header-bar-img-container'
+        );
+        $ampImage = $this->context->createElement(
+            'amp-img',
+            $ampImageContainer,
+            null,
+            array(
+                'src' => $logo->url,
+                'width' => $logo->width,
+                'height' => $logo->height
+            )
+        );
     }
 
     public function build()

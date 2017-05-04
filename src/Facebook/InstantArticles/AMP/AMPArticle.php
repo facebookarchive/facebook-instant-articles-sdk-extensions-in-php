@@ -76,6 +76,10 @@ class AMPArticle extends Element implements InstantArticleInterface
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
     private $logo;
 
+    private $articleCustomCSSRules;
+    private $customCSSElement;
+    private $ampHeader;
+
     private function __construct($instantArticle, $properties, $observer)
     {
         $this->instantArticle = $instantArticle;
@@ -143,6 +147,8 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function transformInstantArticle($context)
     {
+        $this->articleCustomCSSRules = array();
+
         // Builds and appends head to the HTML document
         $html = $context->createElement('html', null, null, array("amp" => ""));
         if ($context->getInstantArticle()->isRTLEnabled()) {
@@ -169,6 +175,14 @@ class AMPArticle extends Element implements InstantArticleInterface
         $footer = $this->observer->applyFilters('AMP_FOOTER', $this->transformArticleFooter($context), $context);
         //$context->withFooter($footer);
 
+        // Set the Custom CSS content
+        $cssDeclarations = $this->getCustomCSS($context);
+        $cssTextContent = $context->getDocument()->createTextNode($cssDeclarations);
+        $this->customCSSElement->appendChild($cssTextContent);
+
+        // Create the logo image, if set
+        $this->ampHeader->genHeaderLogo($this->logo);
+
         return $html;
     }
 
@@ -182,14 +196,14 @@ class AMPArticle extends Element implements InstantArticleInterface
         // Builds the content Header, with proper colors and image, adding to body
         $header = $context->createElement('header', $context->getBody(), 'header');
 
-        // Creates the cover content for the header and appends to the header
+        // Creates the cover content for the cover and appends to the header
         if ($context->getInstantArticle()->getHeader()->getCover()) {
             $headerCover = $this->buildCover($context->getInstantArticle()->getHeader()->getCover(), $context);
             $header->appendChild($headerCover);
         }
 
-        $ampHeader = new AMPHeader($header, $this->logo, $context);
-        return $ampHeader->build();
+        $this->ampHeader = new AMPHeader($header, $context);
+        return $this->ampHeader->build();
     }
 
     public function transformMetaInfoHead($context)
@@ -234,6 +248,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         // Builds custom css style and append to head
         $ampCustomCSS = $this->buildCustomCSS($context);
         $head->appendChild($ampCustomCSS);
+        // Save element, so we can add the custom CSS content after the whole article is processed
+        $this->customCSSElement = $ampCustomCSS;
 
         // Builds Schema.org metadata and appends to head
         $discoveryScript = $context->createElement('script', $head, null, array('type' => 'application/ld+json'));
@@ -378,7 +394,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function buildCover($media, $context)
     {
         if (Type::is($media, Image::getClassName())) {
-            return $this->buildImage($media, $context, 'cover-image', false);
+            return $this->buildImage($media, $context, 'cover-image', true, true);
         } else if (Type::is($media, Slideshow::getClassName())) {
             return $this->buildSlideshow($media, $context, 'cover-slideshow');
         } else if (Type::is($media, Video::getClassName())) {
@@ -395,10 +411,14 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $script;
     }
 
-    private function buildImage($image, $context, $cssClass, $withContainer = true)
+    private function buildImage($image, $context, $cssClass, $withContainer = true, $enforceAspectRatio = false)
     {
         if ($withContainer) {
             $ampImgContainer = $context->createElement('div', null, $cssClass);
+        }
+        else {
+            // If we are enforcing the aspect ratio we need the container
+            $enforceAspectRatio = false;
         }
 
         $ampImg = $context->getDocument()->createElement('amp-img');
@@ -408,13 +428,40 @@ class AMPArticle extends Element implements InstantArticleInterface
         $imageWidth = $imageDimensions[0];
         $imageHeight = $imageDimensions[1];
 
-        // Somehow the full width on mobile is 380, so I resize image height on same ratio
-        $resizedWidthFactor = (double) (380 / (int) $imageWidth);
-        $newHeight = (int) ($imageHeight * $resizedWidthFactor);
+        if ($enforceAspectRatio) {
+            $horizontalScale = self::DEFAULT_WIDTH / $imageWidth;
+            $verticalScale = self::DEFAULT_HEIGHT / $imageHeight;
+            $maxScale = max($horizontalScale, $verticalScale);
+            
+            $translateX = (int) (-($imageWidth * $maxScale - self::DEFAULT_WIDTH) / 2);
+            $translateY = (int) (-($imageHeight * $maxScale - self::DEFAULT_HEIGHT) / 2);
+
+            $imageCSSClass = $context->buildCssClass('header-cover-img');
+            $ampImg->setAttribute('class', $imageCSSClass);
+
+            $this->articleCustomCSSRules["amp-img.$imageCSSClass"] = array(
+                'transform' => "translate({$translateX}px, {$translateY}px)",
+            );
+            $containerCSSClass = $ampImgContainer->getAttribute('class');
+            $this->articleCustomCSSRules["div.$containerCSSClass"] = array(
+                'width' => self::DEFAULT_WIDTH . 'px',
+                'height' => self::DEFAULT_HEIGHT . 'px',
+                'overflow' => 'hidden',
+            );
+
+            $imageWidth = (int) ($imageWidth * $maxScale);
+            $imageHeight = (int) ($imageHeight * $maxScale);
+        }
+        else {
+            // Somehow the full width on mobile is 380, so I resize image height on same ratio
+            $resizedWidthFactor = (double) (self::DEFAULT_WIDTH / (int) $imageWidth);
+            $imageWidth = self::DEFAULT_WIDTH;
+            $imageHeight = (int) ($imageHeight * $resizedWidthFactor);
+        }
 
         $ampImg->setAttribute('src', $imageURL);
-        $ampImg->setAttribute('width', '380');
-        $ampImg->setAttribute('height', (string) $newHeight);
+        $ampImg->setAttribute('width', (string) $imageWidth);
+        $ampImg->setAttribute('height', (string) $imageHeight);
 
         $caption = $image->getCaption();
         if ($caption) {
@@ -768,14 +815,11 @@ class AMPArticle extends Element implements InstantArticleInterface
         return null;
     }
 
-    private function buildCustomCSS($context)
-    {
-        $ampCustomCSS = $context->getDocument()->createElement('style');
-        $ampCustomCSS->setAttribute('amp-custom', '');
-        $cssDeclarations = $this->getCustomCSS($context);
-        $cssTextContent = $context->getDocument()->createTextNode($cssDeclarations);
-        $ampCustomCSS->appendChild($cssTextContent);
-        return $ampCustomCSS;
+    private function buildCustomCSS($context) {
+      $ampCustomCSS = $context->getDocument()->createElement('style');
+      $ampCustomCSS->setAttribute('amp-custom', '');
+      // Note: Custom CSS content will be generated after the whole article is processed
+      return $ampCustomCSS;
     }
 
     public function getMediaDimensions($mediaURL)
@@ -874,6 +918,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $this->articleQuoteStyles($styles, $context) .
             $this->articleCaptionStyles($styles, $context) .
             $this->articleFooterStyles($styles, $context) .
+            $this->articleCustomCSSStyles() .
             (isset($globalCSSFile) ? $globalCSSFile : '').
             (isset($customCSSFile) ? $customCSSFile : '').
             (!isset($globalCSSFile) && !isset($customCSSFile) ? $defaultCSSFile : '');
@@ -1004,6 +1049,26 @@ class AMPArticle extends Element implements InstantArticleInterface
             $context->buildCssSelector('footer') => 'footer',
         );
         return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
+    }
+
+    private function articleCustomCSSStyles()
+    {
+        if (!$this->articleCustomCSSRules) {
+            return null;
+        }
+
+        $rules = '';
+        
+        foreach ($this->articleCustomCSSRules as $cssSelector => $cssProperties) {
+            $declarations = array();
+            foreach ($cssProperties as $cssKey => $cssValue) {
+                $declarations[] = $this->buildCSSDeclaration($cssKey, $cssValue);
+            }
+
+            $rules = $rules . ' ' . $this->buildCSSRule($cssSelector, $this->buildCSSDeclarationBlock($declarations));
+        }
+
+        return $rules;
     }
 
     private function buildTextCSSDeclarationBlock($textStyles, $textType, $context)

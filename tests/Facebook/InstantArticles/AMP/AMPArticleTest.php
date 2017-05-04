@@ -57,7 +57,17 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testTransformIAtoAMPTest1()
     {
-        $customProperties = $this->getWodExpertCustomProperties();
+        $customProperties = array_merge(
+            $this->getWodExpertCustomProperties(),
+            array(
+                'media-sizes' => array(
+                    'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => array(
+                        800,
+                        454,
+                    ),
+                ),
+            )
+        );
         $this->runIAtoAMPTest('test1', $customProperties);
     }
 
@@ -357,14 +367,14 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testCachedImageHeight()
     {
-        $expectedHeight = 215;
+        $expectedHeight = 230;
         $customProperties = array(
             AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
         );
 
         $coverImageXPathQuery = $this->getRenderedMarkupXPathQuery(
-            'test1',
-            '//header[@class=\'ia2amp-header\']/figure/amp-img',
+            'test2',
+            '//article//amp-img',
             $customProperties
         );
         $coverImageElement = $coverImageXPathQuery->item(0);
@@ -382,7 +392,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
-            '//div[@class=\'ia2amp-slideshow-image\']/figure/amp-img',
+            '//div[@class=\'ia2amp-slideshow-image\']//amp-img',
             $customProperties
         );
         $firstArticleImageElement = $imageXPathQuery->item(0);
@@ -400,7 +410,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
-            '//div[@class=\'ia2amp-slideshow-image\']/figure/amp-img',
+            '//div[@class=\'ia2amp-slideshow-image\']//amp-img',
             $customProperties
         );
         $firstArticleImageElement = $imageXPathQuery->item(0);
@@ -418,7 +428,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
-            '//div[@class=\'ia2amp-slideshow-image\']/figure/amp-img',
+            '//div[@class=\'ia2amp-slideshow-image\']//amp-img',
             $customProperties
         );
         $firstArticleImageElement = $imageXPathQuery->item(0);
@@ -438,7 +448,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
-            '//div[@class=\'ia2amp-slideshow-image\']/figure/amp-img',
+            '//div[@class=\'ia2amp-slideshow-image\']//amp-img',
             $customProperties
         );
         $firstArticleImageElement = $imageXPathQuery->item(0);
@@ -526,6 +536,48 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $copyrightElement = $copyrightXPathQuery->item(0);
 
         $this->assertEquals('© 2017 WOD Expert', trim($copyrightElement->textContent));
+    }
+
+    public function testCoverImageWidth()
+    {
+        $expectedWidth = 422;
+        $coverImageXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'test1',
+            '//amp-img[@class=\'ia2amp-header-cover-img\']',
+            array(
+                'media-sizes' => array(
+                    'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => array(
+                        800,
+                        454,
+                    ),
+                ),
+            )
+        );
+
+        $coverImageElement = $coverImageXPathQuery->item(0);
+
+        $this->assertEquals($expectedWidth, $coverImageElement->getAttribute('width'));
+    }
+
+    public function testCoverImageHeight()
+    {
+        $expectedHeight = 240;
+        $coverImageXPathQuery = $this->getRenderedMarkupXPathQuery(
+            'test1',
+            '//amp-img[@class=\'ia2amp-header-cover-img\']',
+            array(
+                'media-sizes' => array(
+                    'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => array(
+                        800,
+                        454,
+                    ),
+                ),
+            )
+        );
+
+        $coverImageElement = $coverImageXPathQuery->item(0);
+
+        $this->assertEquals($expectedHeight, $coverImageElement->getAttribute('height'));
     }
 
     /**
