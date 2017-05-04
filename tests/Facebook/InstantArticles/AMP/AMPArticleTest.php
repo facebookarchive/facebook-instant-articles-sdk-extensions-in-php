@@ -113,7 +113,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $propeties = array(
             'lang' => 'en-US',
             AMPArticle::STYLES_FOLDER_KEY => __DIR__,
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
         );
         if (!is_null($customProperties)) {
             $propeties = array_merge($propeties, $customProperties);
@@ -377,7 +377,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $expectedHeight = 240;
         $customProperties = array(
             AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
         );
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
@@ -395,7 +395,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $expectedHeight = 243;
         $customProperties = array(
             AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => TRUE,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => true,
         );
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
@@ -412,7 +412,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $expectedHeight = 120;
         $customProperties = array(
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
             AMPArticle::DEFAULT_MEDIA_HEIGHT_KEY => $expectedHeight,
         );
 
@@ -430,7 +430,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $expectedHeight = 253;
         $customProperties = array(
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
             AMPArticle::MEDIA_SIZES_KEY => array(
                 "http://blog.wod.expert/wp-content/uploads/2017/03/fail2.jpg" => array(90, 60),
             ),
@@ -450,7 +450,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $expectedHeight = 120;
         $customProperties = array(
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
             AMPArticle::DEFAULT_MEDIA_HEIGHT_KEY => $expectedHeight,
         );
 
@@ -468,7 +468,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $expectedWidth = 90;
         $customProperties = array(
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
             AMPArticle::MEDIA_SIZES_KEY => array(
                 "http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mov" => array($expectedWidth, 60),
             ),
@@ -488,7 +488,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $expectedHeight = 60;
         $customProperties = array(
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => FALSE,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
             AMPArticle::MEDIA_SIZES_KEY => array(
                 "http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mov" => array(90, $expectedHeight),
             ),
@@ -582,18 +582,15 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             $this->getTextStylesTestData('title', '.ia2amp-header-h1'),
             $this->getTextStylesTestData('subtitle', '.ia2amp-header-h2'),
             $this->getTextStylesTestData('byline', '.ia2amp-header h3'),
-
             // Body
             $this->getTextStylesTestData('primary_heading', '.ia2amp-h1'),
             $this->getTextStylesTestData('secondary_heading', '.ia2amp-h2'),
             $this->getTextStylesTestData('body_text', '.ia2amp-p'),
             $this->getTextStylesTestData('inline_link', '.ia2amp-article a'),
-
             // Quotes
             $this->getTextStylesTestData('block_quote', '.ia2amp-blockquote'),
             $this->getTextStylesTestData('pull_quote', '.ia2amp-pullquote'),
             $this->getTextStylesTestData('pull_quote_attribution', '.ia2amp-pullquote cite'),
-
             // Captions
             $this->getTextStylesTestData('caption_title_small', '.ia2amp-op-small h1'),
             $this->getTextStylesTestData('caption_description_small', '.ia2amp-op-small h2'),
@@ -604,7 +601,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             $this->getTextStylesTestData('caption_title_extra_large', '.ia2amp-op-extra-large h1'),
             $this->getTextStylesTestData('caption_description_extra_large', '.ia2amp-op-extra-large h2'),
             $this->getTextStylesTestData('caption_credit', '.ia2amp-figcaption cite'),
-
             // Footer
             $this->getTextStylesTestData('footer', '.ia2amp-footer')
         );
@@ -626,45 +622,109 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $testData = array();
 
         // Font Family
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('randomDataProvider', 'passThroughValuesProvider',
-                $styleName, 'font', $cssSelector, 'font-family'));
+        $testData = array_merge(
+            $testData,
+            $this->getSecondLevelPropertyTestData(
+                'randomDataProvider',
+                'passThroughValuesProvider',
+                $styleName,
+                'font',
+                $cssSelector,
+                'font-family'
+            )
+        );
 
         // Color
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('colorDataProvider', 'passThroughValuesProvider',
-                $styleName, 'color', $cssSelector, 'color'));
+        $testData = array_merge(
+            $testData,
+            $this->getSecondLevelPropertyTestData(
+                'colorDataProvider',
+                'passThroughValuesProvider',
+                $styleName,
+                'color',
+                $cssSelector,
+                'color'
+            )
+        );
 
         // Background Color
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('colorDataProvider', 'passThroughValuesProvider',
-                $styleName, 'background_color', $cssSelector, 'background-color'));
+        $testData = array_merge(
+            $testData,
+            $this->getSecondLevelPropertyTestData(
+                'colorDataProvider',
+                'passThroughValuesProvider',
+                $styleName,
+                'background_color',
+                $cssSelector,
+                'background-color'
+            )
+        );
 
         // Text Transform
-        $testData = array_merge($testData,
+        $testData = array_merge(
+            $testData,
             //  TODO: Is there a way to remove the magic strings?
-            $this->getSecondLevelPropertyTestData('textTransformDataProvider', 'passThroughValuesProvider',
-                $styleName, 'capitalization', $cssSelector, 'text-transform'));
+            $this->getSecondLevelPropertyTestData(
+                'textTransformDataProvider',
+                'passThroughValuesProvider',
+                $styleName,
+                'capitalization',
+                $cssSelector,
+                'text-transform'
+            )
+        );
 
         // Text Alignment
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('textAlignmentDataProvider', 'passThroughValuesProvider',
-                $styleName, 'text_alignment', $cssSelector, 'text-align'));
+        $testData = array_merge(
+            $testData,
+            $this->getSecondLevelPropertyTestData(
+                'textAlignmentDataProvider',
+                'passThroughValuesProvider',
+                $styleName,
+                'text_alignment',
+                $cssSelector,
+                'text-align'
+            )
+        );
 
         // Display
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('displayDataProvider', 'passThroughValuesProvider',
-                $styleName, 'display', $cssSelector, 'display'));
+        $testData = array_merge(
+            $testData,
+            $this->getSecondLevelPropertyTestData(
+                'displayDataProvider',
+                'passThroughValuesProvider',
+                $styleName,
+                'display',
+                $cssSelector,
+                'display'
+            )
+        );
 
         // Margin
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('marginDataProvider', 'spacingValuesProvider',
-                $styleName, 'margin', $cssSelector, 'margin'));
+        $testData = array_merge(
+            $testData,
+            $this->getSecondLevelPropertyTestData(
+                'marginDataProvider',
+                'spacingValuesProvider',
+                $styleName,
+                'margin',
+                $cssSelector,
+                'margin'
+            )
+        );
 
         // Padding
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('paddingDataProvider', 'spacingValuesProvider',
-                $styleName, 'padding', $cssSelector, 'padding'));
+        $testData = array_merge(
+            $testData,
+            $this->getSecondLevelPropertyTestData(
+                'paddingDataProvider',
+                'spacingValuesProvider',
+                $styleName,
+                'padding',
+                $cssSelector,
+                'padding'
+            )
+        );
 
         // Border Color
         // TODO: Enable once implemented
@@ -673,9 +733,17 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         //         $styleName, 'border', $cssSelector, 'border-color'));
 
         // Border Width
-        $testData = array_merge($testData,
-            $this->getSecondLevelPropertyTestData('borderWidthDataProvider', 'borderWidthValuesProvider',
-                $styleName, 'border', $cssSelector, 'border-width'));
+        $testData = array_merge(
+            $testData,
+            $this->getSecondLevelPropertyTestData(
+                'borderWidthDataProvider',
+                'borderWidthValuesProvider',
+                $styleName,
+                'border',
+                $cssSelector,
+                'border-width'
+            )
+        );
 
         return $testData;
     }
@@ -691,9 +759,15 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
      * @param string $cssProperty The CSS property that will be used to verify the unit test result
      * @return array An array with the style value that will be set, and the expected CSS value that will be generated
      */
-    private function getSecondLevelPropertyTestData($dataProviderFunctionName, $validationArgumentsProviderFunctionName,
-        $styleName, $secondLevelProperty, $cssSelector, $cssProperty)
-    {
+    private function getSecondLevelPropertyTestData(
+        $dataProviderFunctionName,
+        $validationArgumentsProviderFunctionName,
+        $styleName,
+        $secondLevelProperty,
+        $cssSelector,
+        $cssProperty
+    ) {
+    
         $testData = array();
 
         // Get all test cases for the given Data Provider function
@@ -710,7 +784,8 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
                     $cssSelector,
                     $cssProperty,
                 ),
-                $styleAndCssValues);
+                $styleAndCssValues
+            );
             // Add the merged values to the list of test items
             $testData[] = $testDataItem;
         }

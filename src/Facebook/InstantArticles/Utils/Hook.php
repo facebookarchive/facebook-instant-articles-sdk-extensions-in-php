@@ -38,7 +38,8 @@ class Hook
      * Private constructor to force factory method: Hook::create();
      */
     private function __construct()
-    {}
+    {
+    }
 
     /**
      * @return Hook new instance of the Hook class.
@@ -63,10 +64,10 @@ class Hook
      */
     public function setHook($hookName, $callable, $params = null)
     {
-      $this->hooks[$hookName] = $callable;
-      if (isset($params) && $params) {
-          $this->params[$hookName] = $params;
-      }
+        $this->hooks[$hookName] = $callable;
+        if (isset($params) && $params) {
+            $this->params[$hookName] = $params;
+        }
     }
 
     public function removeHook($hookName)

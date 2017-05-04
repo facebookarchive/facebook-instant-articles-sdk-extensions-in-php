@@ -33,7 +33,8 @@ class Observer
      * Private constructor to force factory method: Hook::create();
      */
     private function __construct()
-    {}
+    {
+    }
 
     /**
      * @return Hook new instance of the Hook class.
@@ -90,7 +91,8 @@ class Observer
      * As lower the number is, more priority it will have. Default 100.
      * @param int $acceptedArgs Optional. The number of arguments the function accepts. Default 1.
      */
-    public function addFilter( $tag, $functionToAdd, $priority = 100, $acceptedArgs = 1 ) {
+    public function addFilter($tag, $functionToAdd, $priority = 100, $acceptedArgs = 1)
+    {
         // This is a crude filter, needs to create the CallbackHook manager for that
         if (!isset($this->callbacks[$tag])) {
             $this->callbacks[$tag] = new CallbackHook();
@@ -241,8 +243,7 @@ class Observer
         if (is_string($function[0])) {
             // Static
             return $function[0] . '::' . $function[1];
-        }
-        elseif (is_object($function[0])) {
+        } elseif (is_object($function[0])) {
             // Instance call
             if (function_exists('spl_object_hash')) {
                 return spl_object_hash($function[0]) . $function[1];
@@ -273,12 +274,13 @@ class Observer
      * anything registered. With a specific function, the priority of that
      * hook is returned, false otherwise.
      */
-    function hasFilter($tag, $functionToCheck = false) {
+    function hasFilter($tag, $functionToCheck = false)
+    {
         // If hook name has nothing, than nothing is hooked there.
         if (!isset($this->callbacks[$tag])) {
             return false;
         }
-        $idx = $this->getUniqueIndexID( $tag, $functionToCheck, false );
+        $idx = $this->getUniqueIndexID($tag, $functionToCheck, false);
         return $this->callbacks[$tag]->hasFilter($idx, $tag, $functionToCheck);
     }
 }

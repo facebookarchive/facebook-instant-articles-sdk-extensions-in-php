@@ -7,10 +7,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 namespace Facebook\InstantArticles\Utils;
+
 /**
  * CallbackHook class. This is the helper class to get the hooks prioritized, called, removed and mantained.
  */
-class CallbackHook implements \Iterator, \ArrayAccess {
+class CallbackHook implements \Iterator, \ArrayAccess
+{
 
     /**
      * @var array Callback functions/instance->methods
@@ -50,7 +52,7 @@ class CallbackHook implements \Iterator, \ArrayAccess {
         $this->callbacks[$priority][$idx] = array(
             'function' => $functionToAdd,
             'accepted_args' => $acceptedArgs
-      );
+        );
 
         // if we're adding a new priority to the list, put them back in sorted order
         if (!$priorityExisted && count($this->callbacks) > 1) {
@@ -264,9 +266,9 @@ class CallbackHook implements \Iterator, \ArrayAccess {
      *
      * @return int|false If the hook is running, return the current priority level. If it isn't running, return false.
      */
-    public function currentPriority() {
-        if (false === current($this->iterations))
-        {
+    public function currentPriority()
+    {
+        if (false === current($this->iterations)) {
             return false;
         }
 
@@ -385,5 +387,4 @@ class CallbackHook implements \Iterator, \ArrayAccess {
     {
         reset($this->callbacks);
     }
-
 }

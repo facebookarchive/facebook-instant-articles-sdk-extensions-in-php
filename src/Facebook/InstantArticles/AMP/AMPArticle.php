@@ -132,8 +132,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         if (isset($this->properties['css-selector-prefix'])) {
             $prefix = $this->properties['css-selector-prefix'];
-        }
-        else {
+        } else {
             $prefix = self::DEFAULT_CSS_PREFIX;
         }
         $context = AMPContext::create($document, $this->instantArticle, $prefix);
@@ -142,7 +141,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $ampDocument;
     }
 
-    public function transformInstantArticle($context) {
+    public function transformInstantArticle($context)
+    {
         // Builds and appends head to the HTML document
         $html = $context->createElement('html', null, null, array("amp" => ""));
         if ($context->getInstantArticle()->isRTLEnabled()) {
@@ -211,7 +211,8 @@ class AMPArticle extends Element implements InstantArticleInterface
             array(
                 'name' => 'viewport',
                 'content' => 'width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no'
-            ));
+            )
+        );
 
         // Builds ampjs script and append to head
         $context->createElement('script', $head, null, array('src' => 'https://cdn.ampproject.org/v0.js', 'async' => ''));
@@ -270,71 +271,56 @@ class AMPArticle extends Element implements InstantArticleInterface
                 }
                 if (Type::is($child, Paragraph::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_PARAGRAPH', $this->buildRegularDomElement($context, $child, 'p'), $child, $context);
-                }
-                else if (Type::is($child, Blockquote::getClassName())) {
+                } else if (Type::is($child, Blockquote::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_BLOCKQUOTE', $this->buildRegularDomElement($context, $child, 'blockquote'), $child, $context);
-                }
-                else if (Type::is($child, H1::getClassName())) {
+                } else if (Type::is($child, H1::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_H1', $this->buildRegularDomElement($context, $child, 'h1'), $child, $context);
-                }
-                else if (Type::is($child, H2::getClassName())) {
+                } else if (Type::is($child, H2::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_H2', $this->buildRegularDomElement($context, $child, 'h2'), $child, $context);
-                }
-                else if (Type::is($child, ListElement::getClassName())) {
+                } else if (Type::is($child, ListElement::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_LIST', $this->buildRegularDomElement($context, $child, 'list'), $child, $context);
-                }
-                else if (Type::is($child, Pullquote::getClassName())) {
+                } else if (Type::is($child, Pullquote::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_PULLQUOTE', $this->buildRegularDomElement($context, $child, 'pullquote'), $child, $context);
-                }
-                else if (Type::is($child, Image::getClassName())) {
+                } else if (Type::is($child, Image::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_IMAGE', $this->buildImage($child, $context, 'image'), $child, $context);
-                }
-                else if (Type::is($child, AnimatedGIF::getClassName())) {
+                } else if (Type::is($child, AnimatedGIF::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_GIF', $this->buildGIF($child, $context, 'gif'), $child, $context);
-                }
-                else if (Type::is($child, Video::getClassName())) {
+                } else if (Type::is($child, Video::getClassName())) {
                     if (!$containsVideo) {
                         $containsVideo = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-video', 'https://cdn.ampproject.org/v0/amp-video-0.1.js', $context));
                     }
                     $childElement = $this->observer->applyFilters('IA_VIDEO', $this->buildVideo($child, $context, 'video'), $child, $context);
-                }
-                else if (Type::is($child, Audio::getClassName())) {
+                } else if (Type::is($child, Audio::getClassName())) {
                     if (!$containsAudio) {
                         $containsAudio = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-audio', 'https://cdn.ampproject.org/v0/amp-audio-0.1.js', $context));
                     }
                     $childElement = $this->observer->applyFilters('IA_AUDIO', $this->buildAudio($child, $context, 'audio'), $child, $context);
-                }
-                else if (Type::is($child, Slideshow::getClassName())) {
+                } else if (Type::is($child, Slideshow::getClassName())) {
                     if (!$containsSlideshow) {
                         $containsSlideshow = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-carousel', 'https://cdn.ampproject.org/v0/amp-carousel-0.1.js', $context));
                     }
                     $childElement = $this->observer->applyFilters('IA_SLIDESHOW', $this->buildSlideshow($child, $context, 'slideshow'), $child, $context);
-                }
-                else if (Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName())) {
+                } else if (Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
                     }
                     $childElement = $this->observer->applyFilters('IA_INTERACTIVE', $this->buildIframe($child, $context, 'interactive', true), $child, $context);
-                }
-                else if (Type::is($child, Map::getClassName())) {
+                } else if (Type::is($child, Map::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
                     }
                     $childElement = $this->observer->applyFilters('IA_MAP', $this->buildMaps($child, $context, 'map'), $child, $context);
-                }
-                else if (Type::is($child, RelatedArticles::getClassName())) {
+                } else if (Type::is($child, RelatedArticles::getClassName())) {
                     $childElement->setAttribute('class', $context->buildCssClass('related-articles'));
                     // TODO RelatedArticles
-                }
-                else if (Type::is($child, Ad::getClassName())) {
+                } else if (Type::is($child, Ad::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_AD', $this->buildAd($child, $context, 'ad'), $child, $context);
-                }
-                else {
+                } else {
                     // Not a know element, bypasses it
                     continue;
                 }
@@ -372,8 +358,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                     foreach ($credits as $paragraph) {
                         $ampCredits->appendChild($paragraph->toDOMElement($context->getDocument()));
                     }
-                }
-                else {
+                } else {
                     $ampCredits->appendChild($context->getDocument()->createTextNode($credits));
                 }
             }
@@ -394,11 +379,9 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         if (Type::is($media, Image::getClassName())) {
             return $this->buildImage($media, $context, 'cover-image', false);
-        }
-        else if (Type::is($media, Slideshow::getClassName())) {
+        } else if (Type::is($media, Slideshow::getClassName())) {
             return $this->buildSlideshow($media, $context, 'cover-slideshow');
-        }
-        else if (Type::is($media, Video::getClassName())) {
+        } else if (Type::is($media, Video::getClassName())) {
             return $this->buildVideo($media, $context, 'cover-video');
         }
     }
@@ -569,8 +552,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($position === Caption::POSITION_BELOW) {
             $container->appendChild($ampCaptionedElement);
             $container->appendChild($ampCaption);
-        }
-        else {
+        } else {
             $container->appendChild($ampCaption);
             $container->appendChild($ampCaptionedElement);
         }
@@ -608,8 +590,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         if ($caption->getFontSize()) {
             $ampCSSClasses[] = $context->buildCssClass($caption->getFontSize());
-        }
-        else {
+        } else {
             $ampCSSClasses[] = $context->buildCssClass(Caption::SIZE_SMALL);
         }
         if ($caption->getTextAlignment()) {
@@ -775,31 +756,31 @@ class AMPArticle extends Element implements InstantArticleInterface
         if (isset($geotag['type'])) {
             if ($geotag['type'] === 'FeatureCollection' && isset($geotag['features'])) {
                 $features = $geotag['features'];
-                foreach($features as $feature) {
+                foreach ($features as $feature) {
                     if (isset($feature['geometry']) && isset($feature['geometry']['coordinates'])) {
                         return $feature['geometry']['coordinates'];
                     }
                 }
-            }
-            else if (isset($geotag['geometry']) && isset($geotag['geometry']['coordinates'])) {
+            } else if (isset($geotag['geometry']) && isset($geotag['geometry']['coordinates'])) {
                 return $geotag['geometry']['coordinates'];
             }
         }
         return null;
     }
 
-    private function buildCustomCSS($context) {
-      $ampCustomCSS = $context->getDocument()->createElement('style');
-      $ampCustomCSS->setAttribute('amp-custom','');
-      $cssDeclarations = $this->getCustomCSS($context);
-      $cssTextContent = $context->getDocument()->createTextNode($cssDeclarations);
-      $ampCustomCSS->appendChild($cssTextContent);
-      return $ampCustomCSS;
+    private function buildCustomCSS($context)
+    {
+        $ampCustomCSS = $context->getDocument()->createElement('style');
+        $ampCustomCSS->setAttribute('amp-custom', '');
+        $cssDeclarations = $this->getCustomCSS($context);
+        $cssTextContent = $context->getDocument()->createTextNode($cssDeclarations);
+        $ampCustomCSS->appendChild($cssTextContent);
+        return $ampCustomCSS;
     }
 
     public function getMediaDimensions($mediaURL)
     {
-        if (array_key_exists(self::MEDIA_SIZES_KEY,  $this->properties) &&
+        if (array_key_exists(self::MEDIA_SIZES_KEY, $this->properties) &&
                 array_key_exists($mediaURL, $this->properties[self::MEDIA_SIZES_KEY])) {
             return $this->properties[self::MEDIA_SIZES_KEY][$mediaURL];
         }
@@ -810,7 +791,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         if (array_key_exists(self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY, $this->properties) &&
-                $this->properties[self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] === TRUE) {
+                $this->properties[self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] === true) {
             return getimagesize($mediaURL);
         }
 
@@ -827,22 +808,22 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function getMediaDimensionsFromCache($mediaURL)
     {
         if (!array_key_exists(self::MEDIA_CACHE_FOLDER_KEY, $this->properties)) {
-            return NULL;
+            return null;
         }
 
         $mediaCacheFolder = $this->properties[self::MEDIA_CACHE_FOLDER_KEY];
         if (!file_exists($mediaCacheFolder)) {
-            return NULL;
+            return null;
         }
 
         $fileName = basename($mediaURL);
         if (!$fileName) {
-            return NULL;
+            return null;
         }
 
         $cachedFile = $mediaCacheFolder . DIRECTORY_SEPARATOR . $fileName;
         if (!file_exists($cachedFile)) {
-            return NULL;
+            return null;
         }
 
         return getimagesize($cachedFile);
@@ -855,19 +836,17 @@ class AMPArticle extends Element implements InstantArticleInterface
             : __DIR__) . '/';
 
         $styleName = $this->instantArticle->getStyle();
-        if ($styleName == NULL) {
+        if ($styleName == null) {
             $styleName = 'default';
         }
         // Try to get the IA styles from properties
         if (array_key_exists(AMPArticle::OVERRIDE_STYLES_KEY, $this->properties)) {
             $styles = $this->properties[AMPArticle::OVERRIDE_STYLES_KEY];
-        }
-        else {
+        } else {
             if (!file_exists($stylesFolder . $styleName . '.style.json')) {
                 $stylesFile = file_get_contents(__DIR__ . '/configuration/default-amp.style.json');
                 $styles = json_decode($stylesFile, true);
-            }
-            else {
+            } else {
                 $stylesFile = file_get_contents($stylesFolder . $styleName . '.style.json');
                 $styles = json_decode($stylesFile, true);
             }
@@ -902,8 +881,8 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function articleColorsStyles($styles, $context)
     {
-      $backgroundColor = AMPArticle::toRGB($styles['background_color']);
-      return "html {background-color: $backgroundColor;}";
+        $backgroundColor = AMPArticle::toRGB($styles['background_color']);
+        return "html {background-color: $backgroundColor;}";
     }
 
     private function articleHeadStyles($styles, $context)
@@ -935,11 +914,13 @@ class AMPArticle extends Element implements InstantArticleInterface
             $this->articleLogo($styles, $context);
     }
 
-    private function articleLogo($styles, $context) {
+    private function articleLogo($styles, $context)
+    {
         $headerStyles = $styles['header'];
         // TODO: Add style for Like button
         // TODO: Build class name
-        $barStyles = AMPArticle::buildCSSRule('.ia2amp-header-bar',
+        $barStyles = AMPArticle::buildCSSRule(
+            '.ia2amp-header-bar',
             AMPArticle::buildCSSDeclarationBlock(
                 array(
                     AMPArticle::buildCSSDeclaration('background-color', $headerStyles['background_color'])
@@ -1019,7 +1000,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function articleFooterStyles($styles, $context)
     {
-      $mappings = array(
+        $mappings = array(
             $context->buildCssSelector('footer') => 'footer',
         );
         return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
@@ -1145,7 +1126,8 @@ class AMPArticle extends Element implements InstantArticleInterface
             : 0;
     }
 
-    private static function getSpacing($spacingMappings, $spacingDirectionStyles) {
+    private static function getSpacing($spacingMappings, $spacingDirectionStyles)
+    {
         $size = $spacingDirectionStyles['size'];
         $scalingFactor = $spacingDirectionStyles['scaling_factor'];
         return $spacingMappings[$size] * $scalingFactor;
@@ -1174,8 +1156,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                 if (array_key_exists('color', $borderDirectionStyles)) {
                     $declarationBlocks["border-$direction-color"] = AMPArticle::toRGB($borderDirectionStyles['color']);
                 }
-            }
-            else {
+            } else {
                 $borderWidth = 0;
             }
             $borderWidths[] = $borderWidth !== 0 ? $borderWidth . 'px' : '0';
@@ -1187,8 +1168,9 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public static function toRGB($color)
     {
-        if ($color[0] == '#')
+        if ($color[0] == '#') {
             $color = substr($color, 1);
+        }
 
         $opacity = 1.0;
         if (strlen($color) == 8) {
@@ -1204,7 +1186,8 @@ class AMPArticle extends Element implements InstantArticleInterface
             :  'rgba(' . implode(",", $rgb) . ',' . $opacity . ')';
     }
 
-    public function buildSchemaOrgMetadata($context) {
+    public function buildSchemaOrgMetadata($context)
+    {
         $header = $this->instantArticle->getHeader();
         $published = $header->getPublished();
         $modified = $header->getModified();
@@ -1223,7 +1206,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         $authors = $header->getAuthors();
-        foreach($authors as $author) {
+        foreach ($authors as $author) {
             $metadata['author'] = array(
                 '@type' => 'Person',
                 'name' => $author->getName(),
@@ -1260,7 +1243,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $publisher;
     }
 
-    public function getMetadataImage($properties) {
+    public function getMetadataImage($properties)
+    {
         $imageURL = null;
         $header = $this->instantArticle->getHeader();
 
@@ -1292,11 +1276,11 @@ class AMPArticle extends Element implements InstantArticleInterface
         return null;
     }
 
-    private function getImageURLFromElement($element) {
+    private function getImageURLFromElement($element)
+    {
         if (Type::is($element, Image::getClassName())) {
             return $element->getUrl();
-        }
-        else if (Type::is($element, Slideshow::getClassName())) {
+        } else if (Type::is($element, Slideshow::getClassName())) {
             // TODO: Add Unit test
             foreach ($element->getArticleImages() as $articleImage) {
                 if ($articleImage->isValid()) {

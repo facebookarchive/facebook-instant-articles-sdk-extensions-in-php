@@ -37,7 +37,7 @@ class HookTest extends \PHPUnit_Framework_TestCase
         return 'result';
     }
 
-    public function methodHookReplacing($param1=null, $param2=null)
+    public function methodHookReplacing($param1 = null, $param2 = null)
     {
         return 'REPLACED' . (isset($param1) && !Type::isTextEmpty($param1) ? '-'.$param1.'-'.$param2 : '');
     }
@@ -129,7 +129,6 @@ class HookTest extends \PHPUnit_Framework_TestCase
         $hook->setBeforeHook('hook_name', array($this, 'methodHookBefore1'), array($objToChange));
         $result = $hook->call('hook_name', array($this, 'methodHookTestingBefore'), array($objToChange));
         $this->assertEquals('MAIN-WITH-BEFORE-1st-2', $result);
-
     }
 
     public function testHookDefaultAfter()
@@ -243,10 +242,10 @@ class HookTest extends \PHPUnit_Framework_TestCase
 
 function functionOutsideClass()
 {
-   return 'OUTSIDER';
+    return 'OUTSIDER';
 }
 
 function functionOutsideClassWithParams($arg1)
 {
-   return 'OUTSIDER-with-param-'.$arg1;
+    return 'OUTSIDER-with-param-'.$arg1;
 }

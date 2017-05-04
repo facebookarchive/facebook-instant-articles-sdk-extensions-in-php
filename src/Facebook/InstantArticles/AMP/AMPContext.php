@@ -43,7 +43,8 @@ class AMPContext
      * Private constructor. Use self::create($document, $instantArticle)
      */
     private function __construct()
-    {}
+    {
+    }
 
     /**
      * Factory method to create the AMPContext
@@ -547,7 +548,8 @@ class AMPContext
     /**
      * Add new items to the document
      */
-    public function addItem($item) {
+    public function addItem($item)
+    {
         $element = new \DOMElement('dummy');
         Type::enforce($item, get_class($element));
         $this->articleItems[] = $item;
@@ -592,7 +594,7 @@ class AMPContext
      * @param mixed $contextObj an object to be stringified to better understand the context where this warning was generated.
      * @param Exception $exception **optional** The exception that generated this warning.
      */
-    public function addWarning($message, $contextObj, $exception=null)
+    public function addWarning($message, $contextObj, $exception = null)
     {
         $this->warnings[] = new Warning($message, $contextObj, $exception);
         return $this;

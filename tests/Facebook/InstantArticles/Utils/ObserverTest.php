@@ -150,14 +150,17 @@ class ObserverTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class Foobar {
+class Foobar
+{
     private $name;
 
-    function __construct($name){
+    function __construct($name)
+    {
         $this->name = $name;
     }
 
-    function hook($v, $param1=null, $param2=null) {
+    function hook($v, $param1 = null, $param2 = null)
+    {
         return $this->name . " $v" . (!Type::isTextEmpty($param1) ? $param1 : '').(!Type::isTextEmpty($param2) ? $param2 : '');
     }
 }
