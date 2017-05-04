@@ -415,8 +415,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         if ($withContainer) {
             $ampImgContainer = $context->createElement('div', null, $cssClass);
-        }
-        else {
+        } else {
             // If we are enforcing the aspect ratio we need the container
             $enforceAspectRatio = false;
         }
@@ -451,8 +450,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
             $imageWidth = (int) ($imageWidth * $maxScale);
             $imageHeight = (int) ($imageHeight * $maxScale);
-        }
-        else {
+        } else {
             // Somehow the full width on mobile is 380, so I resize image height on same ratio
             $resizedWidthFactor = (double) (self::DEFAULT_WIDTH / (int) $imageWidth);
             $imageWidth = self::DEFAULT_WIDTH;
@@ -815,11 +813,12 @@ class AMPArticle extends Element implements InstantArticleInterface
         return null;
     }
 
-    private function buildCustomCSS($context) {
-      $ampCustomCSS = $context->getDocument()->createElement('style');
-      $ampCustomCSS->setAttribute('amp-custom', '');
+    private function buildCustomCSS($context)
+    {
+        $ampCustomCSS = $context->getDocument()->createElement('style');
+        $ampCustomCSS->setAttribute('amp-custom', '');
       // Note: Custom CSS content will be generated after the whole article is processed
-      return $ampCustomCSS;
+        return $ampCustomCSS;
     }
 
     public function getMediaDimensions($mediaURL)
