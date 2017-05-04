@@ -59,7 +59,7 @@ class AMPHeader
     {
         if ($this->iaHeader()->getSubtitle()) {
             $iaHeaderSubtitle = $this->iaHeader()->getSubtitle()->textToDOMDocumentFragment($this->context->getDocument());
-            $subtitle = $this->context->createElement('h2', $this->header, 'header-subtitle');
+            $subtitle = $this->context->createElement('h2', $this->header, 'header-h2');
             $subtitle->appendChild($iaHeaderSubtitle);
 
             $this->context->buildSpacingDiv($this->header);
