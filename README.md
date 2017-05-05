@@ -61,8 +61,8 @@ If you are encountering problems, the following tips may help in troubleshooting
 
 ## Contributing
 
-For us to accept contributions you will have to first have signed the [Contributor License Agreement](https://code.facebook.com/cla). Please see [CONTRIBUTING](https://github.com/facebook/facebook-instant-articles-sdk-extensions-php/blob/master/CONTRIBUTING.md) for details.
+For us to accept contributions you will have to first have signed the [Contributor License Agreement](https://code.facebook.com/cla). Please see [CONTRIBUTING](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/CONTRIBUTING.md) for details.
 
 ## License
 
-Please see the [license file](https://github.com/facebook/facebook-instant-articles-sdk-extensions-php/blob/master/LICENSE) for more information.
+Please see the [license file](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/LICENSE) for more information.
