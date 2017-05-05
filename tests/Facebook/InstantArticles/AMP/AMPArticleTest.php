@@ -819,7 +819,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $cssSelector,
         $cssProperty
     ) {
-    
+
         $testData = array();
 
         // Get all test cases for the given Data Provider function

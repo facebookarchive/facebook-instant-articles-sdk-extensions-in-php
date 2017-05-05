@@ -335,6 +335,8 @@ class AMPArticle extends Element implements InstantArticleInterface
                     $childElement->setAttribute('class', $context->buildCssClass('related-articles'));
                     // TODO RelatedArticles
                 } else if (Type::is($child, Ad::getClassName())) {
+                    $childElement = $this->observer->applyFilters('IA_ANALYTICS', $this->buildAnalytics($child, $context, 'analytics'), $child, $context);
+                } else if (Type::is($child, Ad::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_AD', $this->buildAd($child, $context, 'ad'), $child, $context);
                 } else {
                     // Not a know element, bypasses it
@@ -688,6 +690,31 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         $iframeContainer->appendChild($ampIframe);
+
+        return $iframeContainer;
+    }
+
+    private function buildAnalytics($analytics, $context, $cssClass)
+    {
+        $srcUrl = $analytics->getSource();
+
+        $iframeContainer = $context->createElement('div', null, $cssClass);
+
+        $ampIframe = $context->getDocument()->createElement('amp-iframe');
+        $ampIframe->setAttribute('src', $this->ensureHttps($srcUrl));
+        $ampIframe->setAttribute('width', 1);
+        $ampIframe->setAttribute('height', 1);
+        $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
+        $ampIframe->setAttribute('layout', 'responsive');
+        $ampIframe->setAttribute('frameborder', '0');
+
+        $iframeContainer->appendChild($ampIframe);
+
+        // TODO Check final URL for documentation
+        $context->addWarning(
+            'This article uses Analytics code, and you didnt implemented a custom analytics code. This might not be the most accurate way of tracking your code. See this documentation at https://www.ampproject.org/docs/reference/components/amp-analytics on how to build your analytics component. To extend component implementations use https://developers.facebook.com/docs/instant-articles/other-formats documentation.',
+            $analytics
+        );
 
         return $iframeContainer;
     }
