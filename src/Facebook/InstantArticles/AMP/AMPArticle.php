@@ -123,7 +123,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $doctype = is_null($doctype) ? '<!doctype html>' : $doctype;
         $rendered = parent::render($doctype, $format);
 
-        // TODO fix the workaround just like on Element.php class
+        // Makes empty value attribute definition, since we use DOMDocument::saveXML()
         $rendered = str_replace('amp=""', 'amp', $rendered);
         $rendered = str_replace('amp-custom=""', 'amp-custom', $rendered);
         $rendered = str_replace('amp-boilerplate=""', 'amp-boilerplate', $rendered);
@@ -431,7 +431,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $horizontalScale = self::DEFAULT_WIDTH / $imageWidth;
             $verticalScale = self::DEFAULT_HEIGHT / $imageHeight;
             $maxScale = max($horizontalScale, $verticalScale);
-            
+
             $translateX = (int) (-($imageWidth * $maxScale - self::DEFAULT_WIDTH) / 2);
             $translateY = (int) (-($imageHeight * $maxScale - self::DEFAULT_HEIGHT) / 2);
 
@@ -1057,7 +1057,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         $rules = '';
-        
+
         foreach ($this->articleCustomCSSRules as $cssSelector => $cssProperties) {
             $declarations = array();
             foreach ($cssProperties as $cssKey => $cssValue) {
