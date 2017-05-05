@@ -29,9 +29,9 @@ class AMPHeaderTest extends \PHPUnit_Framework_TestCase
     {
         $html_file = file_get_contents(__DIR__ . '/articles/'.$test.'-instant-article.html');
         $propeties = array(
-          'lang' => 'en-US',
-          AMPArticle::STYLES_FOLDER_KEY => __DIR__,
-          AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
+            'lang' => 'en-US',
+            AMPArticle::STYLES_FOLDER_KEY => __DIR__,
+            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
         );
         if (!is_null($customProperties)) {
             $propeties = array_merge($propeties, $customProperties);
@@ -56,11 +56,13 @@ class AMPHeaderTest extends \PHPUnit_Framework_TestCase
         $context = $this->genContext();
         $header = $context->createElement('header', $context->getBody(), 'header');
 
-        $this->testHeader = new AMPHeader($header, $this->logo, $context);
+        $this->testHeader = new AMPHeader($header, $context);
         $target = $this->testHeader->build();
+        $this->testHeader->genHeaderLogo($this->logo);
 
         $document = new \DOMDocument;
         $document->appendChild($document->importNode($target, true));
+
         return new \DOMXPath($document);
     }
 
