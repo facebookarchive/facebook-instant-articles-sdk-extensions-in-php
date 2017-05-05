@@ -1,7 +1,7 @@
-# Contributing to Facebook Instant Articles PHP SDK Extensions
+# Contributing to Facebook Instant Articles SDK Extensions in PHP
 We want to make contributing to this project as easy and transparent as possible.
 
-We accept contributions via pull requests on [GitHub](https://github.com/facebook/facebook-instant-articles-sdk-extensions-php).
+We accept contributions via pull requests on [GitHub](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php).
 
 ## Pull Requests
 - **Sign the CLA** - In order to accept your pull request, we need you to submit a [Contributor License Agreement](https://code.facebook.com/cla). You only need to do this once to work on any of Facebook's open source projects.
