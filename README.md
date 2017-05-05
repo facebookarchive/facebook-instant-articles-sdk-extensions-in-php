@@ -1,4 +1,4 @@
-# Facebook Instant Articles PHP SDK Extensions #
+# Facebook Instant Articles SDK Extensions in PHP #
 
 [![Build Status](https://travis-ci.org/facebook/facebook-instant-articles-sdk-extensions-in-php.svg?branch=master)](https://travis-ci.org/facebook/facebook-instant-articles-sdk-extensions-in-php)
 [![Latest Stable Version](https://poser.pugx.org/facebook/facebook-instant-articles-sdk-extensions-in-php/v/stable)](https://packagist.org/packages/facebook/facebook-instant-articles-sdk-extensions-in-php)
