@@ -23,7 +23,7 @@ composer require facebook/facebook-instant-articles-sdk-extensions-php
 
 ## Testing and Developing ##
 
-[Composer](https://getcomposer.org/) is a prerequisite for testing and developing. [Install composer globally](https://getcomposer.org/doc/00-intro.md#globally), then install project dependencies by running this command in the project root directory:
+[Composer](https://getcomposer.org/) is a prerequisite for testing and developing. [Install composer globally](https://getcomposer.org/doc/00-intro.md#globally), then install project dependencies by running this command in the project root directory you've cloned:
 ```sh
 $ composer install
 ```
