@@ -71,4 +71,18 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
         $result = $cssBuilder->build(true);
         $this->assertEquals($expected, $result);
     }
+
+    public function testMultipleCSSFormatted()
+    {
+        $expected = $this->genSimpleCSSFormatted();
+
+        $cssBuilder = new CSSBuilder();
+        $cssBuilder->addProperty('.someClass', 'width', '300px')
+                   ->addProperty('.someClass', 'height', '400px')
+                   ->addProperty('.otherClass', 'background-color', '#aabbcc')
+                   ->addProperty('.otherClass', 'border-width', '2px');
+        $result = $cssBuilder->build(true);
+        $this->assertEquals($expected, $result);
+    }
+
 }
