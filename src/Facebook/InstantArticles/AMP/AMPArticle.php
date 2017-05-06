@@ -862,7 +862,10 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         if (array_key_exists(self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY, $this->properties) &&
                 $this->properties[self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] === true) {
-            return getimagesize($mediaURL);
+            $retrievedSizes = getimagesize($mediaURL);
+            if ($retrievedSizes && !empty($retrievedSizes) && $retrievedSizes[0] !== 0) {
+                return $retrievedSizes;
+            }
         }
 
         $width = array_key_exists(self::DEFAULT_MEDIA_WIDTH_KEY, $this->properties)
