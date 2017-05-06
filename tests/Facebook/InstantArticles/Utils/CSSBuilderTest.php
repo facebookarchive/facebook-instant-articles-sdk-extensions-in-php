@@ -41,6 +41,15 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
             "}";
     }
 
+    public function genOtherCSSFormatted()
+    {
+        return
+            ".otherClass {\n".
+            "    background-color: #aabbcc;\n".
+            "    border-width: 2px;\n".
+            "}";
+    }
+
     public function genSimpleCSS()
     {
         return
@@ -74,7 +83,7 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testMultipleCSSFormatted()
     {
-        $expected = $this->genSimpleCSSFormatted();
+        $expected = $this->genSimpleCSSFormatted()."\n\n".$this->genOtherCSSFormatted();
 
         $cssBuilder = new CSSBuilder();
         $cssBuilder->addProperty('.someClass', 'width', '300px')
