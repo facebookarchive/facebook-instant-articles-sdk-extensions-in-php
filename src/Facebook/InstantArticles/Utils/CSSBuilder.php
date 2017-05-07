@@ -28,6 +28,16 @@ class CSSBuilder
     private $selectors = array();
 
     /**
+     * @var string prefix for css selector classes
+     */
+    private $prefix;
+
+    public function __construct($prefix = 'ia2amp-')
+    {
+        $this->prefix = $prefix;
+    }
+
+    /**
      * Simple key => value method setting for CSS properties. This method does not apply any validation
      * be cautious about using it.
      * @param string $selector The selector for the CSS, free format accepted. Be cautious.
@@ -48,6 +58,29 @@ class CSSBuilder
 
         return $this;
     }
+
+    /**
+     * Builds class selector and apply prefix. If no prefix is set, default one will be applied.
+     * @param string $selector The selector for the CSS, free format accepted. Be cautious.
+     * @param string $property The property name on CSS, free format accepted. Be cautious.
+     * @param string $value The property value on CSS, free format accepted. Be cautious.
+     * @return CSSBuilder $this instance.
+     */
+    public function addToSelector($class, $property, $value)
+    {
+        return $this->addProperty($this->buildCssSelector($class), $property, $value);
+    }
+
+    private function buildCssClass($cssClassName)
+    {
+        return $this->prefix.$cssClassName;
+    }
+
+    private function buildCssSelector($cssClassName)
+    {
+        return '.'.$this->buildCssClass($cssClassName);
+    }
+
 
     /**
      * Builds the css output representing the current status of the CSSBuilder structure.

@@ -32,28 +32,28 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function genSimpleCSSFormatted()
+    public function genSimpleCSSFormatted($prefix = '')
     {
         return
-            ".someClass {\n".
+            ".{$prefix}someClass {\n".
             "    width: 300px;\n".
             "    height: 400px;\n".
             "}";
     }
 
-    public function genOtherCSSFormatted()
+    public function genOtherCSSFormatted($prefix = '')
     {
         return
-            ".otherClass {\n".
+            ".{$prefix}otherClass {\n".
             "    background-color: #aabbcc;\n".
             "    border-width: 2px;\n".
             "}";
     }
 
-    public function genSimpleCSS()
+    public function genSimpleCSS($prefix = '')
     {
         return
-            ".someClass {".
+            ".{$prefix}someClass {".
             "width: 300px;".
             "height: 400px;".
             "}";
@@ -74,7 +74,7 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $expected = $this->genSimpleCSSFormatted();
 
-        $cssBuilder = new CSSBuilder();
+        $cssBuilder = new CSSBuilder('');
         $cssBuilder->addProperty('.someClass', 'width', '300px')
                    ->addProperty('.someClass', 'height', '400px');
         $result = $cssBuilder->build(true);
@@ -85,7 +85,7 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $expected = $this->genSimpleCSSFormatted()."\n\n".$this->genOtherCSSFormatted();
 
-        $cssBuilder = new CSSBuilder();
+        $cssBuilder = new CSSBuilder('');
         $cssBuilder->addProperty('.someClass', 'width', '300px')
                    ->addProperty('.someClass', 'height', '400px')
                    ->addProperty('.otherClass', 'background-color', '#aabbcc')
@@ -94,4 +94,14 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testMultipleCSSFormattedWithPrefix()
+    {
+        $expected = $this->genSimpleCSSFormatted('myprefix-');
+
+        $cssBuilder = new CSSBuilder('myprefix-');
+        $cssBuilder->addToSelector('someClass', 'width', '300px')
+                   ->addToSelector('someClass', 'height', '400px');
+        $result = $cssBuilder->build(true);
+        $this->assertEquals($expected, $result);
+    }
 }
