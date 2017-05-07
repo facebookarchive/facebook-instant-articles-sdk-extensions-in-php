@@ -60,8 +60,9 @@ class CSSBuilder
     }
 
     /**
-     * Builds class selector and apply prefix. If no prefix is set, default one will be applied.
-     * @param string $selector The selector for the CSS, free format accepted. Be cautious.
+     * Adds property and value to the $class. It creates the selector, apply prefix and builds up
+     * css selector class grouping the properties.
+     * @param string $class The class to be applied to the selector.
      * @param string $property The property name on CSS, free format accepted. Be cautious.
      * @param string $value The property value on CSS, free format accepted. Be cautious.
      * @return CSSBuilder $this instance.
