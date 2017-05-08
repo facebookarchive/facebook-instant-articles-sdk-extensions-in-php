@@ -1010,7 +1010,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
         $logoStyles = $headerStyles['logo'];
 
-        $dataURL = $logoStyles['dataURL'];
+        $dataURL = array_key_exists('dataURL', $logoStyles)
+            ? $logoStyles['dataURL']
+            : null;
         $fullResURL = $logoStyles['full_resolution_url'];
 
         $defaultLogoHeight = 44; // TODO: Move to other place
