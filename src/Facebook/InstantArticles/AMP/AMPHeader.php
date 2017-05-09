@@ -82,7 +82,7 @@ class AMPHeader
         foreach ($authorsElement as $author) {
             $authorsString[] = $author->getName();
         }
-        $authors->appendChild($this->context->getDocument()->createTextNode('BY '.implode($authorsString, ', ')));
+        $authors->appendChild($this->context->getDocument()->createTextNode('By '.implode($authorsString, ', ')));
         $this->context->buildSpacingDiv($this->header);
     }
 
