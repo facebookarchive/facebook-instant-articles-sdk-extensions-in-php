@@ -59,7 +59,13 @@
     font-size: 14px;
     line-height: 20px;
     display: inline-block;
+
+
 }
+.ia2amp-p a {
+    margin: 0;
+}
+
 .ia2amp-blockquote {
     font-size: 14px;
     line-height: 20px;
