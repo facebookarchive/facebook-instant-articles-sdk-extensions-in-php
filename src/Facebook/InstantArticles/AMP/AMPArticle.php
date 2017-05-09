@@ -53,6 +53,9 @@ class AMPArticle extends Element implements InstantArticleInterface
     const PUBLISHER_KEY = 'publisher';
     const GOOGLE_MAPS_KEY = 'google_maps_key';
 
+    const MEDIA_TYPE_IMAGE = 'image';
+    const MEDIA_TYPE_VIDEO = 'video';
+
     private $instantArticle;
     /*
        'lang' => 'en-US',
@@ -425,7 +428,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampImg = $context->getDocument()->createElement('amp-img');
         $imageURL = $image->getUrl();
 
-        $imageDimensions = $this->getMediaDimensions($imageURL);
+        $imageDimensions = $this->getMediaDimensions($imageURL, self::MEDIA_TYPE_IMAGE);
         $imageWidth = $imageDimensions[0];
         $imageHeight = $imageDimensions[1];
 
@@ -487,7 +490,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampImg = $context->getDocument()->createElement('amp-anim');
         $imageURL = $image->getUrl();
 
-        $imageDimensions = $this->getMediaDimensions($imageURL);
+        $imageDimensions = $this->getMediaDimensions($imageURL, self::MEDIA_TYPE_IMAGE);
         $imageWidth = $imageDimensions[0];
         $imageHeight = $imageDimensions[1];
 
@@ -517,7 +520,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampVideo = $context->getDocument()->createElement('amp-video');
         $videoUrl = $video->getUrl();
 
-        $videoDimensions = $this->getMediaDimensions($videoUrl);
+        $videoDimensions = $this->getMediaDimensions($videoUrl, self::MEDIA_TYPE_VIDEO);
         $videoWidth = $videoDimensions[0];
         $videoHeight = $videoDimensions[1];
 
@@ -559,7 +562,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
             if (!isset($imageWidth) && !isset($imageHeight)) {
                 $imageUrl = $image->getUrl();
-                $imageDimensions = $this->getMediaDimensions($imageUrl);
+                $imageDimensions = $this->getMediaDimensions($imageUrl, self::MEDIA_TYPE_IMAGE);
                 $imageWidth = $imageDimensions[0];
                 $imageHeight = $imageDimensions[1];
             }
@@ -848,7 +851,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $ampCustomCSS;
     }
 
-    public function getMediaDimensions($mediaURL)
+    public function getMediaDimensions($mediaURL, $mediaType = null)
     {
         if (array_key_exists(self::MEDIA_SIZES_KEY, $this->properties) &&
                 array_key_exists($mediaURL, $this->properties[self::MEDIA_SIZES_KEY])) {
@@ -860,7 +863,8 @@ class AMPArticle extends Element implements InstantArticleInterface
             return $mediaDimensions;
         }
 
-        if (array_key_exists(self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY, $this->properties) &&
+        if ($mediaType === self::MEDIA_TYPE_IMAGE &&
+            array_key_exists(self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY, $this->properties) &&
                 $this->properties[self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] === true) {
             $retrievedSizes = getimagesize($mediaURL);
             if ($retrievedSizes && !empty($retrievedSizes) && $retrievedSizes[0] !== 0) {
@@ -1359,7 +1363,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         if ($imageURL) {
-            $imageDimensions = $this->getMediaDimensions($imageURL);
+            $imageDimensions = $this->getMediaDimensions($imageURL, self::MEDIA_TYPE_IMAGE);
 
             return array(
                 '@type' => 'ImageObject',
