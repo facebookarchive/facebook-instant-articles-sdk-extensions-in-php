@@ -12,8 +12,8 @@ class AMPHeader
 {
     private $header;
     private $context;
-    private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
-
+    private $publishDateElement;
+    
     public function __construct($header, $context)
     {
         $this->header = $header;
@@ -66,11 +66,10 @@ class AMPHeader
         }
     }
 
-    private function genArticlePublishDate()
+    private function genArticlePublishDateElement()
     {
-        $publishDate = $this->context->createElement('h3', $this->header, 'header-date');
-        $datetime = $this->iaHeader()->getPublished()->getDatetime();
-        $publishDate->appendChild($this->context->getDocument()->createTextNode(date_format($datetime, $this->dateFormat)));
+        $this->publishDateElement = $this->context->createElement('h3', $this->header, 'header-date');
+        // Note: The published date will be added after the whole article is processed
         $this->context->buildSpacingDiv($this->header);
     }
 
@@ -109,6 +108,13 @@ class AMPHeader
         );
     }
 
+    public function genArticlePublishDate($dateFormat)
+    {
+        $datetime = $this->iaHeader()->getPublished()->getDatetime();
+        $this->publishDateElement->appendChild(
+            $this->context->getDocument()->createTextNode(date_format($datetime, $dateFormat)));
+    }
+
     public function build()
     {
         $this->genHeaderBar();
@@ -116,7 +122,7 @@ class AMPHeader
         $this->genTitle();
         $this->genSubtitle();
         $this->genAuthors();
-        $this->genArticlePublishDate();
+        $this->genArticlePublishDateElement();
 
         return $this->header;
     }

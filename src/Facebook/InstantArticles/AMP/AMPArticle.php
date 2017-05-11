@@ -185,6 +185,8 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // Create the logo image, if set
         $this->ampHeader->genHeaderLogo($this->logo);
+        // Create the text element for the published date using parsed format from styles
+        $this->ampHeader->genArticlePublishDate($this->dateFormat);
 
         return $html;
     }
@@ -205,7 +207,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $header->appendChild($headerCover);
         }
 
-        $this->ampHeader = new AMPHeader($header, $context);
+        $this->ampHeader = new AMPHeader($header, $context, $this->dateFormat);
         return $this->ampHeader->build();
     }
 
@@ -995,13 +997,15 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function articleLogo($styles, $context)
     {
         $headerStyles = $styles['header'];
+        $backgroundColor = array_key_exists('background_color', $headerStyles)
+            ? $headerStyles['background_color'] : '#FFFFFF'; 
         // TODO: Add style for Like button
         // TODO: Build class name
         $barStyles = AMPArticle::buildCSSRule(
             '.ia2amp-header-bar',
             AMPArticle::buildCSSDeclarationBlock(
                 array(
-                    AMPArticle::buildCSSDeclaration('background-color', $headerStyles['background_color'])
+                    AMPArticle::buildCSSDeclaration('background-color', $backgroundColor)
                 )
             )
         );
