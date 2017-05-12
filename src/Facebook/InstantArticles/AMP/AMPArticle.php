@@ -994,21 +994,40 @@ class AMPArticle extends Element implements InstantArticleInterface
             $this->articleLogo($styles, $context);
     }
 
+    private function tryGetColor($sourceStyles, $colorStylePropertyName)
+    {
+        if (array_key_exists($colorStylePropertyName, $sourceStyles)) {
+            $color = $sourceStyles[$colorStylePropertyName];
+            if ($color) {
+                return self::toRGB($color);
+            }
+        }
+        
+        return null;
+    }
+
     private function articleLogo($styles, $context)
     {
         $headerStyles = $styles['header'];
-        $backgroundColor = array_key_exists('background_color', $headerStyles)
-            ? $headerStyles['background_color'] : '#FFFFFF'; 
-        // TODO: Add style for Like button
-        // TODO: Build class name
-        $barStyles = AMPArticle::buildCSSRule(
-            '.ia2amp-header-bar',
-            AMPArticle::buildCSSDeclarationBlock(
-                array(
-                    AMPArticle::buildCSSDeclaration('background-color', $backgroundColor)
-                )
-            )
-        );
+
+        $barRules = array();
+        
+        $backgroundColor = $this->tryGetColor($headerStyles, 'background_color');
+        if ($backgroundColor) {
+            $cssSelector = "." . $context->buildCssClass('header-bar');
+            $barRules['background-color'] = $backgroundColor;
+        }
+
+        $barColor = $this->tryGetColor($headerStyles, 'bar_color');
+        if ($barColor) {
+            $cssSelector= '.' . $context->buildCssClass('spacing') . '.after-header-bar';
+            $barRules['border-top-color'] = $barColor;
+            $barRules['border-top-style'] = 'solid';
+            $barRules['border-top-width'] = '1px';
+        }
+
+        $barDeclarationMapping = array($cssSelector => $barRules);
+        $barStyles = $this->buildCSSRulesFromArray($barDeclarationMapping);
 
         // TODO: Should we move the code below to another place?
         // It is not really generating any CSS as the width and height are required fields of amp-image
@@ -1092,13 +1111,17 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function articleCustomCSSStyles()
     {
-        if (!$this->articleCustomCSSRules) {
+        return $this->buildCSSRulesFromArray($this->articleCustomCSSRules);
+    }
+
+    private function buildCSSRulesFromArray($ruleMappings)
+    {
+        if (!$ruleMappings) {
             return null;
         }
 
         $rules = '';
-
-        foreach ($this->articleCustomCSSRules as $cssSelector => $cssProperties) {
+        foreach ($ruleMappings as $cssSelector => $cssProperties) {
             $declarations = array();
             foreach ($cssProperties as $cssKey => $cssValue) {
                 $declarations[] = $this->buildCSSDeclaration($cssKey, $cssValue);
