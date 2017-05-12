@@ -13,7 +13,7 @@
         "php": "^5.4 || ^7.0",
         "symfony/css-selector": "2.8.* || ^3.0",
         "facebook/graph-sdk": "~5.0",
-        "facebook/facebook-instant-articles-sdk-php": "^1.5.7",
+        "facebook/facebook-instant-articles-sdk-php": "^1.5.8",
         "apache/log4php": "2.3.0"
     },
     "require-dev": {
