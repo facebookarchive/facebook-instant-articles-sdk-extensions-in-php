@@ -78,11 +78,29 @@ class CSSBuilder
         return $this->addProperty($this->buildCssSelector($class), $property, $value);
     }
 
+    /**
+     * Adds dimension sized property value to the $class. It creates the selector, apply prefix and builds up
+     * css selector class grouping the properties. If value not informed, zero will be placed.
+     * @param string|array<string> $class The class to be applied to the selector.
+     * @param string $property The property name on CSS, free format accepted. Be cautious.
+     * @param string|float|int $dimension The property value on CSS.
+     * @return CSSBuilder $this instance.
+     */
     public function addDimensionToSelector($class, $property, $dimension, $unity = 'px')
     {
-        return $this->addProperty($this->buildCssSelector($class), $property, $dimension.$unity);
+        return $this->addProperty($this->buildCssSelector($class), $property, $dimension ? $dimension.$unity : '0');
     }
 
+    /**
+     * Adds condensed dimensions to property value selected by $class. If value not informed, zero will be placed.
+     * @param string|array<string> $class The class to be applied to the selector.
+     * @param string $property The property name on CSS, free format accepted. Be cautious.
+     * @param string|float|int $top The property value for top position on CSS.
+     * @param string|float|int $right The property value for right position on CSS.
+     * @param string|float|int $bottom The property value for bottom position on CSS.
+     * @param string|float|int $left The property value for left position on CSS.
+     * @return CSSBuilder $this instance.
+     */
     public function addTopRightBottomLeftToSelector($class, $property, $top, $right, $bottom, $left, $unity = 'px')
     {
         $dimension =
@@ -93,12 +111,19 @@ class CSSBuilder
         return $this->addProperty($this->buildCssSelector($class), $property, $dimension);
     }
 
+    /**
+     * Adds spacing height value to the proper selected class.
+     * @param string|array<string> $class The class to be applied to the selector.
+     * @param string|float|int $height The spacing value for spacing.
+     * @param string $unity The unity to be applied. Default value: 'px'.
+     * @return CSSBuilder $this instance.
+     */
     public function addHeightSpacingToSelector($class, $height, $unity = 'px')
     {
         return $this->addProperty(
             $this->buildCssSelector($class).' + '.$this->buildCssSelector($this->spacing),
             'height',
-            $height.$unity
+            $height ? $height.$unity : '0'
         );
     }
 
