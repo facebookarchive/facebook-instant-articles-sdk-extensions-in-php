@@ -41,6 +41,41 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
             "}";
     }
 
+    public function genSpacingCSSFormatted($prefix = '')
+    {
+        return
+            ".{$prefix}someClass {\n".
+            "    width: 300px;\n".
+            "    height: 400px;\n".
+            "}\n".
+            "\n".
+            ".{$prefix}someClass + .{$prefix}spacing {\n".
+            "    height: 18px;\n".
+            "}";
+    }
+
+    public function genMarginCSSFormatted($prefix = '')
+    {
+        return
+            ".{$prefix}someClass {\n".
+            "    margin: 0 10px 5px 0;\n".
+            "    height: 400px;\n".
+            "}";
+    }
+
+    public function genArrayCSSFormatted($prefix = '')
+    {
+        return
+            ".{$prefix}someClass1, .{$prefix}someClass2 {\n".
+            "    width: 300px;\n".
+            "    height: 400px;\n".
+            "}\n".
+            "\n".
+            ".{$prefix}someClass1 {\n".
+            "    color: #fff;\n".
+            "}";
+    }
+
     public function genOtherCSSFormatted($prefix = '')
     {
         return
@@ -58,6 +93,8 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
             "height: 400px;".
             "}";
     }
+
+
 
     public function testSimpleCSS()
     {
@@ -101,6 +138,52 @@ class CSSBuilderTest extends \PHPUnit_Framework_TestCase
         $cssBuilder = new CSSBuilder('myprefix-');
         $cssBuilder->addToSelector('someClass', 'width', '300px')
                    ->addToSelector('someClass', 'height', '400px');
+        $result = $cssBuilder->build(true);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testMultipleDimmensionCSSFormattedWithPrefix()
+    {
+        $expected = $this->genSimpleCSSFormatted('myprefix-');
+
+        $cssBuilder = new CSSBuilder('myprefix-');
+        $cssBuilder->addDimensionToSelector('someClass', 'width', '300', 'px')
+                   ->addDimensionToSelector('someClass', 'height', '400', 'px');
+        $result = $cssBuilder->build(true);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testSpacingCSSFormattedWithPrefix()
+    {
+        $expected = $this->genSpacingCSSFormatted('myprefix-');
+
+        $cssBuilder = new CSSBuilder('myprefix-');
+        $cssBuilder->addDimensionToSelector('someClass', 'width', '300', 'px')
+                   ->addDimensionToSelector('someClass', 'height', '400', 'px')
+                   ->addHeightSpacingToSelector('someClass', '18');
+        $result = $cssBuilder->build(true);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testTopRightBottomLeftCSSFormattedWithPrefix()
+    {
+        $expected = $this->genMarginCSSFormatted('myprefix-');
+
+        $cssBuilder = new CSSBuilder('myprefix-');
+        $cssBuilder->addTopRightBottomLeftToSelector('someClass', 'margin', null, '10', 5, 0, 'px')
+                   ->addDimensionToSelector('someClass', 'height', '400', 'px');
+        $result = $cssBuilder->build(true);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testArrayCSSFormattedWithPrefix()
+    {
+        $expected = $this->genArrayCSSFormatted('myprefix-');
+
+        $cssBuilder = new CSSBuilder('myprefix-');
+        $cssBuilder->addToSelector(array('someClass1', 'someClass2'), 'width', '300px')
+                   ->addToSelector(array('someClass1', 'someClass2'), 'height', '400px')
+                   ->addToSelector('someClass1', 'color', '#fff');
         $result = $cssBuilder->build(true);
         $this->assertEquals($expected, $result);
     }

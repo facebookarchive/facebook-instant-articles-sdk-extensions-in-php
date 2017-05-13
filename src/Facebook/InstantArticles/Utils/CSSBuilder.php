@@ -32,9 +32,15 @@ class CSSBuilder
      */
     private $prefix;
 
-    public function __construct($prefix = 'ia2amp-')
+    /**
+     * @var string spacing For height on the separator divs
+     */
+    private $spacing;
+
+    public function __construct($prefix = 'ia2amp-', $spacing = 'spacing')
     {
         $this->prefix = $prefix;
+        $this->spacing = $spacing;
     }
 
     /**
@@ -62,7 +68,7 @@ class CSSBuilder
     /**
      * Adds property and value to the $class. It creates the selector, apply prefix and builds up
      * css selector class grouping the properties.
-     * @param string $class The class to be applied to the selector.
+     * @param string|array<string> $class The class to be applied to the selector.
      * @param string $property The property name on CSS, free format accepted. Be cautious.
      * @param string $value The property value on CSS, free format accepted. Be cautious.
      * @return CSSBuilder $this instance.
@@ -72,14 +78,47 @@ class CSSBuilder
         return $this->addProperty($this->buildCssSelector($class), $property, $value);
     }
 
+    public function addDimensionToSelector($class, $property, $dimension, $unity = 'px')
+    {
+        return $this->addProperty($this->buildCssSelector($class), $property, $dimension.$unity);
+    }
+
+    public function addTopRightBottomLeftToSelector($class, $property, $top, $right, $bottom, $left, $unity = 'px')
+    {
+        $dimension =
+            ($top ? $top.$unity : '0').' '.
+            ($right ? $right.$unity : '0').' '.
+            ($bottom ? $bottom.$unity : '0').' '.
+            ($left ? $left.$unity : '0');
+        return $this->addProperty($this->buildCssSelector($class), $property, $dimension);
+    }
+
+    public function addHeightSpacingToSelector($class, $height, $unity = 'px')
+    {
+        return $this->addProperty(
+            $this->buildCssSelector($class).' + '.$this->buildCssSelector($this->spacing),
+            'height',
+            $height.$unity
+        );
+    }
+
+
     private function buildCssClass($cssClassName)
     {
         return $this->prefix.$cssClassName;
     }
 
-    private function buildCssSelector($cssClassName)
+    private function buildCssSelector($class)
     {
-        return '.'.$this->buildCssClass($cssClassName);
+        if (is_array($class)) {
+            $selectors = array();
+            foreach ($class as $singleClass) {
+                $selectors[] = $this->buildCssSelector($singleClass);
+            }
+            return implode(', ', $selectors);
+        } else {
+            return '.'.$this->buildCssClass($class);
+        }
     }
 
 
