@@ -1408,7 +1408,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         if (Type::is($element, Image::getClassName())) {
             return $element->getUrl();
         } else if (Type::is($element, Slideshow::getClassName())) {
-            // TODO: Add Unit test
             foreach ($element->getArticleImages() as $articleImage) {
                 if ($articleImage->isValid()) {
                     return $articleImage->getUrl();
