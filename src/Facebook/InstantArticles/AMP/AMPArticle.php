@@ -717,7 +717,6 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $iframeContainer->appendChild($ampIframe);
 
-        // TODO Check final URL for documentation
         $context->addWarning(
             'This article uses Analytics code, and you didnt implemented a custom analytics code. This might not be the most accurate way of tracking your code. See this documentation at https://www.ampproject.org/docs/reference/components/amp-analytics on how to build your analytics component. To extend component implementations use https://developers.facebook.com/docs/instant-articles/other-formats documentation.',
             $analytics
