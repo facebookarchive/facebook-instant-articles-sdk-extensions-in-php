@@ -21,7 +21,9 @@ After the installation, you can include the auto loader script in your source wi
 require_once('vendor/autoload.php');
 ```
 
-You can find examples on how to use the different components of this SDK to integrate with your CMS in the [Quick Start Guide](https://developers.facebook.com/docs/instant-articles/other-formats/#quickstart) of the documentation.
+## Official Documentation
+
+You can find examples on how to use the different components of this SDK to integrate with your CMS in the [Quick Start Guide](https://developers.facebook.com/docs/instant-articles/other-formats/#quickstart) of the [documentation](https://developers.facebook.com/docs/instant-articles/other-formats/).
 
 ## Contributing
 
