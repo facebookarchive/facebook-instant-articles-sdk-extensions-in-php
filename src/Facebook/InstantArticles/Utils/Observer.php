@@ -75,7 +75,7 @@ class Observer
      *         return 'value overriden';
      *     }
      *     $observer = Observer::create();
-     *     $observer->addFilter('filterName', 'callbackFunction'); // Where $priority is default 100, $acceptedArgs is default 1.
+     *     $observer->addFilter('filterName', 'callbackFunction'); // Where $priority is default 10, $acceptedArgs is default 1.
      *
      *     // Accepting two arguments (three possible).
      *     function callbackFunction( $value, $arg2 ) {
@@ -88,10 +88,10 @@ class Observer
      * @param string $tag The name of the filter hook.
      * @param callable $functionToAdd The callback to be called when the filter is applied.
      * @param int $priority Optional. Priority order to run the multiple hooks appended to same $tag.
-     * As lower the number is, more priority it will have. Default 100.
+     * As lower the number is, more priority it will have. Default 10.
      * @param int $acceptedArgs Optional. The number of arguments the function accepts. Default 1.
      */
-    public function addFilter($tag, $functionToAdd, $priority = 100, $acceptedArgs = 1)
+    public function addFilter($tag, $functionToAdd, $priority = 10, $acceptedArgs = 1)
     {
         // This is a crude filter, needs to create the CallbackHook manager for that
         if (!isset($this->callbacks[$tag])) {
@@ -99,7 +99,7 @@ class Observer
         }
         // Builds unique identifier for this callback call. This is important due to
         // same method calls from different instances.
-        $idx = $this->getUniqueIndexID($tag, $functionToAdd, $priority);
+        $idx = $this->getUniqueIndexID($tag, $functionToAdd);
         $this->callbacks[$tag]->addFilter($idx, $tag, $functionToAdd, $priority, $acceptedArgs);
     }
 
@@ -171,14 +171,14 @@ class Observer
      *
      * @param string $tag The filter hook name where function + priority will be removed from
      * @param callable $functionToRemove The function/instance->method will be removed.
-     * @param int $priority Optional. The priority of the function to be removed. Default 100.
+     * @param int $priority Optional. The priority of the function to be removed. Default 10.
      * @return bool True if found function to remove from filter list, false otherwise.
      */
-    function removeFilter($tag, $functionToRemove, $priority = 100)
+    function removeFilter($tag, $functionToRemove, $priority = 10)
     {
         $return = false;
         if (isset($this->callbacks[$tag])) {
-            $idx = $this->getUniqueIndexID($tag, $functionToRemove, $priority);
+            $idx = $this->getUniqueIndexID($tag, $functionToRemove);
             $return = $this->callbacks[$tag]->removeFilter($idx, $tag, $priority);
             if (! $this->callbacks[$tag]->callbacks) {
                 unset($this->callbacks[$tag]);
@@ -227,39 +227,38 @@ class Observer
      * @return string|false Unique ID for usage as array key or false if $priority === false
      * and $function is an object reference, and it does not already have a unique id.
      */
-    private function getUniqueIndexID($tag, $function, $priority)
+    private function getUniqueIndexID($tag, $function)
     {
         if (is_string($function)) {
             return $function;
         }
-
+        if ($function instanceof \Closure) {
+            // If a Closure is used, it cannot be retrieved or removed
+            // individually later
+            return 'Closure' . self::$filterCount++;
+        }
         if (is_object($function)) {
-            // Closures are currently implemented as objects
             $function = array($function, '');
         } else {
             $function = (array) $function;
         }
 
         if (is_string($function[0])) {
-            // Static
+            // Static call
             return $function[0] . '::' . $function[1];
         } elseif (is_object($function[0])) {
             // Instance call
             if (function_exists('spl_object_hash')) {
-                return spl_object_hash($function[0]) . $function[1];
+                return spl_object_hash($function[0]).'->' . $function[1];
             } else {
-                $obj_idx = get_class($function[0]).$function[1];
+                $obj_idx = get_class($function[0]).'->'.$function[1];
                 if (!isset($function[0]->filterIdx)) {
-                    if (false === $priority) {
-                        return false;
-                    }
-                    $obj_idx = $obj_idx . isset($this->callbacks[$tag][$priority]) ? count((array)$this->callbacks[$tag][$priority]) : self::$filterCount;
+                    $obj_idx = $obj_idx . self::$filterCount;
                     $function[0]->filterIdx = self::$filterCount;
                     self::$filterCount++;
                 } else {
                     $obj_idx = $obj_idx . $function[0]->filterIdx;
                 }
-
                 return $obj_idx;
             }
         }
@@ -280,7 +279,7 @@ class Observer
         if (!isset($this->callbacks[$tag])) {
             return false;
         }
-        $idx = $this->getUniqueIndexID($tag, $functionToCheck, false);
+        $idx = $this->getUniqueIndexID($tag, $functionToCheck);
         return $this->callbacks[$tag]->hasFilter($idx, $tag, $functionToCheck);
     }
 }

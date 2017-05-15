@@ -10,6 +10,43 @@ namespace Facebook\InstantArticles\Utils;
 
 use Facebook\InstantArticles\Validators\Type;
 
+/*
+ * Sample class used for testing the Observer.
+ */
+class Greeting
+{
+    private $greeting;
+
+    function __construct($greeting)
+    {
+        $this->greeting = $greeting;
+    }
+
+    /**
+     * Says hello to someone
+     */
+    static function hello($name)
+    {
+        return "Hello $name";
+    }
+
+    /**
+     * Method that returns a string greeting someone
+     */
+    function greet($name, $middleName = null, $lastName = null)
+    {
+        $name = ($this->greeting).' '.$name;
+        if ($middleName) {
+            $name = $name.' '.$middleName;
+        }
+        if ($lastName) {
+            $name = $name.' '.$lastName;
+        }
+        return $name;
+    }
+}
+
+
 class ObserverTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
@@ -32,135 +69,121 @@ class ObserverTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function method()
+    public function testNoFilter()
     {
-        return 'result';
+        $observererver = Observer::create();
+        $name = $observererver->applyFilters('name', "Bob");
+        $this->assertEquals('Bob', $name);
     }
 
-    public function methodFiltering($value)
+    public function testSingleFilter()
     {
-        return $value.'-filtered';
+        $observer = Observer::create();
+        $observer->addFilter('name', function ($name) { return "$name-san"; });
+        $name = $observer->applyFilters('name', "Bob");
+        $this->assertEquals('Bob-san', $name);
     }
 
-    public function testFilterDefault()
+    public function testStaticFilter()
     {
-        $obs = Observer::create();
-        $result = $obs->applyFilters('filterName', $this->method());
-        $this->assertEquals('result', $result);
-    }
+        $observer = Observer::create();
+        $observer->addFilter('name', array("Facebook\InstantArticles\Utils\Greeting", "hello"));
 
-    public function testFilterDefaultWithFilter()
-    {
-        $obs = Observer::create();
-        $obs->addFilter('filterName', array($this, 'methodFiltering'));
-        $result = $obs->applyFilters('filterName', $this->method());
-        $this->assertEquals('result-filtered', $result);
+        $name = $observer->applyFilters('name', "Bob");
+        $this->assertEquals('Hello Bob', $name);
     }
 
     public function testFilterWithReferences()
     {
-        $foo0 = new Foobar("foo");
-        $bar1 = new Foobar("bar1");
-        $bar2 = new Foobar("bar2");
+        $mr = new Greeting("Mr.");
+        $hello = new Greeting("Hello");
 
-        $obs = Observer::create();
-        $obs->addFilter('filterName', array(&$bar1, "hook"));
-        $obs->addFilter('filterName', array(&$bar2, "hook"));
+        $observer = Observer::create();
+        $observer->addFilter('name', array(&$mr, "greet"));
+        $observer->addFilter('name', array(&$hello, "greet"));
 
-        $result = $obs->applyFilters('filterName', $foo0->hook('param'));
-        $this->assertEquals('bar2 bar1 foo param', $result);
+        $name = $observer->applyFilters('name', "Bob");
+        $this->assertEquals('Hello Mr. Bob', $name);
     }
 
     public function testFilterWithParameters()
     {
-        $foo0 = new Foobar("foo");
-        $bar1 = new Foobar("bar1");
+        $hello = new Greeting("Hello");
 
-        $obs = Observer::create();
-        $obs->addFilter('filterName', array(&$bar1, "hook"), 10, 3);
+        $observer = Observer::create();
+        $observer->addFilter('name', array(&$hello, "greet"), 10, 4);
 
-        $result = $obs->applyFilters('filterName', $foo0->hook('param'), ' param2', ' param3');
-        $this->assertEquals('bar1 foo param param2 param3', $result);
+        $name = $observer->applyFilters('name', "Spongebob", "Square", "Pants");
+        $this->assertEquals('Hello Spongebob Square Pants', $name);
     }
 
     public function testFilterWithReferencesAndParameters()
     {
-        $foo0 = new Foobar("foo");
-        $bar1 = new Foobar("bar1");
-        $bar2 = new Foobar("bar2");
+        $hello = new Greeting("Hello");
+        $mr = new Greeting("Mr.");
 
-        $obs = Observer::create();
-        $obs->addFilter('filterName', array(&$bar1, "hook"), 10, 3);
-        $obs->addFilter('filterName', array(&$bar2, "hook"), 10, 3);
+        $observer = Observer::create();
+        $observer->addFilter('name', array(&$hello, "greet"), 11, 2);
+        $observer->addFilter('name', array(&$mr, "greet"), 10, 1);
 
-        $result = $obs->applyFilters('filterName', $foo0->hook('param'), ' param2', ' param3');
-        $this->assertEquals('bar2 bar1 foo param param2 param3 param2 param3', $result);
+        $name = $observer->applyFilters('name', "Bob", "Bobby");
+        $this->assertEquals('Hello Mr. Bob Bobby', $name);
     }
 
-    public function testRemoveFilterWithReferencesAndParameters()
+    public function testRemoveFilterWithReferencesParameters()
     {
-        $foo0 = new Foobar("foo");
-        $bar1 = new Foobar("bar1");
-        $bar2 = new Foobar("bar2");
+        $hello = new Greeting("Hello");
+        $mr = new Greeting("Mr.");
 
-        $obs = Observer::create();
-        $obs->addFilter('filterName', array(&$bar1, "hook"), 10, 3);
-        $obs->addFilter('filterName', array(&$bar2, "hook"), 10, 3);
+        $observer = Observer::create();
+        $observer->addFilter('name', array(&$hello, "greet"), 11, 2);
+        $observer->addFilter('name', array(&$mr, "greet"), 10, 1);
 
-        $result = $obs->applyFilters('filterName', $foo0->hook('param'), ' param2', ' param3');
-        $this->assertEquals('bar2 bar1 foo param param2 param3 param2 param3', $result);
+        $name = $observer->applyFilters('name', "Bob", "Bobby");
+        $this->assertEquals('Hello Mr. Bob Bobby', $name);
 
-        $obs->removeFilter('filterName', array(&$bar1, "hook"), 10, 3);
-        $result = $obs->applyFilters('filterName', $foo0->hook('param'), ' param2', ' param3');
-        $this->assertEquals('bar2 foo param param2 param3', $result);
+        $observer->removeFilter('name', array(&$mr, "greet"), 10);
+
+        $name = $observer->applyFilters('name', "Bob", "Bobby");
+        $this->assertEquals('Hello Bob Bobby', $name);
     }
 
     public function testRemoveAllFiltersWithReferencesAndParameters()
     {
-        $foo0 = new Foobar("foo");
-        $bar1 = new Foobar("bar1");
-        $bar2 = new Foobar("bar2");
+        $hello = new Greeting("Hello");
+        $mr = new Greeting("Mr.");
 
-        $obs = Observer::create();
-        $obs->addFilter('filterName', array(&$bar1, "hook"), 10, 3);
-        $obs->addFilter('filterName', array(&$bar2, "hook"), 10, 3);
+        $observer = Observer::create();
+        $observer->addFilter('name', array(&$hello, "greet"), 11, 2);
+        $observer->addFilter('name', array(&$mr, "greet"), 10, 1);
 
-        $result = $obs->applyFilters('filterName', $foo0->hook('param'), ' param2', ' param3');
-        $this->assertEquals('bar2 bar1 foo param param2 param3 param2 param3', $result);
+        $name = $observer->applyFilters('name', "Bob", "Bobby");
+        $this->assertEquals('Hello Mr. Bob Bobby', $name);
 
-        $obs->removeAllFilters('filterName', 10);
-        $result = $obs->applyFilters('filterName', $foo0->hook('param'), ' param2', ' param3');
-        $this->assertEquals('foo param', $result);
+        $observer->removeAllFilters('name', 11);
+
+        $name = $observer->applyFilters('name', "Bob", "Bobby");
+        $this->assertEquals('Mr. Bob', $name);
+
+        $observer->removeAllFilters('name');
+
+        $name = $observer->applyFilters('name', "Bob", "Bobby");
+        $this->assertEquals('Bob', $name);
     }
 
     public function testHasFilter()
     {
-        $foo0 = new Foobar("foo");
-        $bar1 = new Foobar("bar1");
-        $bar2 = new Foobar("bar2");
+        $hello = new Greeting("Hello");
+        $mr = new Greeting("Mr.");
+        $mrs = new Greeting("Mrs.");
 
-        $obs = Observer::create();
-        $obs->addFilter('filterName', array(&$bar1, "hook"), 10, 3);
+        $observer = Observer::create();
+        $observer->addFilter('name', array(&$hello, "greet"), 11, 2);
+        $observer->addFilter('name', array(&$mr, "greet"), 10, 1);
 
-        $result = $obs->hasFilter('filterName', array(&$bar1, "hook"));
-        $this->assertEquals(10, $result);
-
-        $result = $obs->hasFilter('filterName');
-        $this->assertTrue($result);
-    }
-}
-
-class Foobar
-{
-    private $name;
-
-    function __construct($name)
-    {
-        $this->name = $name;
-    }
-
-    function hook($v, $param1 = null, $param2 = null)
-    {
-        return $this->name . " $v" . (!Type::isTextEmpty($param1) ? $param1 : '').(!Type::isTextEmpty($param2) ? $param2 : '');
+        $this->assertEquals(11, $observer->hasFilter('name', array(&$hello, "greet")));
+        $this->assertEquals(10, $observer->hasFilter('name', array(&$mr, "greet")));
+        $this->assertFalse($observer->hasFilter('name', array(&$mrs, "greet")));
+        $this->assertTrue($observer->hasFilter('name'));
     }
 }
