@@ -167,13 +167,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $ampExpected = file_get_contents(__DIR__.'/articles/'.$test.'-amp-converted.html');
         $this->compareIgnoringStyles($ampExpected, $ampRendered);
-
-        // Sets content into the file for fast testing
-        // file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted.html', $ampRendered);
-
-        // URL of file: https://s3.amazonaws.com/wodexpert/test1-amp-converted.html
-        // AMP url for testing: https://search.google.com/search-console/amp
-        // $this->uploadToS3(__DIR__.'/articles/'.$test.'-amp-converted.html', ''.$test.'-amp-converted-everton.html');
     }
 
     private function getRenderedMarkupXPathQuery($test, $xPathExpression, $customProperties = null)
@@ -1134,27 +1127,5 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         return '#' . str_pad(dechex($red), 2, '0', STR_PAD_LEFT) .
                     str_pad(dechex($green), 2, '0', STR_PAD_LEFT) .
                     str_pad(dechex($blue), 2, '0', STR_PAD_LEFT);
-    }
-
-    /*
-    TODO remove this before release and before squash
-    */
-    public function uploadToS3($fileToUpload, $fileNameToStoreAtS3)
-    {
-        $awsClient = S3Client::factory(array(
-            'credentials' => array(
-                'key'    => 'AKIAIA5UXSRCJTQL66QA',
-                'secret' => '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',
-            ),
-            'region'     => 'us-east-1',
-            'version'    => '2006-03-01',
-        ));
-
-        $awsClient->putObject(array(
-            'Bucket'     => 'wodexpert',
-            'Key'        => $fileNameToStoreAtS3,
-            'SourceFile' => $fileToUpload,
-            'ACL'        => 'public-read'
-        ));
     }
 }

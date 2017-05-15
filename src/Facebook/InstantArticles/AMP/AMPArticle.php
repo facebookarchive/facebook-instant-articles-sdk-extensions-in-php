@@ -40,6 +40,8 @@ class AMPArticle extends Element implements InstantArticleInterface
     const DEFAULT_MARGIN = 16.4;
     const DEFAULT_WIDTH = 380;
     const DEFAULT_HEIGHT = 240;
+    const DEFAULT_LOGO_WIDTH = 230;
+    const DEFAULT_LOGO_HEIGHT = 44;
     const DEFAULT_DATE_FORMAT = 'F d, Y';
     const DEFAULT_CSS_PREFIX = 'ia2amp-';
 
@@ -472,7 +474,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($caption) {
             $ampFigure = $this->buildCaption($caption, $context, $ampImg);
 
-            // Replace the top level image element with the figure
+            // Replaces the top level image element with the figure
             $ampImg = $ampFigure;
         }
 
@@ -504,7 +506,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($caption) {
             $ampFigure = $this->buildCaption($caption, $context, $image);
 
-            // Replace the top level image with the figure
+            // Replaces the top level image with the figure
             $ampImg = $ampFigure;
         }
 
@@ -526,7 +528,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $videoWidth = $videoDimensions[0];
         $videoHeight = $videoDimensions[1];
 
-        $ampVideo->setAttribute('src', $this->ensureHttps($videoUrl));
+        $ampVideo->setAttribute('src', $this->ensureHttps($context, $videoUrl));
         $ampVideo->setAttribute('width', $videoWidth);
         $ampVideo->setAttribute('height', $videoHeight);
 
@@ -534,7 +536,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($caption) {
             $ampFigure = $this->buildCaption($caption, $context, $ampVideo);
 
-            // Replace the top level video with the figure
+            // Replaces the top level video with the figure
             $ampVideo = $ampFigure;
         }
 
@@ -576,7 +578,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($caption) {
             $ampFigure = $this->buildCaption($caption, $context, $ampCarousel);
 
-            // Replace the top level carousel with the figure
+            // Replaces the top level carousel with the figure
             $ampCarousel = $ampFigure;
         }
 
@@ -677,7 +679,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $iframeContainer = $context->createElement('div', null, $cssClass);
 
         $ampIframe = $context->getDocument()->createElement('amp-iframe');
-        $ampIframe->setAttribute('src', $this->ensureHttps($srcUrl));
+        $ampIframe->setAttribute('src', $this->ensureHttps($context, $srcUrl));
         $ampIframe->setAttribute('width', self::DEFAULT_WIDTH);
         $ampIframe->setAttribute('height', self::DEFAULT_HEIGHT);
         $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
@@ -689,7 +691,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             if ($caption) {
                 $ampFigure = $this->buildCaption($caption, $context, $ampIframe);
 
-                // Replace the top level iframe with the figure
+                // Replaces the top level iframe with the figure
                 $ampIframe = $ampFigure;
             }
         }
@@ -706,7 +708,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $iframeContainer = $context->createElement('div', null, $cssClass);
 
         $ampIframe = $context->getDocument()->createElement('amp-iframe');
-        $ampIframe->setAttribute('src', $this->ensureHttps($srcUrl));
+        $ampIframe->setAttribute('src', $this->ensureHttps($context, $srcUrl));
         $ampIframe->setAttribute('width', 1);
         $ampIframe->setAttribute('height', 1);
         $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
@@ -715,7 +717,6 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $iframeContainer->appendChild($ampIframe);
 
-        // TODO Check final URL for documentation
         $context->addWarning(
             'This article uses Analytics code, and you didnt implemented a custom analytics code. This might not be the most accurate way of tracking your code. See this documentation at https://www.ampproject.org/docs/reference/components/amp-analytics on how to build your analytics component. To extend component implementations use https://developers.facebook.com/docs/instant-articles/other-formats documentation.',
             $analytics
@@ -735,7 +736,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampAd = $context->createElement('amp-iframe', $ampAdContainer);
 
         if (!Type::isTextEmpty($srcUrl)) {
-            $ampAd->setAttribute('src', $this->ensureHttps($srcUrl));
+            $ampAd->setAttribute('src', $this->ensureHttps($context, $srcUrl));
         }
         $ampAd->setAttribute('width', $width ? $width : self::DEFAULT_WIDTH);
         $ampAd->setAttribute('height', $height ? $height : self::DEFAULT_HEIGHT);
@@ -994,21 +995,40 @@ class AMPArticle extends Element implements InstantArticleInterface
             $this->articleLogo($styles, $context);
     }
 
+    private function tryGetColor($sourceStyles, $colorStylePropertyName)
+    {
+        if (array_key_exists($colorStylePropertyName, $sourceStyles)) {
+            $color = $sourceStyles[$colorStylePropertyName];
+            if ($color) {
+                return self::toRGB($color);
+            }
+        }
+
+        return null;
+    }
+
     private function articleLogo($styles, $context)
     {
         $headerStyles = $styles['header'];
-        $backgroundColor = array_key_exists('background_color', $headerStyles)
-            ? $headerStyles['background_color'] : '#FFFFFF'; 
-        // TODO: Add style for Like button
-        // TODO: Build class name
-        $barStyles = AMPArticle::buildCSSRule(
-            '.ia2amp-header-bar',
-            AMPArticle::buildCSSDeclarationBlock(
-                array(
-                    AMPArticle::buildCSSDeclaration('background-color', $backgroundColor)
-                )
-            )
-        );
+
+        $barRules = array();
+
+        $backgroundColor = $this->tryGetColor($headerStyles, 'background_color');
+        if ($backgroundColor) {
+            $cssSelector = "." . $context->buildCssClass('header-bar');
+            $barRules['background-color'] = $backgroundColor;
+        }
+
+        $barColor = $this->tryGetColor($headerStyles, 'bar_color');
+        if ($barColor) {
+            $cssSelector= '.' . $context->buildCssClass('spacing') . '.after-header-bar';
+            $barRules['border-top-color'] = $barColor;
+            $barRules['border-top-style'] = 'solid';
+            $barRules['border-top-width'] = '1px';
+        }
+
+        $barDeclarationMapping = array($cssSelector => $barRules);
+        $barStyles = $this->buildCSSRulesFromArray($barDeclarationMapping);
 
         // TODO: Should we move the code below to another place?
         // It is not really generating any CSS as the width and height are required fields of amp-image
@@ -1023,8 +1043,8 @@ class AMPArticle extends Element implements InstantArticleInterface
             : null;
         $fullResURL = $logoStyles['full_resolution_url'];
 
-        $defaultLogoHeight = 44; // TODO: Move to other place
-        $defaultLogoWidth = 230; // TODO: Move to other place
+        $defaultLogoHeight = $this->observer->applyFilters('DEFAULT_LOGO_HEIGHT', self::DEFAULT_LOGO_HEIGHT);
+        $defaultLogoWidth = $this->observer->applyFilters('DEFAULT_LOGO_WIDTH', self::DEFAULT_LOGO_WIDTH);
         $logoWidth = $logoStyles['full_resolution_width'];
         $logoHeight = $logoStyles['full_resolution_height'];
         $resizeScale = $headerStyles['logo_scale'] || 1.0;
@@ -1092,13 +1112,17 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function articleCustomCSSStyles()
     {
-        if (!$this->articleCustomCSSRules) {
+        return $this->buildCSSRulesFromArray($this->articleCustomCSSRules);
+    }
+
+    private function buildCSSRulesFromArray($ruleMappings)
+    {
+        if (!$ruleMappings) {
             return null;
         }
 
         $rules = '';
-
-        foreach ($this->articleCustomCSSRules as $cssSelector => $cssProperties) {
+        foreach ($ruleMappings as $cssSelector => $cssProperties) {
             $declarations = array();
             foreach ($cssProperties as $cssKey => $cssValue) {
                 $declarations[] = $this->buildCSSDeclaration($cssKey, $cssValue);
@@ -1385,7 +1409,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         if (Type::is($element, Image::getClassName())) {
             return $element->getUrl();
         } else if (Type::is($element, Slideshow::getClassName())) {
-            // TODO: Add Unit test
             foreach ($element->getArticleImages() as $articleImage) {
                 if ($articleImage->isValid()) {
                     return $articleImage->getUrl();
@@ -1396,8 +1419,11 @@ class AMPArticle extends Element implements InstantArticleInterface
         return null;
     }
 
-    private function ensureHttps($url)
+    private function ensureHttps($context, $url)
     {
+        if (strpos($url , 'http:') !== false) {
+            $context->addWarning('URLs for videos, iframes, analytics and ads should be HTTPS. Double check if this one is still valid using HTTPS protocol', $url);
+        }
         return Type::isTextEmpty($url) ? $url : preg_replace("/^http:/i", "https:", $url);
     }
 }
