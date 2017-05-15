@@ -691,7 +691,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             if ($caption) {
                 $ampFigure = $this->buildCaption($caption, $context, $ampIframe);
 
-                // Replace the top level iframe with the figure
+                // Replaces the top level iframe with the figure
                 $ampIframe = $ampFigure;
             }
         }
