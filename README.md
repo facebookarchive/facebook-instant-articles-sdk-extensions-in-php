@@ -6,7 +6,7 @@
 The Facebook Instant Articles SDK Extensions in PHP provides a native PHP interface for converting valid Instant Articles into AMP. This gives developers the ability to have AMP content right after getting his own Instant Article markup format ready.
 
 The Extension package consists of:
-- **Dependencies**: It relies solely on the [Instant Articles SDK](https://github.com/Facebook/facebook-instant-articles-sdk-php) and its dependencies to get the Instant Article markup format available into the Elements object tree structure.
+- **Dependencies**: It relies solely on the [Instant Articles SDK](https://github.com/Facebook/facebook-instant-articles-sdk-php) and its dependencies to get the Instant Article markup format available into the Elements object tree structure. It also depends on [Composer](https://getcomposer.org/) dependency manager.
 - **AMP**: The AMP transformation was based on the current implementation and definition from [AMP project](https://www.ampproject.org/).
 
 ## Quick Start
