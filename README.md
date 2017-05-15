@@ -18,7 +18,7 @@ You can find examples on how to use the different components of this SDK to inte
 The Facebook Instant Articles PHP SDK can be installed with [Composer](https://getcomposer.org/). Run this command:
 
 ```sh
-composer require facebook/facebook-instant-articles-sdk-extensions-php
+composer require facebook/facebook-instant-articles-sdk-extensions-in-php
 ```
 
 ## Testing and Developing ##
