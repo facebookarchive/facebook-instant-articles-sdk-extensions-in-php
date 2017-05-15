@@ -526,7 +526,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $videoWidth = $videoDimensions[0];
         $videoHeight = $videoDimensions[1];
 
-        $ampVideo->setAttribute('src', $this->ensureHttps($videoUrl));
+        $ampVideo->setAttribute('src', $this->ensureHttps($context, $videoUrl));
         $ampVideo->setAttribute('width', $videoWidth);
         $ampVideo->setAttribute('height', $videoHeight);
 
@@ -677,7 +677,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $iframeContainer = $context->createElement('div', null, $cssClass);
 
         $ampIframe = $context->getDocument()->createElement('amp-iframe');
-        $ampIframe->setAttribute('src', $this->ensureHttps($srcUrl));
+        $ampIframe->setAttribute('src', $this->ensureHttps($context, $srcUrl));
         $ampIframe->setAttribute('width', self::DEFAULT_WIDTH);
         $ampIframe->setAttribute('height', self::DEFAULT_HEIGHT);
         $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
@@ -706,7 +706,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $iframeContainer = $context->createElement('div', null, $cssClass);
 
         $ampIframe = $context->getDocument()->createElement('amp-iframe');
-        $ampIframe->setAttribute('src', $this->ensureHttps($srcUrl));
+        $ampIframe->setAttribute('src', $this->ensureHttps($context, $srcUrl));
         $ampIframe->setAttribute('width', 1);
         $ampIframe->setAttribute('height', 1);
         $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
@@ -735,7 +735,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampAd = $context->createElement('amp-iframe', $ampAdContainer);
 
         if (!Type::isTextEmpty($srcUrl)) {
-            $ampAd->setAttribute('src', $this->ensureHttps($srcUrl));
+            $ampAd->setAttribute('src', $this->ensureHttps($context, $srcUrl));
         }
         $ampAd->setAttribute('width', $width ? $width : self::DEFAULT_WIDTH);
         $ampAd->setAttribute('height', $height ? $height : self::DEFAULT_HEIGHT);
@@ -1002,7 +1002,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                 return self::toRGB($color);
             }
         }
-        
+
         return null;
     }
 
@@ -1011,7 +1011,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $headerStyles = $styles['header'];
 
         $barRules = array();
-        
+
         $backgroundColor = $this->tryGetColor($headerStyles, 'background_color');
         if ($backgroundColor) {
             $cssSelector = "." . $context->buildCssClass('header-bar');
@@ -1419,8 +1419,11 @@ class AMPArticle extends Element implements InstantArticleInterface
         return null;
     }
 
-    private function ensureHttps($url)
+    private function ensureHttps($context, $url)
     {
+        if (strpos($url , 'http:') !== false) {
+            $context->addWarning('URLs for videos, iframes, analytics and ads should be HTTPS. Double check if this one is still valid using HTTPS protocol', $url);
+        }
         return Type::isTextEmpty($url) ? $url : preg_replace("/^http:/i", "https:", $url);
     }
 }
