@@ -40,6 +40,8 @@ class AMPArticle extends Element implements InstantArticleInterface
     const DEFAULT_MARGIN = 16.4;
     const DEFAULT_WIDTH = 380;
     const DEFAULT_HEIGHT = 240;
+    const DEFAULT_LOGO_WIDTH = 230;
+    const DEFAULT_LOGO_HEIGHT = 44;
     const DEFAULT_DATE_FORMAT = 'F d, Y';
     const DEFAULT_CSS_PREFIX = 'ia2amp-';
 
@@ -1042,8 +1044,8 @@ class AMPArticle extends Element implements InstantArticleInterface
             : null;
         $fullResURL = $logoStyles['full_resolution_url'];
 
-        $defaultLogoHeight = 44; // TODO: Move to other place
-        $defaultLogoWidth = 230; // TODO: Move to other place
+        $defaultLogoHeight = $this->observer->applyFilters('DEFAULT_LOGO_HEIGHT', self::DEFAULT_LOGO_HEIGHT);
+        $defaultLogoWidth = $this->observer->applyFilters('DEFAULT_LOGO_WIDTH', self::DEFAULT_LOGO_WIDTH);
         $logoWidth = $logoStyles['full_resolution_width'];
         $logoHeight = $logoStyles['full_resolution_height'];
         $resizeScale = $headerStyles['logo_scale'] || 1.0;
