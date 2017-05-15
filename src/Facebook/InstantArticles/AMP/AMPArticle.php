@@ -474,7 +474,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($caption) {
             $ampFigure = $this->buildCaption($caption, $context, $ampImg);
 
-            // Replace the top level image element with the figure
+            // Replaces the top level image element with the figure
             $ampImg = $ampFigure;
         }
 
@@ -506,7 +506,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($caption) {
             $ampFigure = $this->buildCaption($caption, $context, $image);
 
-            // Replace the top level image with the figure
+            // Replaces the top level image with the figure
             $ampImg = $ampFigure;
         }
 
@@ -536,7 +536,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($caption) {
             $ampFigure = $this->buildCaption($caption, $context, $ampVideo);
 
-            // Replace the top level video with the figure
+            // Replaces the top level video with the figure
             $ampVideo = $ampFigure;
         }
 
@@ -578,7 +578,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($caption) {
             $ampFigure = $this->buildCaption($caption, $context, $ampCarousel);
 
-            // Replace the top level carousel with the figure
+            // Replaces the top level carousel with the figure
             $ampCarousel = $ampFigure;
         }
 
