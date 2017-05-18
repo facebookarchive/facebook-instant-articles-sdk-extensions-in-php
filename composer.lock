@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f484b406b6be0f62e10a3c83f769c693",
-    "content-hash": "c7729000f4198dd984f0eee909c6ca4a",
+    "hash": "bd3b4d4a6c97e13c18d2c2e945192b5e",
+    "content-hash": "3613e294895670f8673807f7bd73970b",
     "packages": [
         {
             "name": "apache/log4php",
@@ -39,16 +39,16 @@
         },
         {
             "name": "facebook/facebook-instant-articles-sdk-php",
-            "version": "v1.5.8",
+            "version": "v1.5.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/facebook-instant-articles-sdk-php.git",
-                "reference": "982b3ac85f546027c9756d0c226f47dc992262c5"
+                "reference": "d26d9946f3b13d112f13b70ba1eff8bffeba4ab2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/facebook-instant-articles-sdk-php/zipball/982b3ac85f546027c9756d0c226f47dc992262c5",
-                "reference": "982b3ac85f546027c9756d0c226f47dc992262c5",
+                "url": "https://api.github.com/repos/facebook/facebook-instant-articles-sdk-php/zipball/d26d9946f3b13d112f13b70ba1eff8bffeba4ab2",
+                "reference": "d26d9946f3b13d112f13b70ba1eff8bffeba4ab2",
                 "shasum": ""
             },
             "require": {
@@ -86,7 +86,7 @@
                 "instant",
                 "sdk"
             ],
-            "time": "2017-05-12 03:08:45"
+            "time": "2017-05-16 13:27:25"
         },
         {
             "name": "facebook/graph-sdk",
