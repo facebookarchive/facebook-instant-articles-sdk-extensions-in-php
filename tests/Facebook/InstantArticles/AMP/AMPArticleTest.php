@@ -841,7 +841,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Takes an IA style property name and an expected value and returns both in an array
+     * Takes an Instant Article style property name and an expected value and returns both in an array
      *
      * @param string $stylePropertyName
      * @param string $expectedCSSValue
@@ -923,9 +923,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Generates spacing (margin or padding) IA style values and expected CSS values
+     * Generates spacing (margin or padding) Instant Article style values and expected CSS values
      *
-     * @param int $size The IA style size value
+     * @param int $size The Instant Article style size value
      * @param int $baseSpacingValue The value that will be multiplied by the scaling factor
      * @param string $direction A valid direction for a border style e.g. 'top'
      * @param string $spacingFormat The expected spacing format e.g. '0 0 0 %spx'
@@ -989,7 +989,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Generates Border Color IA style values and expected CSS values
+     * Generates Border Color Instant Article style values and expected CSS values
      *
      * @param string $direction A valid direction for a border style e.g. 'top'
      * @return array
@@ -1028,7 +1028,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Generates Border Width IA style values and expected CSS values
+     * Generates Border Width Instant Article style values and expected CSS values
      *
      * @param string $direction A valid direction for a border style e.g. 'top'
      * @param string $borderFormat The expected format of the border width for the given direction e.g. '%s 0 0 0'
@@ -1065,10 +1065,10 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Validates the transformation of IA Styles to CSS by updating a second level JSON property and looking for an expected CSS value
+     * Validates the transformation of Instant Article Styles to CSS by updating a second level JSON property and looking for an expected CSS value
      *
-     * @param string $firstLevelKey The name of the IA styles object that is the parent of the property that will be tested
-     * @param string $secondLevelKey The name of the IA styles object that will be tested
+     * @param string $firstLevelKey The name of the Instant Article styles object that is the parent of the property that will be tested
+     * @param string $secondLevelKey The name of the Instant Article styles object that will be tested
      * @param string $cssSelector The CSS selector that will be used to verify the genarted CSS
      * @param string $cssProperty The name of CSS property that will be used to test the transformation
      * @param string $styleValue The style value that will be assigned to test the generation of an expected CSS value
@@ -1083,7 +1083,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $testStyles[$firstLevelKey][$secondLevelKey] = $styleValue;
 
         $customProperties = array(
-            // Use the updated styles instead of the ones defined in the IA document
+            // Use the updated styles instead of the ones defined in the Instant Article document
             AMPArticle::OVERRIDE_STYLES_KEY => $testStyles,
         );
 

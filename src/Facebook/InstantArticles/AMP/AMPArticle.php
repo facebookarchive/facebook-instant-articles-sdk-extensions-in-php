@@ -919,7 +919,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($styleName == null) {
             $styleName = 'default';
         }
-        // Try to get the IA styles from properties
+        // Try to get the Instant Articles styles from properties
         if (array_key_exists(AMPArticle::OVERRIDE_STYLES_KEY, $this->properties)) {
             $styles = $this->properties[AMPArticle::OVERRIDE_STYLES_KEY];
         } else {
