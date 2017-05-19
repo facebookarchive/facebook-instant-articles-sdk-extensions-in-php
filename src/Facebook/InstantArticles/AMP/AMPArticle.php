@@ -81,7 +81,6 @@ class AMPArticle extends Element implements InstantArticleInterface
     private $dateFormat = AMPArticle::DEFAULT_DATE_FORMAT;
     private $logo;
 
-    private $articleCustomCSSRules;
     private $customCSSElement;
     private $ampHeader;
 
@@ -152,8 +151,6 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function transformInstantArticle($context)
     {
-        $this->articleCustomCSSRules = array();
-
         // Builds and appends head to the HTML document
         $html = $context->createElement('html', null, null, array("amp" => ""));
         if ($context->getInstantArticle()->isRTLEnabled()) {
@@ -447,15 +444,13 @@ class AMPArticle extends Element implements InstantArticleInterface
             $imageCSSClass = $context->buildCssClass('header-cover-img');
             $ampImg->setAttribute('class', $imageCSSClass);
 
-            $this->articleCustomCSSRules["amp-img.$imageCSSClass"] = array(
-                'transform' => "translate({$translateX}px, {$translateY}px)",
-            );
+            $context->getCssBuilder()->addProperty("amp-img.$imageCSSClass", 'transform', "translate({$translateX}px, {$translateY}px)");
+
             $containerCSSClass = $ampImgContainer->getAttribute('class');
-            $this->articleCustomCSSRules["div.$containerCSSClass"] = array(
-                'width' => self::DEFAULT_WIDTH . 'px',
-                'height' => self::DEFAULT_HEIGHT . 'px',
-                'overflow' => 'hidden',
-            );
+            $context->getCssBuilder()
+                ->addProperty("div.$containerCSSClass", 'width', self::DEFAULT_WIDTH.'px')
+                ->addProperty("div.$containerCSSClass", 'height', self::DEFAULT_HEIGHT.'px')
+                ->addProperty("div.$containerCSSClass", 'overflow', 'hidden');
 
             $imageWidth = (int) ($imageWidth * $maxScale);
             $imageHeight = (int) ($imageHeight * $maxScale);
@@ -948,13 +943,14 @@ class AMPArticle extends Element implements InstantArticleInterface
             $defaultCSSFile = str_replace(array("\r", "\n"), ' ', $defaultCSSFile);
         }
 
-        return $this->articleColorsStyles($styles, $context) .
-            $this->articleHeadStyles($styles, $context) .
-            $this->articleBodyStyles($styles, $context) .
-            $this->articleQuoteStyles($styles, $context) .
-            $this->articleCaptionStyles($styles, $context) .
-            $this->articleFooterStyles($styles, $context) .
-            $this->articleCustomCSSStyles() .
+        $this->articleColorsStyles($styles, $context);
+        $this->articleHeadStyles($styles, $context);
+        $this->articleBodyStyles($styles, $context);
+        $this->articleQuoteStyles($styles, $context);
+        $this->articleCaptionStyles($styles, $context);
+        $this->articleFooterStyles($styles, $context);
+        return
+            $context->getCssBuilder()->build(false).
             (isset($globalCSSFile) ? $globalCSSFile : '').
             (isset($customCSSFile) ? $customCSSFile : '').
             (!isset($globalCSSFile) && !isset($customCSSFile) ? $defaultCSSFile : '');
@@ -963,7 +959,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function articleColorsStyles($styles, $context)
     {
         $backgroundColor = AMPArticle::toRGB($styles['background_color']);
-        return "html {background-color: $backgroundColor;}";
+        $context->getCssBuilder()->addProperty('html', 'background-color', $backgroundColor);
     }
 
     private function articleHeadStyles($styles, $context)
@@ -1011,24 +1007,18 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         $headerStyles = $styles['header'];
 
-        $barRules = array();
-
         $backgroundColor = $this->tryGetColor($headerStyles, 'background_color');
         if ($backgroundColor) {
-            $cssSelector = "." . $context->buildCssClass('header-bar');
-            $barRules['background-color'] = $backgroundColor;
+            $context->getCssBuilder()->addToSelector('header-bar', 'background-color', $backgroundColor);
         }
 
         $barColor = $this->tryGetColor($headerStyles, 'bar_color');
         if ($barColor) {
             $cssSelector= '.' . $context->buildCssClass('spacing') . '.after-header-bar';
-            $barRules['border-top-color'] = $barColor;
-            $barRules['border-top-style'] = 'solid';
-            $barRules['border-top-width'] = '1px';
+            $context->getCssBuilder()-addProperty($cssSelector, 'border-top-color', $barColor);
+            $context->getCssBuilder()-addProperty($cssSelector, 'border-top-style', 'solid');
+            $context->getCssBuilder()-addProperty($cssSelector, 'border-top-width', '1px');
         }
-
-        $barDeclarationMapping = array($cssSelector => $barRules);
-        $barStyles = $this->buildCSSRulesFromArray($barDeclarationMapping);
 
         // TODO: Should we move the code below to another place?
         // It is not really generating any CSS as the width and height are required fields of amp-image
@@ -1057,8 +1047,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         $scaledLogoWidth = (int) ($logoWidth * $resizeScale);
         $scaledLogoHeight = (int) ($logoHeight * $resizeScale);
         $this->logo = new AMPImage($logoURL, $scaledLogoWidth, $scaledLogoHeight);
-
-        return $barStyles;
     }
 
     private function articleBodyStyles($styles, $context)
@@ -1069,7 +1057,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $context->buildCssSelector('p') => 'body_text',
             $context->buildCssSelector('article a') => 'inline_link',
         );
-        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
+        $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
     private function articleQuoteStyles($styles, $context)
@@ -1079,7 +1067,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $context->buildCssSelector('pullquote') => 'pull_quote',
             $context->buildCssSelector('pullquote cite') => 'pull_quote_attribution',
         );
-        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
+        $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
     private function articleCaptionStyles($styles, $context)
@@ -1099,7 +1087,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
             '.ia2amp-figcaption cite' => 'caption_credit',
         );
-        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
+        $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
     private function articleFooterStyles($styles, $context)
@@ -1107,34 +1095,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         $mappings = array(
             $context->buildCssSelector('footer') => 'footer',
         );
-        return $this->buildCSSRulesFromMappings($mappings, $styles, $context);
+        $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
-    private function articleCustomCSSStyles()
-    {
-        return $this->buildCSSRulesFromArray($this->articleCustomCSSRules);
-    }
-
-    private function buildCSSRulesFromArray($ruleMappings)
-    {
-        if (!$ruleMappings) {
-            return null;
-        }
-
-        $rules = '';
-        foreach ($ruleMappings as $cssSelector => $cssProperties) {
-            $declarations = array();
-            foreach ($cssProperties as $cssKey => $cssValue) {
-                $declarations[] = $this->buildCSSDeclaration($cssKey, $cssValue);
-            }
-
-            $rules = $rules . ' ' . $this->buildCSSRule($cssSelector, $this->buildCSSDeclarationBlock($declarations));
-        }
-
-        return $rules;
-    }
-
-    private function buildTextCSSDeclarationBlock($textStyles, $textType, $context)
+    private function buildTextCSSDeclarationBlock($selector, $textStyles, $textType, $context)
     {
         // TODO: Move to constant
         $mappings = array(
@@ -1182,11 +1146,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         $borderMappings = AMPArticle::getBorderDeclarationBlocks($textStyles);
         $filteredMappings = array_merge($filteredMappings, $borderMappings);
 
-        $cssDeclarations = array();
         foreach ($filteredMappings as $filteredKey => $cssValue) {
-            $cssDeclarations[] = AMPArticle::buildCSSDeclaration($filteredKey, $cssValue);
+            $context->getCssBuilder()->addProperty($selector, $filteredKey, $cssValue);
         }
-        return AMPArticle::buildCSSDeclarationBlock($cssDeclarations);
     }
 
     private static function filterMappings($mappings, $styles)
@@ -1198,21 +1160,6 @@ class AMPArticle extends Element implements InstantArticleInterface
             }
         }
         return $result;
-    }
-
-    private static function buildCSSDeclaration($cssKey, $cssValue)
-    {
-        return "$cssKey: $cssValue;";
-    }
-
-    private static function buildCSSDeclarationBlock($cssDeclarations)
-    {
-        return '{' . implode(' ', $cssDeclarations) . '}';
-    }
-
-    private static function buildCSSRule($cssSelector, $cssDeclarationBlock)
-    {
-        return "$cssSelector $cssDeclarationBlock";
     }
 
     private static function getSpacingDeclarationBlocks($spacingMappings, $spacingType, $textStyles)
@@ -1237,14 +1184,11 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function buildCSSRulesFromMappings($mappings, $styles, $context)
     {
-        $rule = '';
         foreach ($mappings as $selector => $objectKey) {
             if (array_key_exists($objectKey, $styles)) {
-                $declarationBlock = $this->buildTextCSSDeclarationBlock($styles[$objectKey], $objectKey, $context);
-                $rule = $rule . AMPArticle::buildCssRule($selector, $declarationBlock);
+                $this->buildTextCSSDeclarationBlock($selector, $styles[$objectKey], $objectKey, $context);
             }
         }
-        return $rule;
     }
 
     private static function getDirectionSpacing($spacingMappings, $direction, $spacingStyles)

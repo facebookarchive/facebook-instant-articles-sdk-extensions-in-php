@@ -167,6 +167,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         $ampExpected = file_get_contents(__DIR__.'/articles/'.$test.'-amp-converted.html');
         $this->compareIgnoringStyles($ampExpected, $ampRendered);
+
+        // Sets content into the file for double checking testing
+        // file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted-new.html', $ampRendered);
     }
 
     private function getRenderedMarkupXPathQuery($test, $xPathExpression, $customProperties = null)
