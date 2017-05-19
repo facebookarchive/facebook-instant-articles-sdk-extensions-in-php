@@ -97,11 +97,20 @@ class AMPContext
      * @param CSSBuilder $cssBuilder The css builder instance to be used.
      * @return $this reference.
      */
-    private function withCssBuilder($cssBuilder)
+    public function withCssBuilder($cssBuilder)
     {
         Type::enforce($cssBuilder, CSSBuilder::getClassName());
         $this->cssBuilder = $cssBuilder;
         return $this;
+    }
+
+    /**
+     * Gets the CssBuilder being used in this context.
+     * @return CSSBuilder being used in this context.
+     */
+    public function getCssBuilder()
+    {
+        return $this->cssBuilder;
     }
 
     /**
