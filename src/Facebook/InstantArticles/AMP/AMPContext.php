@@ -13,6 +13,7 @@ use Facebook\InstantArticles\Elements\InstantArticle;
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
 use Facebook\InstantArticles\Utils\Warning;
+use Facebook\InstantArticles\Utils\CSSBuilder;
 
 class AMPContext
 {
@@ -39,6 +40,8 @@ class AMPContext
 
     private $warnings = array();
 
+    private $cssBuilder;
+
     /**
      * Private constructor. Use self::create($document, $instantArticle)
      */
@@ -55,9 +58,11 @@ class AMPContext
     public static function create($document, $instantArticle, $cssPrefix = "ia2amp-")
     {
         $context = new self();
+
         return $context->withDocument($document)
                        ->withInstantArticle($instantArticle)
-                       ->withCssPrefix($cssPrefix);
+                       ->withCssPrefix($cssPrefix)
+                       ->withCssBuilder(new CSSBuilder($cssPrefix));
     }
 
     /**
@@ -87,7 +92,17 @@ class AMPContext
         return $this;
     }
 
-
+    /**
+     * Sets the CSSBuilder.
+     * @param CSSBuilder $cssBuilder The css builder instance to be used.
+     * @return $this reference.
+     */
+    private function withCssBuilder($cssBuilder)
+    {
+        Type::enforce($cssBuilder, CSSBuilder::getClassName());
+        $this->cssBuilder = $cssBuilder;
+        return $this;
+    }
 
     /**
      * Gets the root document being used in this context.

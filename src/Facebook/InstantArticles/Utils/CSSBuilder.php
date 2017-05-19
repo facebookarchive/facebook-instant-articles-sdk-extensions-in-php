@@ -174,4 +174,14 @@ class CSSBuilder
 
         return $result;
     }
+
+    /**
+     * Auxiliary method to extract the full qualified class name.
+     *
+     * @return string The full qualified name of class.
+     */
+    public static function getClassName()
+    {
+        return get_called_class();
+    }
 }
