@@ -1260,13 +1260,21 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         $opacity = 1.0;
+        // Last 2 digits are the alpha channel: https://www.w3.org/TR/css-color-4/
         if (strlen($color) == 8) {
-            $opacity = round(hexdec(substr($color, 0, 2)) / 255, 2);
-            $color = substr($color, 2);
+            $opacity = round(hexdec(substr($color, -2)) / 255, 2);
+            $color = substr($color, -2);
         }
 
-        $hex = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
-        $rgb = array_map('hexdec', $hex);
+        // Short font color: #05F will be transformed into #0055FF
+        if (strlen($color) == 3) {
+            $hex = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
+            $rgb = array_map('hexdec', $hex);
+        } else {
+            // Default regular hexa: #A1B2C2
+            $hex = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
+            $rgb = array_map('hexdec', $hex);
+        }
 
         return $opacity == 1.0
             ? 'rgb(' . implode(",", $rgb) . ')'
