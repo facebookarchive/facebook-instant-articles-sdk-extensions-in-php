@@ -143,7 +143,31 @@ class AMPArticle extends Element implements InstantArticleInterface
         } else {
             $prefix = self::DEFAULT_CSS_PREFIX;
         }
+
+        $mediaSizes =
+            array_key_exists(self::MEDIA_SIZES_KEY, $this->properties) ?
+                $this->properties[self::MEDIA_SIZES_KEY] :
+                null;
+
+        $mediaCacheFolder =
+            array_key_exists(self::MEDIA_CACHE_FOLDER_KEY, $this->properties) ?
+                $this->properties[self::MEDIA_CACHE_FOLDER_KEY] :
+                null;
+
+        $enableDownloadForMediaSizing =
+            (array_key_exists(self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY, $this->properties) &&
+            $this->properties[self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] === true);
+
+        $defaultWidth = array_key_exists(self::DEFAULT_MEDIA_WIDTH_KEY, $this->properties)
+            ? $this->properties[self::DEFAULT_MEDIA_WIDTH_KEY]
+            : self::DEFAULT_WIDTH;
+        $defaultHeight = array_key_exists(self::DEFAULT_MEDIA_HEIGHT_KEY, $this->properties)
+            ? $this->properties[self::DEFAULT_MEDIA_HEIGHT_KEY]
+            : self::DEFAULT_HEIGHT;
+
+
         $context = AMPContext::create($document, $this->instantArticle, $prefix);
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
 
         $ampDocument = $this->observer->applyFilters('AMP_DOCUMENT', $this->transformInstantArticle($context), $context);
         return $ampDocument;
@@ -197,16 +221,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public function transformArticleHeader($context)
     {
-        // Builds the content Header, with proper colors and image, adding to body
-        $header = $context->createElement('header', $context->getBody(), 'header');
-
-        // Creates the cover content for the cover and appends to the header
-        if ($context->getInstantArticle()->getHeader()->getCover()) {
-            $headerCover = $this->buildCover($context->getInstantArticle()->getHeader()->getCover(), $context);
-            $header->appendChild($headerCover);
-        }
-
-        $this->ampHeader = new AMPHeader($header, $context, $this->dateFormat);
+        $this->ampHeader = new AMPHeader($context);
         return $this->ampHeader->build();
     }
 

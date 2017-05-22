@@ -13,10 +13,9 @@ class AMPHeader
     private $header;
     private $context;
     private $publishDateElement;
-    
-    public function __construct($header, $context)
+
+    public function __construct($context)
     {
-        $this->header = $header;
         $this->context = $context;
     }
 
@@ -85,6 +84,17 @@ class AMPHeader
         $this->context->buildSpacingDiv($this->header);
     }
 
+    public function genContainer()
+    {
+        // Builds the content Header, with proper colors and image, adding to body
+        $this->header = $this->context->createElement('header', $this->context->getBody(), 'header');
+        // Creates the cover content for the cover and appends to the header
+        if ($this->context->getInstantArticle()->getHeader()->getCover()) {
+            $ampCover = new AMPCover($this->context, $this->context->getInstantArticle()->getHeader()->getCover());
+            $this->header->appendChild($ampCover->build());
+        }
+    }
+
     public function genHeaderLogo($logo)
     {
         if (!isset($logo->url)) {
@@ -117,6 +127,7 @@ class AMPHeader
 
     public function build()
     {
+        $this->genContainer();
         $this->genHeaderBar();
         $this->genKicker();
         $this->genTitle();

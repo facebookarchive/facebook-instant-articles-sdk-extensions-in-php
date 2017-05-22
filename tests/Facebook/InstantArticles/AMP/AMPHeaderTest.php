@@ -43,20 +43,24 @@ class AMPHeaderTest extends \PHPUnit_Framework_TestCase
     private function genContext()
     {
         $renderer = $this->getRenderer('test1', null);
-        $context = AMPContext::create(
-            new \DOMDocument(),
-            $renderer->getInstantArticle(),
-            'ia2amp-'
-        );
+        $context = AMPContext::create(new \DOMDocument(), $renderer->getInstantArticle());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = __DIR__ . '/articles/media-cache';
+        $enableDownloadForMediaSizing = false;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
         return $context;
     }
 
     private function genTestingHeader()
     {
         $context = $this->genContext();
-        $header = $context->createElement('header', $context->getBody(), 'header');
 
-        $this->testHeader = new AMPHeader($header, $context);
+        $this->testHeader = new AMPHeader($context);
         $target = $this->testHeader->build();
         $this->testHeader->genHeaderLogo($this->logo);
 

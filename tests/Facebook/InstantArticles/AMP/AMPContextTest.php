@@ -308,4 +308,258 @@ class AMPContextTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('InvalidArgumentException', 'Tag <h3> expected, <script> informed.');
         $context->withHeaderDate($document->createElement('script'));
     }
+
+    public function testInformedImageDimensions()
+    {
+        $expectedWidth = 800;
+        $expectedHeight = 500;
+
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => array($expectedWidth, $expectedHeight));
+        $mediaCacheFolder = __DIR__ . '/articles/media-cache';
+        $enableDownloadForMediaSizing = true;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg');
+
+        $this->assertEquals($expectedWidth, $dimensions[0]);
+        $this->assertEquals($expectedHeight, $dimensions[1]);
+    }
+
+    public function testCachedImageDimensions()
+    {
+        $expectedWidth = 400;
+        $expectedHeight = 227;
+
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = __DIR__ . '/articles/media-cache';
+        $enableDownloadForMediaSizing = true;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg');
+
+        $this->assertEquals($expectedWidth, $dimensions[0]);
+        $this->assertEquals($expectedHeight, $dimensions[1]);
+    }
+
+    public function testImageDimensionsDownloadDisabled()
+    {
+        $expectedWidth = 400;
+        $expectedHeight = 227;
+
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = __DIR__ . '/articles/media-cache';
+        $enableDownloadForMediaSizing = false;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg');
+
+        $this->assertEquals($expectedWidth, $dimensions[0]);
+        $this->assertEquals($expectedHeight, $dimensions[1]);
+    }
+
+    public function testImageDimensionsDownloadEnabled()
+    {
+        $expectedWidth = 800;
+        $expectedHeight = 454;
+
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = null;
+        $enableDownloadForMediaSizing = true;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg', AMPContext::MEDIA_TYPE_IMAGE);
+
+        $this->assertEquals($expectedWidth, $dimensions[0]);
+        $this->assertEquals($expectedHeight, $dimensions[1]);
+    }
+
+    public function testImageDimensionsDefault()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = null;
+        $enableDownloadForMediaSizing = false;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg', AMPContext::MEDIA_TYPE_IMAGE);
+
+        $this->assertEquals($defaultWidth, $dimensions[0]);
+        $this->assertEquals($defaultHeight, $dimensions[1]);
+    }
+
+    public function testInformedVideoDimensions()
+    {
+        $expectedWidth = 800;
+        $expectedHeight = 500;
+
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array('http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4' => array($expectedWidth, $expectedHeight));
+        $mediaCacheFolder = __DIR__ . '/articles/media-cache';
+        $enableDownloadForMediaSizing = true;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4', AMPContext::MEDIA_TYPE_VIDEO);
+
+        $this->assertEquals($expectedWidth, $dimensions[0]);
+        $this->assertEquals($expectedHeight, $dimensions[1]);
+    }
+
+    public function testCachedVideoDimensions()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = __DIR__ . '/articles/media-cache';
+        $enableDownloadForMediaSizing = true;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4', AMPContext::MEDIA_TYPE_VIDEO);
+
+        $this->assertEquals($defaultWidth, $dimensions[0]);
+        $this->assertEquals($defaultHeight, $dimensions[1]);
+    }
+
+    public function testVideoDimensionsDownloadDisabled()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = __DIR__ . '/articles/media-cache';
+        $enableDownloadForMediaSizing = false;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4', AMPContext::MEDIA_TYPE_VIDEO);
+
+        $this->assertEquals($defaultWidth, $dimensions[0]);
+        $this->assertEquals($defaultHeight, $dimensions[1]);
+    }
+
+    public function testVideoDimensionsDownloadEnabled()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = null;
+        $enableDownloadForMediaSizing = true;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4', AMPContext::MEDIA_TYPE_VIDEO);
+
+        $this->assertEquals($defaultWidth, $dimensions[0]);
+        $this->assertEquals($defaultHeight, $dimensions[1]);
+    }
+
+    public function testVideoDimensionsDefault()
+    {
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = null;
+        $enableDownloadForMediaSizing = false;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4', AMPContext::MEDIA_TYPE_VIDEO);
+
+        $this->assertEquals($defaultWidth, $dimensions[0]);
+        $this->assertEquals($defaultHeight, $dimensions[1]);
+    }
+
+    //
+    // public function testVideoHeightDefaultProperty()
+    // {
+    //     $expectedHeight = 120;
+    //     $customProperties = array(
+    //         AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
+    //         AMPArticle::DEFAULT_MEDIA_HEIGHT_KEY => $expectedHeight,
+    //     );
+    //
+    //     $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
+    //         'natgeo',
+    //         '//amp-video',
+    //         $customProperties
+    //     );
+    //     $firstArticleVideoElement = $videoXPathQuery->item(0);
+    //
+    //     $this->assertEquals($expectedHeight, $firstArticleVideoElement->getAttribute('height'));
+    // }
+    //
+    // public function testVideoWidthFromMediaSizes()
+    // {
+    //     $expectedWidth = 90;
+    //     $customProperties = array(
+    //         AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
+    //         AMPArticle::MEDIA_SIZES_KEY => array(
+    //             "http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4" => array($expectedWidth, 60),
+    //         ),
+    //     );
+    //
+    //     $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
+    //         'natgeo',
+    //         '//amp-video',
+    //         $customProperties
+    //     );
+    //     $firstArticleVideoElement = $videoXPathQuery->item(0);
+    //
+    //     $this->assertEquals($expectedWidth, $firstArticleVideoElement->getAttribute('width'));
+    // }
+    //
+    // public function testVideoHeightFromMediaSizes()
+    // {
+    //     $expectedHeight = 60;
+    //     $customProperties = array(
+    //         AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
+    //         AMPArticle::MEDIA_SIZES_KEY => array(
+    //             "http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4" => array(90, $expectedHeight),
+    //         ),
+    //     );
+    //
+    //     $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
+    //         'natgeo',
+    //         '//amp-video',
+    //         $customProperties
+    //     );
+    //     $firstArticleVideoElement = $videoXPathQuery->item(0);
+    //
+    //     $this->assertEquals($expectedHeight, $firstArticleVideoElement->getAttribute('height'));
+    // }
 }

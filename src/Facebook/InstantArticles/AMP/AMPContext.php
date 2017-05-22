@@ -17,8 +17,8 @@ use Facebook\InstantArticles\Utils\CSSBuilder;
 
 class AMPContext
 {
-    private $document;
     private $instantArticle;
+    private $document;
 
     private $html;
     private $head;
@@ -41,6 +41,19 @@ class AMPContext
     private $warnings = array();
 
     private $cssBuilder;
+
+    private $mediaSizes;
+    private $mediaCacheFolder;
+    private $enableDownloadForMediaSizing;
+    private $defaultWidth;
+    private $defaultHeight;
+
+    const MEDIA_TYPE_IMAGE = 'image';
+    const MEDIA_TYPE_VIDEO = 'video';
+    const DEFAULT_WIDTH = 380;
+    const DEFAULT_HEIGHT = 240;
+
+
 
     /**
      * Private constructor. Use self::create($document, $instantArticle)
@@ -630,5 +643,69 @@ class AMPContext
     public function getWarnings()
     {
         return $this->warnings;
+    }
+
+    /**
+     * @param array $mediaSizes The map of URLs and sizes already defined.
+     * @param string|file $mediaCacheFolder Where the cache is stored.
+     * @param boolean $enableDownloadForMediaSizing Indicates wheather the images will be downloaded or not to check sizes.
+     * @param int $defaultWidth The default width that will be used to image in case no dimensions is found for this image.
+     * @param int $defaultHeight The default height that will be used to image in case no dimensions is found for this image.
+     * @return $this instance.
+     */
+    public function withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight)
+    {
+        $this->mediaSizes = $mediaSizes;
+        $this->mediaCacheFolder = $mediaCacheFolder;
+        $this->enableDownloadForMediaSizing = $enableDownloadForMediaSizing;
+        $this->defaultWidth = $defaultWidth;
+        $this->defaultHeight = $defaultHeight;
+        return $this;
+    }
+
+    /**
+     * Returns an array(width, height) based on that image URL.
+     * @param string $mediaURL
+     * @param string $mediaType: Possible values: AMPContext::MEDIA_TYPE_IMAGE and AMPContext::MEDIA_TYPE_VIDEO.
+     * @return array with 2 possitions, first being width, second being the height.
+     */
+    public function getMediaDimensions($mediaURL, $mediaType = null)
+    {
+        if ($this->mediaSizes && array_key_exists($mediaURL, $this->mediaSizes)) {
+            return $this->mediaSizes[$mediaURL];
+        }
+
+        $mediaDimensions = $this->getMediaDimensionsFromCache($mediaURL);
+        if ($mediaDimensions) {
+            return $mediaDimensions;
+        }
+
+        if ($mediaType === self::MEDIA_TYPE_IMAGE && $this->enableDownloadForMediaSizing) {
+            $retrievedSizes = getimagesize($mediaURL);
+            if ($retrievedSizes && !empty($retrievedSizes) && $retrievedSizes[0] !== 0) {
+                return $retrievedSizes;
+            }
+        }
+
+        return array($this->defaultWidth, $this->defaultHeight);
+    }
+
+    private function getMediaDimensionsFromCache($mediaURL)
+    {
+        if (!$this->mediaCacheFolder || !file_exists($this->mediaCacheFolder)) {
+            return null;
+        }
+
+        $fileName = basename($mediaURL);
+        if (!$fileName) {
+            return null;
+        }
+
+        $cachedFile = $this->mediaCacheFolder . DIRECTORY_SEPARATOR . $fileName;
+        if (!file_exists($cachedFile)) {
+            return null;
+        }
+
+        return getimagesize($cachedFile);
     }
 }
