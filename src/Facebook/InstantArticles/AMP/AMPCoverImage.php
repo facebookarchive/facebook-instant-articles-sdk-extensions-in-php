@@ -19,7 +19,7 @@ class AMPCoverImage
     private $containerTag;
     private $ampImgTag;
 
-    public function __construct($image, $context, $cssClass)
+    private function __construct($image, $context, $cssClass)
     {
         $this->image = $image;
         $this->context = $context;
