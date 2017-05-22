@@ -84,7 +84,7 @@ class AMPHeader
         $this->context->buildSpacingDiv($this->header);
     }
 
-    public function genContainer()
+    private function genContainer()
     {
         // Builds the content Header, with proper colors and image, adding to body
         $this->header = $this->context->createElement('header', $this->context->getBody(), 'header');
