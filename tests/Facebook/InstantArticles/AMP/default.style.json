@@ -160,6 +160,7 @@
 		"underline": "NONE"
 	},
 	"byline": {
+		"background_color": "#00FFFFFF",
 		"border": {
 			"bottom": {
 				"width": 0
@@ -319,6 +320,7 @@
 		"underline": "NONE"
 	},
 	"body_text": {
+		"background_color": "#00FFFFFF",
 		"border": {
 			"bottom": {
 				"width": 0
@@ -371,6 +373,7 @@
 		"underline": "NONE"
 	},
 	"inline_link": {
+		"background_color": "#00FFFFFF",
 		"border": {
 			"bottom": {
 				"width": 0
@@ -1115,19 +1118,11 @@
 		"text_size_scale": 1,
 		"underline": "NONE"
 	},
-	"id": "1331594966932732",
+	"id": "1282952941794244",
 	"name": "default",
-	"is_default": false,
+	"is_default": true,
 	"header": {
 		"accent_color": "#989898",
-		"background_color": "#FFFFFF",
-		"logo": {
-			"full_resolution_url": "https://scontent.xx.fbcdn.net/v/t39.5687-6/18601675_1346062722145630_7520526922577608704_n.png?_nc_log=1&oh=da39b645a2451707922783ca9216798c&oe=59ABEE74",
-			"full_resolution_width": 690,
-			"full_resolution_height": 132,
-			"thumbnail_url": "https://fb-s-c-a.akamaihd.net/h-ak-fbx/v/t39.5687-6/18316413_1479102688826582_6425345085692444672_n.png?_nc_log=1&oh=bdbfc80602af9814d5ded9fa697c2541&oe=59BA0B55&__gda__=1503683893_41eab7141458daff7d6e0ad0d8ad7506",
-			"id": "1346062718812297"
-		},
-		"logo_scale": 1
+		"background_color": "#FFFFFF"
 	}
 }

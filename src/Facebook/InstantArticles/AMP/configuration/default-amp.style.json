@@ -1116,17 +1116,17 @@
 		"underline": "NONE"
 	},
 	"id": "1331594966932732",
-	"name": "default-amp",
+	"name": "default",
 	"is_default": false,
 	"header": {
 		"accent_color": "#989898",
 		"background_color": "#FFFFFF",
 		"logo": {
-			"full_resolution_url": "https://fb-s-d-a.akamaihd.net/h-ak-fbx/v/t39.5687-6/17365342_925010574268324_7049557804083838976_n.png?_nc_log=1&oh=d0983274fbfa36c89e9b053fb69ce035&oe=5986A3AB&__gda__=1501881125_d3803d192f42140b69fdbf1072560016",
+			"full_resolution_url": "https://scontent.xx.fbcdn.net/v/t39.5687-6/18601675_1346062722145630_7520526922577608704_n.png?_nc_log=1&oh=da39b645a2451707922783ca9216798c&oe=59ABEE74",
 			"full_resolution_width": 690,
 			"full_resolution_height": 132,
-			"thumbnail_url": "https://fb-s-c-a.akamaihd.net/h-ak-fbx/v/t39.5687-6/17365457_1501259559885333_8180043284299644928_n.png?_nc_log=1&oh=8ab2334a5839095ba44ef2a82e7518ff&oe=59C03154&__gda__=1505722676_cb36a91fec11c982bb6a2464facd6620",
-			"id": "925010570934991"
+			"thumbnail_url": "https://fb-s-c-a.akamaihd.net/h-ak-fbx/v/t39.5687-6/18316413_1479102688826582_6425345085692444672_n.png?_nc_log=1&oh=bdbfc80602af9814d5ded9fa697c2541&oe=59BA0B55&__gda__=1503683893_41eab7141458daff7d6e0ad0d8ad7506",
+			"id": "1346062718812297"
 		},
 		"logo_scale": 1
 	}
