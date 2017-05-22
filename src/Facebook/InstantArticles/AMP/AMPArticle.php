@@ -12,6 +12,7 @@ use Facebook\InstantArticles\Elements\Element;
 use Facebook\InstantArticles\Elements\Paragraph;
 use Facebook\InstantArticles\Elements\Blockquote;
 use Facebook\InstantArticles\Elements\Ad;
+use Facebook\InstantArticles\Elements\Analytics;
 use Facebook\InstantArticles\Elements\H1;
 use Facebook\InstantArticles\Elements\H2;
 use Facebook\InstantArticles\Elements\ListElement;
@@ -353,7 +354,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                 } else if (Type::is($child, RelatedArticles::getClassName())) {
                     $childElement->setAttribute('class', $context->buildCssClass('related-articles'));
                     // TODO RelatedArticles
-                } else if (Type::is($child, Ad::getClassName())) {
+                } else if (Type::is($child, Analytics::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_ANALYTICS', $this->buildAnalytics($child, $context, 'analytics'), $child, $context);
                 } else if (Type::is($child, Ad::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_AD', $this->buildAd($child, $context, 'ad'), $child, $context);
