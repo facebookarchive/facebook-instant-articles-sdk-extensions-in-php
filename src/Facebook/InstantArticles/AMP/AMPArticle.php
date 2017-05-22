@@ -1030,9 +1030,9 @@ class AMPArticle extends Element implements InstantArticleInterface
         $barColor = $this->tryGetColor($headerStyles, 'bar_color');
         if ($barColor) {
             $cssSelector= '.' . $context->buildCssClass('spacing') . '.after-header-bar';
-            $context->getCssBuilder()-addProperty($cssSelector, 'border-top-color', $barColor);
-            $context->getCssBuilder()-addProperty($cssSelector, 'border-top-style', 'solid');
-            $context->getCssBuilder()-addProperty($cssSelector, 'border-top-width', '1px');
+            $context->getCssBuilder()->addProperty($cssSelector, 'border-top-color', $barColor);
+            $context->getCssBuilder()->addProperty($cssSelector, 'border-top-style', 'solid');
+            $context->getCssBuilder()->addProperty($cssSelector, 'border-top-width', '1px');
         }
 
         // TODO: Should we move the code below to another place?
