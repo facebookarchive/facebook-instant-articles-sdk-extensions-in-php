@@ -8,7 +8,7 @@
  */
 namespace Facebook\InstantArticles\AMP;
 
-class AMPCoverImage extends AMPCaption
+class AMPCoverImage
 {
     // Constructor setup
     private $image;
