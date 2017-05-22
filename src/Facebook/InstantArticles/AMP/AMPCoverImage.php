@@ -65,21 +65,18 @@ class AMPCoverImage extends AMPCaption
         $this->ampImgTag->setAttribute('width', (string) $imageWidth);
         $this->ampImgTag->setAttribute('height', (string) $imageHeight);
 
-        /*
-        TODO Check this block
-        $translateX = (int) (-($imageWidth * $maxScale - self::DEFAULT_WIDTH) / 2);
-        $translateY = (int) (-($imageHeight * $maxScale - self::DEFAULT_HEIGHT) / 2);
+        $translateX = (int) (-($imageWidth * $maxScale - AMPContext::DEFAULT_WIDTH) / 2);
+        $translateY = (int) (-($imageHeight * $maxScale - AMPContext::DEFAULT_HEIGHT) / 2);
 
+        $imageCSSClass = $this->ampImgTag->getAttribute('class');
         $this->articleCustomCSSRules["amp-img.$imageCSSClass"] = array(
             'transform' => "translate({$translateX}px, {$translateY}px)",
         );
-        $containerCSSClass = $ampImgContainer->getAttribute('class');
-        $this->articleCustomCSSRules["div.$containerCSSClass"] = array(
-            'width' => self::DEFAULT_WIDTH . 'px',
-            'height' => self::DEFAULT_HEIGHT . 'px',
-            'overflow' => 'hidden',
-        );
-        */
+        $containerCSSClass = $this->containerTag->getAttribute('class');
+        $this->context->getCssBuilder()
+            ->addProperty("div.$containerCSSClass", 'width', AMPContext::DEFAULT_WIDTH.'px')
+            ->addProperty("div.$containerCSSClass", 'height', AMPContext::DEFAULT_HEIGHT.'px')
+            ->addProperty("div.$containerCSSClass", 'overflow', 'hidden');
 
     }
 
