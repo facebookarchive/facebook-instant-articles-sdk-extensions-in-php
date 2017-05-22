@@ -52,7 +52,7 @@ $properties = array(
     'styles-folder' => __DIR__.'/styles',
 
     // Overrides any style linked from the Instant Article, this might be useful if you want to apply same style to all your Instant Articles.
-    'override-styles' => $styleGotFromSomewhereElse
+    'override-styles' => json_decode($styleGotFromSomewhereElse, true);
 );
 
 /*
