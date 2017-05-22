@@ -1255,30 +1255,57 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     public static function toRGB($color)
     {
-        if ($color[0] == '#') {
+        // Normalize #FFFFFF to ffffff
+        $color = strtolower($color);
+        if (substr($color, 0, 1) == '#') {
             $color = substr($color, 1);
         }
 
-        $opacity = 1.0;
-        // Last 2 digits are the alpha channel: https://www.w3.org/TR/css-color-4/
-        if (strlen($color) == 8) {
-            $opacity = round(hexdec(substr($color, -2)) / 255, 2);
-            $color = substr($color, -2);
+        // Match correct patter for each strlen
+        switch (strlen($color)) {
+            case 3:
+                // RGB
+                $a = null;
+                $r = hexdec(substr($color, 0, 1) . substr($color, 0, 1));
+                $g = hexdec(substr($color, 1, 1) . substr($color, 1, 1));
+                $b = hexdec(substr($color, 2, 1) . substr($color, 2, 1));
+                break;
+            case 4:
+                // ARGB
+                $a = hexdec(substr($color, 0, 1) . substr($color, 0, 1));
+                $r = hexdec(substr($color, 1, 1) . substr($color, 1, 1));
+                $g = hexdec(substr($color, 2, 1) . substr($color, 2, 1));
+                $b = hexdec(substr($color, 3, 1) . substr($color, 3, 1));
+                break;
+            case 6:
+                // RRGGBB
+                $a = null;
+                $r = hexdec(substr($color, 0, 2));
+                $g = hexdec(substr($color, 2, 2));
+                $b = hexdec(substr($color, 4, 2));
+                break;
+            case 8:
+                // AARRGGBB
+                $a = hexdec(substr($color, 0, 2));
+                $r = hexdec(substr($color, 2, 2));
+                $g = hexdec(substr($color, 4, 2));
+                $b = hexdec(substr($color, 6, 2));
+                break;
+
         }
 
-        // Short font color: #05F will be transformed into #0055FF
-        if (strlen($color) == 3) {
-            $hex = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
-            $rgb = array_map('hexdec', $hex);
-        } else {
-            // Default regular hexa: #A1B2C2
-            $hex = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
-            $rgb = array_map('hexdec', $hex);
+        $alpha = 1.0;
+        // Alpha range is 0-1, not 0-255: https://www.w3.org/TR/css-color-4/
+        if (!empty($a)) {
+            $alpha = round($a / 255.0, 2);
         }
 
-        return $opacity == 1.0
-            ? 'rgb(' . implode(",", $rgb) . ')'
-            :  'rgba(' . implode(",", $rgb) . ',' . $opacity . ')';
+        $rgb = [ $r, $g, $b ];
+        $rgb = implode(',', $rgb);
+
+        return $alpha === 1.0
+            ? 'rgb(' . $rgb . ')'
+            :  'rgba(' . $rgb . ',' . $alpha . ')';
     }
 
     public function buildSchemaOrgMetadata($context)
