@@ -48,12 +48,11 @@ class AMPContext
     private $defaultWidth;
     private $defaultHeight;
 
-    const MEDIA_TYPE_IMAGE = 'image';
-    const MEDIA_TYPE_VIDEO = 'video';
-    const DEFAULT_WIDTH = 380;
-    const DEFAULT_HEIGHT = 240;
-
-
+    //TODO: remove this?
+    const MEDIA_TYPE_IMAGE = AMPArticle::MEDIA_TYPE_IMAGE;
+    const MEDIA_TYPE_VIDEO = AMPArticle::MEDIA_TYPE_VIDEO;
+    const DEFAULT_WIDTH = AMPArticle::DEFAULT_WIDTH;
+    const DEFAULT_HEIGHT = AMPArticle::DEFAULT_HEIGHT;
 
     /**
      * Private constructor. Use self::create($document, $instantArticle)
@@ -680,7 +679,7 @@ class AMPContext
             return $mediaDimensions;
         }
 
-        if ($mediaType === self::MEDIA_TYPE_IMAGE && $this->enableDownloadForMediaSizing) {
+        if ($mediaType === AMPArticle::MEDIA_TYPE_IMAGE && $this->enableDownloadForMediaSizing) {
             $retrievedSizes = getimagesize($mediaURL);
             if ($retrievedSizes && !empty($retrievedSizes) && $retrievedSizes[0] !== 0) {
                 return $retrievedSizes;
