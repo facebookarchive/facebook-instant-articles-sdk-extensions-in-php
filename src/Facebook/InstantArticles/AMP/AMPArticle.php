@@ -338,7 +338,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-carousel', 'https://cdn.ampproject.org/v0/amp-carousel-0.1.js', $context));
                     }
                     $childElement = $this->observer->applyFilters('IA_SLIDESHOW', $this->buildSlideshow($child, $context, 'slideshow'), $child, $context);
-                } else if ((Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName())) && !Type::isTextEmpty($child->getUrl())) {
+                } else if ((Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName())) && !Type::isTextEmpty($child->getSource())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
