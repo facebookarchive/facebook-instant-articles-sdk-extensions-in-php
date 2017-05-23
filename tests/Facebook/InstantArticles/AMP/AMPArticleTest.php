@@ -209,7 +209,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $discoveryMetadata = $this->getDiscoveryMetadata($test);
 
-        $this->assertFalse(array_key_exists($key, $discoveryMetadata), "Found unexpected $key key in Schema.org metadata");
+        $this->assertFalse(array_key_exists($key, $discoveryMetadata), "Found unexpected '$key' key in Schema.org metadata");
     }
 
     public function testSchemaOrgContext()
@@ -242,9 +242,11 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $this->verifySchemaOrgHasExpectedValue('dateModified', '2017-03-17T16:46:07+00:00');
     }
 
-    public function testSchemaOrgNoDateModified()
+    public function testSchemaOrgHasDateModified()
     {
-        $this->verifySchemaOrgDoesNotHaveKey('dateModified', 'natgeo');
+      $key = 'dateModified';
+      $discoveryMetadata = $this->getDiscoveryMetadata('tutorial');
+      $this->assertTrue(array_key_exists($key, $discoveryMetadata), "Did not found expected '$key' key in Schema.org metadata");
     }
 
     public function testSchemaOrgAuthor()
@@ -459,7 +461,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         );
 
         $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
-            'natgeo',
+            'tutorial',
             '//amp-video',
             $customProperties
         );
@@ -470,18 +472,11 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testVideoWidthFromMediaSizes()
     {
-        $expectedWidth = 90;
-        $customProperties = array(
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
-            AMPArticle::MEDIA_SIZES_KEY => array(
-                "http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mov" => array($expectedWidth, 60),
-            ),
-        );
-
+        $expectedWidth = 380;
         $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
-            'natgeo',
+            'tutorial',
             '//amp-video',
-            $customProperties
+            null
         );
         $firstArticleVideoElement = $videoXPathQuery->item(0);
 
@@ -490,18 +485,11 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testVideoHeightFromMediaSizes()
     {
-        $expectedHeight = 60;
-        $customProperties = array(
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
-            AMPArticle::MEDIA_SIZES_KEY => array(
-                "http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mov" => array(90, $expectedHeight),
-            ),
-        );
-
+        $expectedHeight = 240;
         $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
-            'natgeo',
+            'tutorial',
             '//amp-video',
-            $customProperties
+            null
         );
         $firstArticleVideoElement = $videoXPathQuery->item(0);
 
