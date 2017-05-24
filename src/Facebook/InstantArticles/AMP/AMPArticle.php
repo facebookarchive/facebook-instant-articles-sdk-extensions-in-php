@@ -12,6 +12,7 @@ use Facebook\InstantArticles\Elements\Element;
 use Facebook\InstantArticles\Elements\Paragraph;
 use Facebook\InstantArticles\Elements\Blockquote;
 use Facebook\InstantArticles\Elements\Ad;
+use Facebook\InstantArticles\Elements\Analytics;
 use Facebook\InstantArticles\Elements\H1;
 use Facebook\InstantArticles\Elements\H2;
 use Facebook\InstantArticles\Elements\ListElement;
@@ -54,6 +55,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     const MEDIA_SIZES_KEY = 'media-sizes';
     const PUBLISHER_KEY = 'publisher';
     const GOOGLE_MAPS_KEY = 'google_maps_key';
+    const ANALYTICS_KEY = 'analytics';
 
     const MEDIA_TYPE_IMAGE = 'image';
     const MEDIA_TYPE_VIDEO = 'video';
@@ -70,6 +72,7 @@ class AMPArticle extends Element implements InstantArticleInterface
        'default-media-height' => 240,
        'media-sizes' => array(),
        'publisher' => array(),
+       'analytics' => array(),
      */
     private $properties = array();
 
@@ -170,7 +173,51 @@ class AMPArticle extends Element implements InstantArticleInterface
         $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
 
         $ampDocument = $this->observer->applyFilters('AMP_DOCUMENT', $this->transformInstantArticle($context), $context);
+
         return $ampDocument;
+    }
+
+    public function buildAnalytics($context = null)
+    {
+        if (!isset($this->properties[self::ANALYTICS_KEY])) {
+            return null;
+        }
+
+        if ($context === null) {
+            $context = $this->getContext();
+            if ($context === null) {
+                throw new Exception('No context found.');
+            }
+        }
+
+        $document = $context->getDocument();
+        $container = $document->createDocumentFragment();
+
+        foreach ($this->properties[self::ANALYTICS_KEY] as $analyticsString) {
+            $fragment = $document->createDocumentFragment();
+            $successs = $fragment->appendXML($analyticsString);
+
+            if (
+                !$successs || // Broken XML
+                $fragment->childNodes->length !== 1 || // Not a single tag
+                !($fragment->firstChild instanceof \DOMElement) || // Not a tag
+                !(
+                    $fragment->firstChild->tagName !== 'amp-analytics' || // Not a <amp-analytics>  tag
+                    $fragment->firstChild->tagName !== 'amp-pixel' // Or a <amp-pixel>  tag
+                )
+            ) {
+                $context->addWarning("Invalid Analytics markup. AMP Analytics code should be a single <amp-analytics> or <amp-pixel> tag.", $analyticsString);
+                return null;
+            }
+
+            $container->appendChild($this->observer->applyFilters('AMP_ANALYTICS', $fragment, $this->properties));
+        }
+
+        if ($container->childNodes->length === 0) {
+            return null;
+        }
+
+        return $container;
     }
 
     public function transformInstantArticle($context)
@@ -210,6 +257,13 @@ class AMPArticle extends Element implements InstantArticleInterface
         $this->ampHeader->genHeaderLogo($this->logo);
         // Create the text element for the published date using parsed format from styles
         $this->ampHeader->genArticlePublishDate($this->dateFormat);
+
+        // Add the analytics code
+        $analytics = $this->buildAnalytics();
+        if ($analytics !== null) {
+            $head->appendChild($this->buildCustomElementScriptEntry('amp-analytics', 'https://cdn.ampproject.org/v0/amp-analytics-0.1.js', $context));
+            $body->insertBefore($analytics, $body->firstChild);
+        }
 
         return $html;
     }
@@ -353,8 +407,14 @@ class AMPArticle extends Element implements InstantArticleInterface
                 } else if (Type::is($child, RelatedArticles::getClassName())) {
                     $childElement->setAttribute('class', $context->buildCssClass('related-articles'));
                     // TODO RelatedArticles
-                } else if (Type::is($child, Ad::getClassName())) {
-                    $childElement = $this->observer->applyFilters('IA_ANALYTICS', $this->buildAnalytics($child, $context, 'analytics'), $child, $context);
+                } else if (Type::is($child, Analytics::getClassName())) {
+                    if ($this->buildAnalytics() === null) {
+                        $context->addWarning(
+                            'Your Instant Article has analytics code, and you didn\'t provide an AMP analytics json. Your data will not be tracked. See the documentation at https://www.ampproject.org/docs/reference/components/amp-analytics on how to build your analytics component for AMP.',
+                            $child
+                        );
+                    }
+                    continue;
                 } else if (Type::is($child, Ad::getClassName())) {
                     $childElement = $this->observer->applyFilters('IA_AD', $this->buildAd($child, $context, 'ad'), $child, $context);
                 } else {
@@ -711,30 +771,6 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $iframeContainer;
     }
 
-    private function buildAnalytics($analytics, $context, $cssClass)
-    {
-        $srcUrl = $analytics->getSource();
-
-        $iframeContainer = $context->createElement('div', null, $cssClass);
-
-        $ampIframe = $context->getDocument()->createElement('amp-iframe');
-        $ampIframe->setAttribute('src', $this->ensureHttps($context, $srcUrl));
-        $ampIframe->setAttribute('width', 1);
-        $ampIframe->setAttribute('height', 1);
-        $ampIframe->setAttribute('sandbox', 'allow-scripts allow-same-origin');
-        $ampIframe->setAttribute('layout', 'responsive');
-        $ampIframe->setAttribute('frameborder', '0');
-
-        $iframeContainer->appendChild($ampIframe);
-
-        $context->addWarning(
-            'This article uses Analytics code, and you didnt implemented a custom analytics code. This might not be the most accurate way of tracking your code. See this documentation at https://www.ampproject.org/docs/reference/components/amp-analytics on how to build your analytics component. To extend component implementations use https://developers.facebook.com/docs/instant-articles/other-formats documentation.',
-            $analytics
-        );
-
-        return $iframeContainer;
-    }
-
     private function buildAd($ad, $context, $cssClass)
     {
         $srcUrl = $ad->getSource();
@@ -774,7 +810,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $googleAPIKey = $this->getObserver()->applyFilters('GET_GOOGLE_MAPS_KEY', $googleAPIKey, $this->properties, $context);
 
         if (Type::isTextEmpty($googleAPIKey)) {
-            $context->addWarning('Map by default converts Facebook Instant Article Maps into Google Maps. To accomplish that, you will need to inform into your $properties parameter the "google_maps_key" => "<your key>". Find more here how to get your Google Maps key: https://developers.google.com/maps/documentation/javascript/get-api-key', $map);
+            $context->addWarning('Facebook Instant Article Maps are converted into Google Maps by default. To accomplish that, you will need to inform into your $properties parameter the "google_maps_key" => "<your key>". Find more here how to get your Google Maps key: https://developers.google.com/maps/documentation/javascript/get-api-key', $map);
             return $context->createElement('div');
         }
 

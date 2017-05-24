@@ -28,16 +28,16 @@ class AMPHeaderTest extends \PHPUnit_Framework_TestCase
     private function getRenderer($test, $customProperties = null)
     {
         $html_file = file_get_contents(__DIR__ . '/articles/'.$test.'-instant-article.html');
-        $propeties = array(
+        $properties = array(
             'lang' => 'en-US',
             AMPArticle::STYLES_FOLDER_KEY => __DIR__,
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
         );
         if (!is_null($customProperties)) {
-            $propeties = array_merge($propeties, $customProperties);
+            $properties = array_merge($properties, $customProperties);
         }
 
-        return AMPArticle::create($html_file, $propeties);
+        return AMPArticle::create($html_file, $properties);
     }
 
     private function genContext()

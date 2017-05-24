@@ -117,16 +117,16 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $html_file = file_get_contents(__DIR__ . '/articles/'.$test.'-instant-article.html');
 
-        $propeties = array(
+        $properties = array(
             'lang' => 'en-US',
             AMPArticle::STYLES_FOLDER_KEY => __DIR__,
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
         );
         if (!is_null($customProperties)) {
-            $propeties = array_merge($propeties, $customProperties);
+            $properties = array_merge($properties, $customProperties);
         }
 
-        return AMPArticle::create($html_file, $propeties);
+        return AMPArticle::create($html_file, $properties);
     }
 
     private function getRenderedAMP($test, $customProperties = null)
@@ -1114,5 +1114,34 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         return '#' . str_pad(dechex($red), 2, '0', STR_PAD_LEFT) .
                     str_pad(dechex($green), 2, '0', STR_PAD_LEFT) .
                     str_pad(dechex($blue), 2, '0', STR_PAD_LEFT);
+    }
+
+    public function testBuildAnalytics()
+    {
+        $properties = array();
+        $properties['analytics'] = [
+            '<amp-pixel src="https://foo.com/pixel?RANDOM"></amp-pixel>',
+            '<amp-analytics><script type="application/json">{}</script></amp-analytics>',
+        ];
+
+        $context = AMPContext::create(new \DOMDocument(), InstantArticle::create());
+
+        $article = AMPArticle::create('<html></html>', $properties);
+        $fragment = $article->buildAnalytics($context);
+
+        $this->assertEquals(2, $fragment->childNodes->length);
+
+        $pixel = $fragment->firstChild;
+        $this->assertEquals('amp-pixel', $pixel->tagName);
+        $this->assertEquals('https://foo.com/pixel?RANDOM', $pixel->getAttribute('src'));
+
+        $analytics = $fragment->childNodes->item(1);
+        $this->assertEquals('amp-analytics', $analytics->tagName);
+        $this->assertEquals(1, $analytics->childNodes->length);
+
+        $analyticsScript = $analytics->firstChild;
+        $this->assertEquals('script', $analyticsScript->tagName);
+        $this->assertEquals('application/json', $analyticsScript->getAttribute('type'));
+        $this->assertEquals('{}', $analyticsScript->textContent);
     }
 }
