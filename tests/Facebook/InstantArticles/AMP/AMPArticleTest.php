@@ -697,7 +697,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         // Text Transform
         $testData = array_merge(
             $testData,
-            //  TODO: Is there a way to remove the magic strings?
             $this->getSecondLevelPropertyTestData(
                 'textTransformDataProvider',
                 'passThroughValuesProvider',
@@ -836,7 +835,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
      */
     private function passThroughValuesProvider($stylePropertyName, $expectedCSSValue)
     {
-        // TODO: Should we use a class instead of an array? (Probably)
         return array($stylePropertyName, $expectedCSSValue);
     }
 
@@ -942,7 +940,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
      */
     private function marginDataProvider()
     {
-        // TODO: Create unit tests for other margin values
         return array(
             // size, baseSpacingValue, direction, spacingFormat
             array('DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'right', '0 %spx 0 0'),
@@ -960,7 +957,6 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
      */
     private function paddingDataProvider()
     {
-        // TODO: Create unit tests for other padding values
         return array(
             // size, baseSpacingValue, direction, spacingFormat
             array('NONE', 0, 'top', '0 0 0 0'),

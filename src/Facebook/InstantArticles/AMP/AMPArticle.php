@@ -57,15 +57,11 @@ class AMPArticle extends Element implements InstantArticleInterface
     const GOOGLE_MAPS_KEY = 'google_maps_key';
     const ANALYTICS_KEY = 'analytics';
 
-    const MEDIA_TYPE_IMAGE = 'image';
-    const MEDIA_TYPE_VIDEO = 'video';
-
     private $instantArticle;
     /*
        'lang' => 'en-US',
        'css-selector-prefix' => 'ia2amp-',
        'styles-folder' => '/articles/styles'
-       // TODO: Is the value below the expected default value?
        'media-cache-folder' => '/articles/media',
        'enable-download-for-media-sizing' => FALSE,
        'default-media-width' => 380,
@@ -405,7 +401,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                     $childElement = $this->observer->applyFilters('IA_MAP', $this->buildMaps($child, $context, 'map'), $child, $context);
                 } else if (Type::is($child, RelatedArticles::getClassName())) {
                     $childElement->setAttribute('class', $context->buildCssClass('related-articles'));
-                    // TODO RelatedArticles
+                    // TODO RelatedArticles is not covered yet, since AMP didn't get a good structure for it up to date.
                 } else if (Type::is($child, Analytics::getClassName())) {
                     if ($this->buildAnalytics() === null) {
                         $context->addWarning(
@@ -503,7 +499,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampImg = $context->getDocument()->createElement('amp-img');
         $imageURL = $image->getUrl();
 
-        $imageDimensions = $this->getMediaDimensions($imageURL, self::MEDIA_TYPE_IMAGE);
+        $imageDimensions = $this->getMediaDimensions($imageURL, AMPContext::MEDIA_TYPE_IMAGE);
         $imageWidth = $imageDimensions[0];
         $imageHeight = $imageDimensions[1];
 
@@ -563,7 +559,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampImg = $context->getDocument()->createElement('amp-anim');
         $imageURL = $image->getUrl();
 
-        $imageDimensions = $this->getMediaDimensions($imageURL, self::MEDIA_TYPE_IMAGE);
+        $imageDimensions = $this->getMediaDimensions($imageURL, AMPContext::MEDIA_TYPE_IMAGE);
         $imageWidth = $imageDimensions[0];
         $imageHeight = $imageDimensions[1];
 
@@ -593,7 +589,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampVideo = $context->getDocument()->createElement('amp-video');
         $videoUrl = $video->getUrl();
 
-        $videoDimensions = $this->getMediaDimensions($videoUrl, self::MEDIA_TYPE_VIDEO);
+        $videoDimensions = $this->getMediaDimensions($videoUrl, AMPContext::MEDIA_TYPE_VIDEO);
         $videoWidth = $videoDimensions[0];
         $videoHeight = $videoDimensions[1];
 
@@ -618,7 +614,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     {
         $ampAudio = $context->createElement('div', null, $cssClass);
 
-        // TODO
+        // TODO Audio is not yet covered into first version of converter.
 
         return $ampAudio;
     }
@@ -635,7 +631,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
             if (!isset($imageWidth) && !isset($imageHeight)) {
                 $imageUrl = $image->getUrl();
-                $imageDimensions = $this->getMediaDimensions($imageUrl, self::MEDIA_TYPE_IMAGE);
+                $imageDimensions = $this->getMediaDimensions($imageUrl, AMPContext::MEDIA_TYPE_IMAGE);
                 $imageWidth = $imageDimensions[0];
                 $imageHeight = $imageDimensions[1];
             }
@@ -736,14 +732,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $srcUrl = $interactive->getSource();
 
         // Based on $srcUrl build:
-        // TODO check URLs for youtube
-        // TODO check URLs for Facebook
-        // TODO check URLs for Twitter
-        // TODO check URLs for Instagram
-        // TODO check URLs for Vimeo
-        // TODO check URLs for Vine
-        // TODO check URLs for playbuzz
-        // TODO check URLs for soundcloud
+        // TODO check URLs for youtube, Facebook, Twitter, Instagram, Vimeo, Vine, playbuzz, soundcloud
 
         $iframeContainer = $context->createElement('div', null, $cssClass);
 
@@ -911,7 +900,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             return $mediaDimensions;
         }
 
-        if ($mediaType === self::MEDIA_TYPE_IMAGE &&
+        if ($mediaType === AMPContext::MEDIA_TYPE_IMAGE &&
             array_key_exists(self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY, $this->properties) &&
                 $this->properties[self::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] === true) {
             $retrievedSizes = getimagesize($mediaURL);
@@ -977,7 +966,6 @@ class AMPArticle extends Element implements InstantArticleInterface
             }
         }
 
-        // TODO: Refactor this logic for custom CSS (global and style specific)
         if (file_exists($stylesFolder . 'global.amp-custom.css')) {
             $globalCSSFile = file_get_contents($stylesFolder . 'global.amp-custom.css');
             $globalCSSFile = str_replace(array("\r", "\n"), ' ', $globalCSSFile);
@@ -1015,14 +1003,12 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function articleHeadStyles($styles, $context)
     {
         $mappings = array(
-            // TODO: Logo
             $context->buildCssSelector('header-category') => 'kicker',
             $context->buildCssSelector('header-h1') => 'title',
             $context->buildCssSelector('header-h2') => 'subtitle',
             $context->buildCssSelector('header h3') => 'byline'
         );
 
-        // TODO: Move to constant/static
         $dateFormatMappings = array(
             'MONTH_AND_DAY' => 'F d',
             'MONTH_AND_YEAR' => 'F Y',
@@ -1069,9 +1055,6 @@ class AMPArticle extends Element implements InstantArticleInterface
             $context->getCssBuilder()->addProperty($cssSelector, 'border-top-style', 'solid');
             $context->getCssBuilder()->addProperty($cssSelector, 'border-top-width', '1px');
         }
-
-        // TODO: Should we move the code below to another place?
-        // It is not really generating any CSS as the width and height are required fields of amp-image
 
         if (!array_key_exists('logo', $headerStyles)) {
             return '';
@@ -1150,7 +1133,6 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function buildTextCSSDeclarationBlock($selector, $textStyles, $textType, $context)
     {
-        // TODO: Move to constant
         $mappings = array(
             'font-family' => 'font',
             'text-align' => 'text_alignment',
@@ -1257,7 +1239,6 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private static function getBorderDeclarationBlocks($textStyles)
     {
-        // TODO: Move to constant
         $directions = array(
             'top',
             'right',
@@ -1419,7 +1400,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         if ($imageURL) {
-            $imageDimensions = $this->getMediaDimensions($imageURL, self::MEDIA_TYPE_IMAGE);
+            $imageDimensions = $this->getMediaDimensions($imageURL, AMPContext::MEDIA_TYPE_IMAGE);
 
             return array(
                 '@type' => 'ImageObject',

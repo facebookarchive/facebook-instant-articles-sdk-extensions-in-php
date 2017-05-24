@@ -48,9 +48,9 @@ class AMPContext
     private $defaultWidth;
     private $defaultHeight;
 
-    //TODO: remove this?
-    const MEDIA_TYPE_IMAGE = AMPArticle::MEDIA_TYPE_IMAGE;
-    const MEDIA_TYPE_VIDEO = AMPArticle::MEDIA_TYPE_VIDEO;
+    const MEDIA_TYPE_IMAGE = 'image';
+    const MEDIA_TYPE_VIDEO = 'video';
+
     const DEFAULT_WIDTH = AMPArticle::DEFAULT_WIDTH;
     const DEFAULT_HEIGHT = AMPArticle::DEFAULT_HEIGHT;
 
@@ -679,7 +679,7 @@ class AMPContext
             return $mediaDimensions;
         }
 
-        if ($mediaType === AMPArticle::MEDIA_TYPE_IMAGE && $this->enableDownloadForMediaSizing) {
+        if ($mediaType === AMPContext::MEDIA_TYPE_IMAGE && $this->enableDownloadForMediaSizing) {
             $retrievedSizes = getimagesize($mediaURL);
             if ($retrievedSizes && !empty($retrievedSizes) && $retrievedSizes[0] !== 0) {
                 return $retrievedSizes;
