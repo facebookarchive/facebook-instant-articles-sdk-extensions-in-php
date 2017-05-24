@@ -197,8 +197,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $fragment = $document->createDocumentFragment();
             $successs = $fragment->appendXML($analyticsString);
 
-            if (
-                !$successs || // Broken XML
+            if (!$successs || // Broken XML
                 $fragment->childNodes->length !== 1 || // Not a single tag
                 !($fragment->firstChild instanceof \DOMElement) || // Not a tag
                 !(
@@ -1327,7 +1326,6 @@ class AMPArticle extends Element implements InstantArticleInterface
                 $g = hexdec(substr($color, 4, 2));
                 $b = hexdec(substr($color, 6, 2));
                 break;
-
         }
 
         $alpha = 1.0;
@@ -1451,7 +1449,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function ensureHttps($context, $url)
     {
-        if (strpos($url , 'http:') !== false) {
+        if (strpos($url, 'http:') !== false) {
             $context->addWarning('URLs for videos, iframes, analytics and ads should be HTTPS. Double check if this one is still valid using HTTPS protocol', $url);
         }
         return Type::isTextEmpty($url) ? $url : preg_replace("/^http:/i", "https:", $url);

@@ -79,7 +79,10 @@ class ObserverTest extends \PHPUnit_Framework_TestCase
     public function testSingleFilter()
     {
         $observer = Observer::create();
-        $observer->addFilter('name', function ($name) { return "$name-san"; });
+        $observer->addFilter('name', function ($name) {
+            return "$name-san";
+
+        });
         $name = $observer->applyFilters('name', "Bob");
         $this->assertEquals('Bob-san', $name);
     }

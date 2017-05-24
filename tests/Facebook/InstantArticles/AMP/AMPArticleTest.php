@@ -244,9 +244,9 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testSchemaOrgHasDateModified()
     {
-      $key = 'dateModified';
-      $discoveryMetadata = $this->getDiscoveryMetadata('tutorial');
-      $this->assertTrue(array_key_exists($key, $discoveryMetadata), "Did not found expected '$key' key in Schema.org metadata");
+        $key = 'dateModified';
+        $discoveryMetadata = $this->getDiscoveryMetadata('tutorial');
+        $this->assertTrue(array_key_exists($key, $discoveryMetadata), "Did not found expected '$key' key in Schema.org metadata");
     }
 
     public function testSchemaOrgAuthor()
