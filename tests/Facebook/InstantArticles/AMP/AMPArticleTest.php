@@ -362,7 +362,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     public function testCachedImageHeight()
     {
-        $expectedHeight = 230;
+        $expectedHeight = 181;
         $customProperties = array(
             AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
         );

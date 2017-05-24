@@ -57,6 +57,13 @@ class AMPArticle extends Element implements InstantArticleInterface
     const GOOGLE_MAPS_KEY = 'google_maps_key';
     const ANALYTICS_KEY = 'analytics';
 
+    const MEDIA_TYPE_IMAGE = 'image';
+    const MEDIA_TYPE_VIDEO = 'video';
+
+    const MEDIA_SIZE_MODE_RESPONSIVE = 'responsive';
+    const MEDIA_SIZE_MODE_VIEWPORT = 'viewport';
+    const MEDIA_SIZE_MODE_SCALED = 'scaled';
+
     private $instantArticle;
     /*
        'lang' => 'en-US',
@@ -470,7 +477,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     private function buildCover($media, $context)
     {
         if (Type::is($media, Image::getClassName())) {
-            return $this->buildImage($media, $context, 'cover-image', true, true);
+            return $this->buildImage($media, $context, 'cover-image', true, self::MEDIA_SIZE_MODE_VIEWPORT);
         } else if (Type::is($media, Slideshow::getClassName())) {
             return $this->buildSlideshow($media, $context, 'cover-slideshow');
         } else if (Type::is($media, Video::getClassName())) {
@@ -487,13 +494,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $script;
     }
 
-    private function buildImage($image, $context, $cssClass, $withContainer = true, $enforceAspectRatio = false)
+    private function buildImage($image, $context, $cssClass, $withContainer = true, $mediaSizeMode = self::MEDIA_SIZE_MODE_RESPONSIVE)
     {
         if ($withContainer) {
             $ampImgContainer = $context->createElement('div', null, $cssClass);
-        } else {
-            // If we are enforcing the aspect ratio we need the container
-            $enforceAspectRatio = false;
         }
 
         $ampImg = $context->getDocument()->createElement('amp-img');
@@ -503,7 +507,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $imageWidth = $imageDimensions[0];
         $imageHeight = $imageDimensions[1];
 
-        if ($enforceAspectRatio) {
+        if ($mediaSizeMode === self::MEDIA_SIZE_MODE_VIEWPORT) {
             $horizontalScale = self::DEFAULT_WIDTH / $imageWidth;
             $verticalScale = self::DEFAULT_HEIGHT / $imageHeight;
             $maxScale = max($horizontalScale, $verticalScale);
@@ -524,11 +528,13 @@ class AMPArticle extends Element implements InstantArticleInterface
 
             $imageWidth = (int) ($imageWidth * $maxScale);
             $imageHeight = (int) ($imageHeight * $maxScale);
-        } else {
+        } else if ($mediaSizeMode === self::MEDIA_SIZE_MODE_SCALED) {
             // Somehow the full width on mobile is 380, so I resize image height on same ratio
             $resizedWidthFactor = (double) (self::DEFAULT_WIDTH / (int) $imageWidth);
             $imageWidth = self::DEFAULT_WIDTH;
             $imageHeight = (int) ($imageHeight * $resizedWidthFactor);
+        } else {
+            $ampImg->setAttribute('layout', 'responsive');
         }
 
         $ampImg->setAttribute('src', $imageURL);
@@ -626,7 +632,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $ampCarousel = $context->getDocument()->createElement('amp-carousel');
 
         foreach ($slideshow->getArticleImages() as $image) {
-            $ampImage = $this->buildImage($image, $context, 'slideshow-image', true);
+            $ampImage = $this->buildImage($image, $context, 'slideshow-image', true, self::MEDIA_SIZE_MODE_SCALED);
             $ampCarousel->appendChild($ampImage);
 
             if (!isset($imageWidth) && !isset($imageHeight)) {
