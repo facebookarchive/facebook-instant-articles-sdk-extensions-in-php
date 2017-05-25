@@ -1,0 +1,43 @@
+{
+    "name": "facebook/facebook-instant-articles-sdk-extensions-php",
+    "description": "Facebook Instant Articles SDK Extensions in PHP to transform Instant Articles markup file into AMP",
+    "keywords": ["facebook", "sdk", "instant", "articles", "instantarticles", "amp", "extensions"],
+    "type": "library",
+    "homepage": "https://github.com/facebook/facebook-instant-articles-sdk-extensions-php",
+    "license": "proprietary",
+    "authors": [{
+        "name": "Facebook",
+        "homepage": "https://github.com/facebook/facebook-instant-articles-sdk-extensions-php/contributors"
+    }],
+    "require": {
+        "php": "^5.4 || ^7.0",
+        "facebook/facebook-instant-articles-sdk-php": "^1.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Facebook\\InstantArticles\\": "src/Facebook/InstantArticles/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Facebook\\InstantArticles\\": "tests/Facebook/InstantArticles/"
+        }
+    },
+    "scripts": {
+        "all": [
+            "@cs",
+            "@test"
+        ],
+        "cs": [
+            "composer install",
+            "phpcbf --standard=phpcs.xml -p || phpcs --standard=phpcs.xml -p"
+        ],
+        "test": [
+            "composer install",
+            "phpunit"
+        ]
+    }
+}

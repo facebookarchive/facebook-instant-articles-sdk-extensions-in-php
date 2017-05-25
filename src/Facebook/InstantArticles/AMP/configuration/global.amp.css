@@ -1,0 +1,202 @@
+/*Global Styles*/
+.ia2amp-header-bar {
+    margin: -5px 0 0 0;
+    height: 55px;
+    font: 0/0 a;
+}
+.ia2amp-header-bar:before {
+    content: ' ';
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+    width: 16.4px;
+}
+.ia2amp-header-bar-img-container {
+    display: inline-block;
+    vertical-align: middle;
+}
+.ia2amp-header-category {
+    font-size: 10px;
+    line-height: 12px;
+    display: block;
+    font-weight: normal;
+}
+.ia2amp-header-h1 {
+    font-size: 24px;
+    line-height: 30px;
+    display: block;
+    font-weight: normal;
+}
+.ia2amp-header-h2 {
+    font-size: 16px;
+    line-height: 20px;
+    display: block;
+    font-weight: normal;
+}
+.ia2amp-header h3 {
+    font-size: 8px;
+    line-height: 12px;
+    display: block;
+    font-weight: normal;
+}
+
+.ia2amp-h1, .ia2amp-h2, .ia2amp-h3 {
+    display: block;
+    font-weight: normal;
+}
+
+.ia2amp-h1 {
+    font-size: 19px;
+    line-height: 23px;
+}
+
+.ia2amp-h2 {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.ia2amp-p {
+    font-size: 14px;
+    line-height: 20px;
+    display: inline-block;
+
+
+}
+.ia2amp-p a {
+    margin: 0;
+}
+
+.ia2amp-blockquote {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 0px 13.2px 0px 18.8px;
+}
+
+.ia2amp-spacing {
+    display: block;
+    height: 18.8px;
+    margin: 0 16.4px 0 16.4px;
+}
+
+header figure figcaption {
+    display: none;
+}
+
+.ia2amp-figure {
+    margin: 0;
+}
+
+.ia2amp-op-small h1, .ia2amp-op-small h2 {
+    font-size: 10px;
+    display: block;
+}
+
+.ia2amp-op-medium h1, .ia2amp-op-medium h2 {
+    font-size: 14px;
+    display: block;
+}
+
+.ia2amp-op-large h1, .ia2amp-op-large h2 {
+    font-size: 16px;
+    display: block;
+}
+
+.ia2amp-op-extra-large h1, .ia2amp-op-extra-large h2 {
+    font-size: 23px;
+    display: block;
+}
+
+.ia2amp-figcaption cite {
+    font-size: 8px;
+    display: block;
+}
+
+.ia2amp-op-left {
+    text-align: left;
+}
+
+.ia2amp-op-center {
+    text-align: center;
+}
+
+.ia2amp-op-right {
+    text-align: right;
+}
+
+.ia2amp-figure {
+    position: relative;
+}
+
+figcaption.ia2amp-op-vertical-center {
+    position: absolute;
+    z-index: 1000;
+}
+
+.ia2amp-footer {
+    display: block;
+    font-size: 12px;
+    line-height: 17px;
+}
+
+.ia2amp-footer aside p {
+    margin: 0;
+}
+
+.ia2amp-spacing.after-header-bar.before-header-category {
+    height: 18.8px;
+}
+
+.ia2amp-spacing.after-header-category.before-header-h1,
+.ia2amp-spacing.after-header-h1.before-header-h2 {
+    height: 13.2px;
+}
+
+.ia2amp-spacing.after-h1.before-h2 {
+    height: 13.2px;
+}
+
+.ia2amp-spacing.after-li.before-li {
+    height: 13.2px;
+}
+
+.ia2amp-spacing.after-footer.before-footer {
+    height: 18.8px;
+}
+
+.ia2amp-spacing.after-header-h1.before-header-author,
+.ia2amp-spacing.after-header-h2.before-header-author {
+    height: 18.8px;
+}
+
+.ia2amp-spacing.after-header-author.before-header-date {
+    height: 0;
+}
+
+.ia2amp-spacing.after-header-date.before-h1,
+.ia2amp-spacing.after-header-date.before-h2,
+.ia2amp-spacing.after-header-date.before-p {
+    height: 26.4px;
+}
+
+.ia2amp-spacing.after-h1.before-p,
+.ia2amp-spacing.after-h2.before-p,
+.ia2amp-spacing.after-h3.before-p {
+    height: 18.8px;
+}
+
+.ia2amp-spacing.after-blockquote.before-p {
+    height: 18.8px;
+}
+
+.ia2amp-spacing.after-slideshow,
+.ia2amp-spacing.before-slideshow,
+.ia2amp-spacing.after-interactive,
+.ia2amp-spacing.before-interactive,
+.ia2amp-spacing.after-image,
+.ia2amp-spacing.before-image,
+.ia2amp-spacing.after-figcaption-small,
+.ia2amp-spacing.after-figcaption-medium,
+.ia2amp-spacing.after-figcaption-large,
+.ia2amp-spacing.after-figcaption-extra-large {
+    height: 26.4px;
+}
