@@ -22,7 +22,7 @@ class HookTest extends \PHPUnit_Framework_TestCase
                 'appenders' => [
                     'facebook-instantarticles-traverser' => [
                         'class' => 'LoggerAppenderConsole',
-                        'threshold' => 'INFO',
+                        'threshold' => 'DEBUG',
                         'layout' => [
                             'class' => 'LoggerLayoutSimple'
                         ]
