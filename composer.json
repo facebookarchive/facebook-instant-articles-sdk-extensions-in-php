@@ -1,13 +1,13 @@
 {
-    "name": "facebook/facebook-instant-articles-sdk-extensions-php",
+    "name": "facebook/facebook-instant-articles-sdk-extensions-in-php",
     "description": "Facebook Instant Articles SDK Extensions in PHP to transform Instant Articles markup file into AMP",
     "keywords": ["facebook", "sdk", "instant", "articles", "instantarticles", "amp", "extensions"],
     "type": "library",
-    "homepage": "https://github.com/facebook/facebook-instant-articles-sdk-extensions-php",
+    "homepage": "https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php",
     "license": "proprietary",
     "authors": [{
         "name": "Facebook",
-        "homepage": "https://github.com/facebook/facebook-instant-articles-sdk-extensions-php/contributors"
+        "homepage": "https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/contributors"
     }],
     "require": {
         "php": "^5.4 || ^7.0",
