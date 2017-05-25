@@ -10,43 +10,6 @@ namespace Facebook\InstantArticles\Utils;
 
 use Facebook\InstantArticles\Validators\Type;
 
-/*
- * Sample class used for testing the Observer.
- */
-class Greeting
-{
-    private $greeting;
-
-    function __construct($greeting)
-    {
-        $this->greeting = $greeting;
-    }
-
-    /**
-     * Says hello to someone
-     */
-    static function hello($name)
-    {
-        return "Hello $name";
-    }
-
-    /**
-     * Method that returns a string greeting someone
-     */
-    function greet($name, $middleName = null, $lastName = null)
-    {
-        $name = ($this->greeting).' '.$name;
-        if ($middleName) {
-            $name = $name.' '.$middleName;
-        }
-        if ($lastName) {
-            $name = $name.' '.$lastName;
-        }
-        return $name;
-    }
-}
-
-
 class ObserverTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
