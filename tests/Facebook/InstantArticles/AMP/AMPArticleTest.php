@@ -11,37 +11,14 @@ namespace Facebook\InstantArticles\AMP;
 use Facebook\InstantArticles\Elements\InstantArticle;
 use Facebook\InstantArticles\AMP\AMPArticle;
 use Facebook\InstantArticles\Parser\Parser;
+use Facebook\InstantArticles\Utils\FileUtilsPHPUnitTestCase;
 
-class AMPArticleTest extends \PHPUnit_Framework_TestCase
+class AMPArticleTest extends FileUtilsPHPUnitTestCase
 {
-    protected function setUp()
-    {
-        \Logger::configure(
-            [
-                'rootLogger' => [
-                    'appenders' => ['facebook-instantarticles-traverser']
-                ],
-                'appenders' => [
-                    'facebook-instantarticles-traverser' => [
-                        'class' => 'LoggerAppenderConsole',
-                        'threshold' => 'INFO',
-                        'layout' => [
-                            'class' => 'LoggerLayoutSimple'
-                        ]
-                    ]
-                ]
-            ]
-        );
-    }
-
     public function testParseIA()
     {
-        $html_file = file_get_contents(__DIR__ . '/articles/test1-instant-article.html');
-
-        libxml_use_internal_errors(true);
-        $document = new \DOMDocument();
-        $document->loadHTML($html_file);
-        libxml_use_internal_errors(false);
+        $html_file = $this->loadHTMLFile(__DIR__ . '/articles/test1-instant-article.html');
+        $document = $this->loadDOMDocument(__DIR__ . '/articles/test1-instant-article.html');
 
         $parser = new Parser();
         $instant_article = $parser->parse($document);
@@ -115,7 +92,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
     private function getRenderer($test, $customProperties = null)
     {
-        $html_file = file_get_contents(__DIR__ . '/articles/'.$test.'-instant-article.html');
+        $instantArticle = $this->loadInstantArticle(__DIR__ . '/articles/'.$test.'-instant-article.html');
 
         $properties = array(
             'lang' => 'en-US',
@@ -126,7 +103,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             $properties = array_merge($properties, $customProperties);
         }
 
-        return AMPArticle::create($html_file, $properties);
+        return AMPArticle::create($instantArticle, $properties);
     }
 
     private function getRenderedAMP($test, $customProperties = null)
@@ -162,7 +139,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         $ampRendered = $this->getRenderedAMP($test, $customProperties);
 
-        $ampExpected = file_get_contents(__DIR__.'/articles/'.$test.'-amp-converted.html');
+        $ampExpected = $this->loadHTMLFile(__DIR__.'/articles/'.$test.'-amp-converted.html');
         $this->compareIgnoringStyles($ampExpected, $ampRendered);
 
         // Sets content into the file for double checking testing
