@@ -37,9 +37,10 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     public function testParseIA()
     {
         $html_file = file_get_contents(__DIR__ . '/articles/test1-instant-article.html');
+        $html_file = mb_convert_encoding($html_file, 'HTML-ENTITIES', 'utf-8');
 
         libxml_use_internal_errors(true);
-        $document = new \DOMDocument();
+        $document = new \DOMDocument('1.0');
         $document->loadHTML($html_file);
         libxml_use_internal_errors(false);
 
@@ -48,6 +49,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $instant_article->addMetaProperty('op:generator:version', '1.0.0');
         $instant_article->addMetaProperty('op:generator:transformer:version', '1.0.0');
         $result = $instant_article->render('', true)."\n";
+        $result = mb_convert_encoding($result, 'HTML-ENTITIES', 'utf-8');
 
         $this->assertEquals($html_file, $result);
     }
@@ -116,6 +118,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     private function getRenderer($test, $customProperties = null)
     {
         $html_file = file_get_contents(__DIR__ . '/articles/'.$test.'-instant-article.html');
+        $html_file = mb_convert_encoding($html_file, 'HTML-ENTITIES', 'utf-8');
 
         $properties = array(
             'lang' => 'en-US',
@@ -161,8 +164,10 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     public function runIAtoAMPTest($test, $customProperties = null)
     {
         $ampRendered = $this->getRenderedAMP($test, $customProperties);
+        $ampRendered = mb_convert_encoding($ampRendered, 'HTML-ENTITIES', 'utf-8');
 
         $ampExpected = file_get_contents(__DIR__.'/articles/'.$test.'-amp-converted.html');
+        $ampExpected = mb_convert_encoding($ampExpected, 'HTML-ENTITIES', 'utf-8');
         $this->compareIgnoringStyles($ampExpected, $ampRendered);
 
         // Sets content into the file for double checking testing
@@ -172,6 +177,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     private function getRenderedMarkupXPathQuery($test, $xPathExpression, $customProperties = null)
     {
         $amp_rendered = $this->getRenderedAMP($test, $customProperties);
+        $amp_rendered = mb_convert_encoding($amp_rendered, 'HTML-ENTITIES', 'utf-8');
 
         libxml_use_internal_errors(true);
         $renderedDocument = new \DOMDocument();
