@@ -28,6 +28,7 @@ class AMPHeaderTest extends \PHPUnit_Framework_TestCase
     private function getRenderer($test, $customProperties = null)
     {
         $html_file = file_get_contents(__DIR__ . '/articles/'.$test.'-instant-article.html');
+        $html_file = mb_convert_encoding($html_file, 'HTML-ENTITIES', 'utf-8');
         $properties = array(
             'lang' => 'en-US',
             AMPArticle::STYLES_FOLDER_KEY => __DIR__,
