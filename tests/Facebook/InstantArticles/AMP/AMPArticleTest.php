@@ -126,7 +126,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
             $properties = array_merge($properties, $customProperties);
         }
 
-        return AMPArticle::create($html_file, $properties);
+        return AMPArticle::create(mb_convert_encoding($html_file, 'HTML-ENTITIES', 'utf-8'), $properties);
     }
 
     private function getRenderedAMP($test, $customProperties = null)
@@ -140,7 +140,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     {
         libxml_use_internal_errors(true);
         $markupDocument = new \DOMDocument();
-        $markupDocument->loadHTML($markup);
+        $markupDocument->loadHTML(mb_convert_encoding($markup, 'HTML-ENTITIES', 'utf-8'));
         libxml_use_internal_errors(false);
 
         $xPath = new \DOMXPath($markupDocument);
@@ -163,7 +163,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
         $ampRendered = $this->getRenderedAMP($test, $customProperties);
 
         $ampExpected = file_get_contents(__DIR__.'/articles/'.$test.'-amp-converted.html');
-        $this->compareIgnoringStyles($ampExpected, $ampRendered);
+        $this->compareIgnoringStyles(mb_convert_encoding($ampExpected, 'HTML-ENTITIES', 'utf-8'), $ampRendered);
 
         // Sets content into the file for double checking testing
         // file_put_contents(__DIR__.'/articles/'.$test.'-amp-converted.html', $ampRendered);
