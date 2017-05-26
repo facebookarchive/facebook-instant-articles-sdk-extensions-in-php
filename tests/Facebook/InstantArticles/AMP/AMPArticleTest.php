@@ -40,7 +40,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
 
         libxml_use_internal_errors(true);
         $document = new \DOMDocument();
-        $document->loadHTML($html_file);
+        $document->loadHTML(mb_convert_encoding($html_file, 'HTML-ENTITIES', 'utf-8'));
         libxml_use_internal_errors(false);
 
         $parser = new Parser();
