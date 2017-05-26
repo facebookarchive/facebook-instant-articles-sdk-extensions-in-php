@@ -177,6 +177,7 @@ class AMPArticleTest extends \PHPUnit_Framework_TestCase
     private function getRenderedMarkupXPathQuery($test, $xPathExpression, $customProperties = null)
     {
         $amp_rendered = $this->getRenderedAMP($test, $customProperties);
+        $amp_rendered = mb_convert_encoding($amp_rendered, 'HTML-ENTITIES', 'utf-8');
 
         libxml_use_internal_errors(true);
         $renderedDocument = new \DOMDocument();
