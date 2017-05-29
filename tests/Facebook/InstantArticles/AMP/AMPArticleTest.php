@@ -150,10 +150,7 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     {
         $amp_rendered = $this->getRenderedAMP($test, $customProperties);
 
-        libxml_use_internal_errors(true);
-        $renderedDocument = new \DOMDocument();
-        $renderedDocument->loadHTML($amp_rendered);
-        libxml_use_internal_errors(false);
+        $renderedDocument = $this->loadDOMDocumentFromString($amp_rendered);
         $xPath = new \DOMXPath($renderedDocument);
 
         return $xPath->query($xPathExpression);

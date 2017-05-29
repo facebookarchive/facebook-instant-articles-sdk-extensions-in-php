@@ -48,7 +48,16 @@ class FileUtilsPHPUnitTestCase extends \PHPUnit_Framework_TestCase
     public function loadDOMDocument($file, $encoding = 'utf-8')
     {
         $fileContent = $this->loadHTMLFile($file, $encoding);
+        return $this->loadDOMDocumentFromString($fileContent, $encoding);
+    }
 
+    /**
+     * Helper method that loads HTML file into DOMDocument instance, encoding as HTML-ENTITIES and using by default utf-8.
+     * @param string $fileContent The file content
+     * @param string $encoding "utf-8" by default. Supports the format informed.
+     */
+    public function loadDOMDocumentFromString($fileContent, $encoding = 'utf-8')
+    {
         libxml_use_internal_errors(true);
         $document = new \DOMDocument('1.0');
         $document->loadHTML('<?xml encoding="${$encoding}" ?>'.$fileContent);
