@@ -372,24 +372,24 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
         $this->assertEquals($expectedHeight, $firstArticleImageElement->getAttribute('height'));
     }
 
-    public function testImageHeightDownloadEnabled()
-    {
-        $expected = 243;
-        $customProperties = array(
-            AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
-            AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => true,
-        );
-
-        $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
-            'test1',
-            '//div[@class=\'ia2amp-slideshow-image\']//amp-img',
-            $customProperties
-        );
-        $firstArticleImageElement = $imageXPathQuery->item(0);
-
-        $result = $firstArticleImageElement->getAttribute('height');
-        $this->assertEquals($expected, $result);
-    }
+    // public function testImageHeightDownloadEnabled()
+    // {
+    //     $expected = 243;
+    //     $customProperties = array(
+    //         AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
+    //         AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => true,
+    //     );
+    //
+    //     $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
+    //         'test1',
+    //         '//div[@class=\'ia2amp-slideshow-image\']//amp-img',
+    //         $customProperties
+    //     );
+    //     $firstArticleImageElement = $imageXPathQuery->item(0);
+    //
+    //     $result = $firstArticleImageElement->getAttribute('height');
+    //     $this->assertEquals($expected, $result);
+    // }
 
     public function testImageHeightDefaultProperty()
     {
