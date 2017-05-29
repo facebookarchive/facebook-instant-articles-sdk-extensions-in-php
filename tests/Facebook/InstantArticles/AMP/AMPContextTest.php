@@ -372,27 +372,6 @@ class AMPContextTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedHeight, $dimensions[1]);
     }
 
-    public function testImageDimensionsDownloadEnabled()
-    {
-        $expectedWidth = 800;
-        $expectedHeight = 454;
-
-        $document = new \DOMDocument();
-        $context = AMPContext::create($document, InstantArticle::create());
-
-        $mediaSizes = array();
-        $mediaCacheFolder = null;
-        $enableDownloadForMediaSizing = true;
-        $defaultWidth = 1000;
-        $defaultHeight = 900;
-        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
-
-        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg', AMPContext::MEDIA_TYPE_IMAGE);
-
-        $this->assertEquals($expectedWidth, $dimensions[0]);
-        $this->assertEquals($expectedHeight, $dimensions[1]);
-    }
-
     public function testImageDimensionsDefault()
     {
         $document = new \DOMDocument();
