@@ -317,14 +317,14 @@ class AMPContextTest extends \PHPUnit_Framework_TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => array($expectedWidth, $expectedHeight));
+        $mediaSizes = array('https://www.facebook.com/images/fb_icon_325x325.png' => array($expectedWidth, $expectedHeight));
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
         $enableDownloadForMediaSizing = true;
         $defaultWidth = 1000;
         $defaultHeight = 900;
         $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
 
-        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg');
+        $dimensions = $context->getMediaDimensions('https://www.facebook.com/images/fb_icon_325x325.png');
 
         $this->assertEquals($expectedWidth, $dimensions[0]);
         $this->assertEquals($expectedHeight, $dimensions[1]);
@@ -332,8 +332,8 @@ class AMPContextTest extends \PHPUnit_Framework_TestCase
 
     public function testCachedImageDimensions()
     {
-        $expectedWidth = 400;
-        $expectedHeight = 227;
+        $expectedWidth = 325;
+        $expectedHeight = 325;
 
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
@@ -345,7 +345,7 @@ class AMPContextTest extends \PHPUnit_Framework_TestCase
         $defaultHeight = 900;
         $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
 
-        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg');
+        $dimensions = $context->getMediaDimensions('https://www.facebook.com/images/fb_icon_325x325.png');
 
         $this->assertEquals($expectedWidth, $dimensions[0]);
         $this->assertEquals($expectedHeight, $dimensions[1]);
@@ -353,8 +353,8 @@ class AMPContextTest extends \PHPUnit_Framework_TestCase
 
     public function testImageDimensionsDownloadDisabled()
     {
-        $expectedWidth = 400;
-        $expectedHeight = 227;
+        $expectedWidth = 325;
+        $expectedHeight = 325;
 
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
@@ -366,7 +366,28 @@ class AMPContextTest extends \PHPUnit_Framework_TestCase
         $defaultHeight = 900;
         $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
 
-        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg');
+        $dimensions = $context->getMediaDimensions('https://www.facebook.com/images/fb_icon_325x325.png');
+
+        $this->assertEquals($expectedWidth, $dimensions[0]);
+        $this->assertEquals($expectedHeight, $dimensions[1]);
+    }
+
+    public function testImageDimensionsDownloadEnabled()
+    {
+        $expectedWidth = 325;
+        $expectedHeight = 325;
+
+        $document = new \DOMDocument();
+        $context = AMPContext::create($document, InstantArticle::create());
+
+        $mediaSizes = array();
+        $mediaCacheFolder = null;
+        $enableDownloadForMediaSizing = true;
+        $defaultWidth = 1000;
+        $defaultHeight = 900;
+        $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
+
+        $dimensions = $context->getMediaDimensions('https://www.facebook.com/images/fb_icon_325x325.png', AMPContext::MEDIA_TYPE_IMAGE);
 
         $this->assertEquals($expectedWidth, $dimensions[0]);
         $this->assertEquals($expectedHeight, $dimensions[1]);
@@ -384,7 +405,7 @@ class AMPContextTest extends \PHPUnit_Framework_TestCase
         $defaultHeight = 900;
         $context->withMediaSizingSetup($mediaSizes, $mediaCacheFolder, $enableDownloadForMediaSizing, $defaultWidth, $defaultHeight);
 
-        $dimensions = $context->getMediaDimensions('http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg', AMPContext::MEDIA_TYPE_IMAGE);
+        $dimensions = $context->getMediaDimensions('https://www.facebook.com/images/fb_icon_325x325.png', AMPContext::MEDIA_TYPE_IMAGE);
 
         $this->assertEquals($defaultWidth, $dimensions[0]);
         $this->assertEquals($defaultHeight, $dimensions[1]);
