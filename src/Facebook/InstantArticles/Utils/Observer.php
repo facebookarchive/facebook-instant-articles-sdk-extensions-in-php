@@ -275,7 +275,7 @@ class Observer
      */
     public function hasFilter($tag, $functionToCheck = false)
     {
-        // If hook name has nothing, than nothing is hooked there.
+        // If hook name has nothing, then nothing is hooked there.
         if (!isset($this->callbacks[$tag])) {
             return false;
         }
