@@ -30,6 +30,7 @@ use Facebook\InstantArticles\Elements\RelatedArticles;
 use Facebook\InstantArticles\Elements\Container;
 use Facebook\InstantArticles\Elements\TextContainer;
 use Facebook\InstantArticles\Elements\InstantArticleInterface;
+use Facebook\InstantArticles\Elements\InstantArticle;
 
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
