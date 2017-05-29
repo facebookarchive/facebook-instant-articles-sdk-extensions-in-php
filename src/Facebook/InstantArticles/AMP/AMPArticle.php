@@ -116,6 +116,9 @@ class AMPArticle extends Element implements InstantArticleInterface
             $instantArticle = $parser->parse($document);
         }
 
+        // Enforces that $instantArticle is typeof InstantArticle class.
+        Type::enforce($instantArticle, InstantArticle::getClassName());
+
         if ($properties === null) {
             $properties = array();
         }
