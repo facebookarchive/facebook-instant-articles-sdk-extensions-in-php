@@ -174,7 +174,7 @@ class Observer
      * @param int $priority Optional. The priority of the function to be removed. Default 10.
      * @return bool True if found function to remove from filter list, false otherwise.
      */
-    function removeFilter($tag, $functionToRemove, $priority = 10)
+    public function removeFilter($tag, $functionToRemove, $priority = 10)
     {
         $return = false;
         if (isset($this->callbacks[$tag])) {
@@ -193,7 +193,7 @@ class Observer
      * @param string $tag The filter to remove hooks from.
      * @param int|bool $priority Optional. The priority number to remove. Default false.
      */
-    function removeAllFilters($tag, $priority = false)
+    public function removeAllFilters($tag, $priority = false)
     {
         if (isset($this->callbacks[$tag])) {
             $this->callbacks[$tag]->removeAllFilters($priority);
@@ -273,9 +273,9 @@ class Observer
      * anything registered. With a specific function, the priority of that
      * hook is returned, false otherwise.
      */
-    function hasFilter($tag, $functionToCheck = false)
+    public function hasFilter($tag, $functionToCheck = false)
     {
-        // If hook name has nothing, than nothing is hooked there.
+        // If hook name has nothing, then nothing is hooked there.
         if (!isset($this->callbacks[$tag])) {
             return false;
         }

@@ -30,6 +30,7 @@ use Facebook\InstantArticles\Elements\RelatedArticles;
 use Facebook\InstantArticles\Elements\Container;
 use Facebook\InstantArticles\Elements\TextContainer;
 use Facebook\InstantArticles\Elements\InstantArticleInterface;
+use Facebook\InstantArticles\Elements\InstantArticle;
 
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
@@ -97,15 +98,27 @@ class AMPArticle extends Element implements InstantArticleInterface
         $this->observer = $observer;
     }
 
-    public static function create($instantArticleString, $properties = array(), $observer = null)
+    /**
+     * Factory method to instantiate the AMPArticle converter.
+     * @param string|InstantArticle $instantArticle The instant article that will be parsed if informed as string.
+     * @param array() $properties the configuration for the AMP conversion. @see https://developers.facebook.com/docs/instant-articles/other-formats
+     * @param Observer $observer optional, will be created in case none informed. This is the hooking system for code level customizations.
+     */
+    public static function create($instantArticle, $properties = array(), $observer = null)
     {
-        libxml_use_internal_errors(true);
-        $document = new \DOMDocument();
-        $document->loadHTML($instantArticleString);
-        libxml_use_internal_errors(false);
+        // Treats if the informed content is string, parsing it into InstantArticle.
+        if (Type::is($instantArticle, Type::STRING)) {
+            libxml_use_internal_errors(true);
+            $document = new \DOMDocument('1.0');
+            $document->loadHTML($instantArticle);
+            libxml_use_internal_errors(false);
 
-        $parser = new Parser();
-        $instant_article = $parser->parse($document);
+            $parser = new Parser();
+            $instantArticle = $parser->parse($document);
+        }
+
+        // Enforces that $instantArticle is typeof InstantArticle class.
+        Type::enforce($instantArticle, InstantArticle::getClassName());
 
         if ($properties === null) {
             $properties = array();
@@ -115,7 +128,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $observer = Observer::create();
         }
 
-        return new self($instant_article, $properties, $observer);
+        return new self($instantArticle, $properties, $observer);
     }
 
     public function getObserver()

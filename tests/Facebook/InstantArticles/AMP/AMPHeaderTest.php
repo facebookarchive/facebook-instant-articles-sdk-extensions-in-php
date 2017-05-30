@@ -11,8 +11,9 @@ namespace Facebook\InstantArticles\AMP;
 use Facebook\InstantArticles\AMP\AMPHeader;
 use Facebook\InstantArticles\AMP\AMPImage;
 use Facebook\InstantArticles\AMP\AMPArticle;
+use Facebook\InstantArticles\Utils\FileUtilsPHPUnitTestCase;
 
-class AMPHeaderTest extends \PHPUnit_Framework_TestCase
+class AMPHeaderTest extends FileUtilsPHPUnitTestCase
 {
     private $logo;
     private $testHeader;
@@ -27,7 +28,7 @@ class AMPHeaderTest extends \PHPUnit_Framework_TestCase
 
     private function getRenderer($test, $customProperties = null)
     {
-        $html_file = file_get_contents(__DIR__ . '/articles/'.$test.'-instant-article.html');
+        $instantArticle = $this->loadInstantArticle(__DIR__ . '/articles/'.$test.'-instant-article.html');
         $properties = array(
             'lang' => 'en-US',
             AMPArticle::STYLES_FOLDER_KEY => __DIR__,
@@ -37,13 +38,13 @@ class AMPHeaderTest extends \PHPUnit_Framework_TestCase
             $properties = array_merge($properties, $customProperties);
         }
 
-        return AMPArticle::create($html_file, $properties);
+        return AMPArticle::create($instantArticle, $properties);
     }
 
     private function genContext()
     {
         $renderer = $this->getRenderer('test1', null);
-        $context = AMPContext::create(new \DOMDocument(), $renderer->getInstantArticle());
+        $context = AMPContext::create(new \DOMDocument('1.0'), $renderer->getInstantArticle());
 
         $mediaSizes = array();
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
