@@ -10,7 +10,6 @@ namespace Facebook\InstantArticles\AMP;
 
 use Facebook\InstantArticles\Elements\InstantArticle;
 
-use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
 use Facebook\InstantArticles\Utils\Warning;
 use Facebook\InstantArticles\Utils\CSSBuilder;

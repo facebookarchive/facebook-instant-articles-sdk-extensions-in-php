@@ -8,7 +8,6 @@
  */
 namespace Facebook\InstantArticles\Utils;
 
-use Facebook\InstantArticles\Validators\Type;
 
 /*
  * Sample class used for testing the Observer.

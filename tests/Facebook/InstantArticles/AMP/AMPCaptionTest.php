@@ -8,7 +8,6 @@
  */
 namespace Facebook\InstantArticles\AMP;
 
-use Facebook\InstantArticles\AMP\AMPContext;
 
 use Facebook\InstantArticles\Elements\InstantArticle;
 use Facebook\InstantArticles\Elements\Header;

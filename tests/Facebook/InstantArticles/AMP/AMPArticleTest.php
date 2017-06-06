@@ -1,4 +1,4 @@
-<?php
+e<?php
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
  * All rights reserved.
@@ -9,7 +9,6 @@
 namespace Facebook\InstantArticles\AMP;
 
 use Facebook\InstantArticles\Elements\InstantArticle;
-use Facebook\InstantArticles\AMP\AMPArticle;
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Utils\FileUtilsPHPUnitTestCase;
 
