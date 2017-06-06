@@ -8,7 +8,6 @@
  */
 namespace Facebook\InstantArticles\Utils;
 
-use Facebook\InstantArticles\Validators\Type;
 
 class CSSBuilderTest extends \PHPUnit_Framework_TestCase
 {
