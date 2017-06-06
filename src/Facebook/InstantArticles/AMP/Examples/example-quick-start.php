@@ -55,7 +55,7 @@ $properties[AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] = true;
 $properties[AMPArticle::ANALYTICS_KEY] = array(
   '<amp-pixel src="http://mydomain.com/my_tracking_pixel.gif">',
   '<amp-analytics config="https://mydomain.com/analytics.config.json"></amp-analytics>'
-)
+);
 
 // Converts it into AMP
 $amp_string =
