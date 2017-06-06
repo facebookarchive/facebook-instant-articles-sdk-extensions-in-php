@@ -9,6 +9,9 @@
         "name": "Facebook",
         "homepage": "https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/contributors"
     }],
+    "config": {
+        "sort-packages": true
+    },
     "require": {
         "php": "^5.4 || ^7.0",
         "facebook/facebook-instant-articles-sdk-php": "^1.6"
