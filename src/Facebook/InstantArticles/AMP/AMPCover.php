@@ -26,7 +26,7 @@ class AMPCover
     private $coverElement;
 
     /**
-     * @var DOMNode The html tag holding the final element;
+     * @var \DOMNode The html tag holding the final element;
      */
     private $coverTag;
 

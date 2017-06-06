@@ -23,17 +23,17 @@ class AMPCaption
     private $caption;
 
     /**
-     * @var DOMNode The DOMNode html element being captionized
+     * @var \DOMNode The DOMNode html element being captionized
      */
     private $ampTag;
 
     /**
-     * @var DOMNode The Final container for Caption
+     * @var \DOMNode The Final container for Caption
      */
     private $container;
 
     /**
-     * @var DOMNode The figcaption DOMNode that will hold the text content.
+     * @var \DOMNode The figcaption DOMNode that will hold the text content.
      */
     private $ampCaption;
 

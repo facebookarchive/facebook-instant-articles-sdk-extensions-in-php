@@ -206,7 +206,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($context === null) {
             $context = $this->getContext();
             if ($context === null) {
-                throw new Exception('No context found.');
+                throw new \Exception('No context found.');
             }
         }
 

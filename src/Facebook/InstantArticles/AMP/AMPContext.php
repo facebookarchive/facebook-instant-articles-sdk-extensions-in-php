@@ -62,7 +62,7 @@ class AMPContext
 
     /**
      * Factory method to create the AMPContext
-     * @param DOMDocument $document The root document used on the context. If null informed, a new one will be created.
+     * @param \DOMDocument $document The root document used on the context. If null informed, a new one will be created.
      * @param InstantArticle $instantArticle The Element InstantArticle that will be used during conversion.
      * @param string $cssPrefix The css prefix for building element classes.
      */
@@ -78,7 +78,7 @@ class AMPContext
 
     /**
      * Sets the document. Private method since this should be unmodifiable.
-     * @param DOMDocument $document The root document to be used.
+     * @param \DOMDocument $document The root document to be used.
      * @return $this reference.
      */
     private function withDocument($document)
@@ -126,7 +126,7 @@ class AMPContext
 
     /**
      * Gets the root document being used in this context.
-     * @return DOMDocument $document The root document.
+     * @return \DOMDocument $document The root document.
      */
     public function getDocument()
     {
@@ -139,7 +139,7 @@ class AMPContext
      * @param array(<string>=><string>) $attributes mapped array of attributes to be set to this Element being created.
      * @param string $cssClass The element class for styling purposes.
      * @param $DOMNode $container The container element where the new created element will be appended. Optional.
-     * @return DOMElement <$tagName> element using the DOMDocument $document from context.
+     * @return \DOMElement <$tagName> element using the DOMDocument $document from context.
      */
     public function createElement($tagName, $container = null, $cssClass = null, $attributes = null)
     {
@@ -221,8 +221,8 @@ class AMPContext
      * Sets the <html> full document.
      * WARNING: by setting this, will overwrite the full document, be sure to
      * have a valid AMP document while setting.
-     * @param DOMElement $html The html tag, should be a <html> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <html> tag.
+     * @param \DOMElement $html The html tag, should be a <html> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <html> tag.
      * @return $this instance.
      */
     public function withHtml($html)
@@ -243,7 +243,7 @@ class AMPContext
 
     /**
      * Gets the <html> tag.
-     * @return DOMElement $html The <html> tag.
+     * @return \DOMElement $html The <html> tag.
      */
     public function getHtml()
     {
@@ -254,8 +254,8 @@ class AMPContext
      * Sets the <head> tag.
      * WARNING: by setting this, will overwrite the head from document, be sure to
      * have a valid AMP head while setting.
-     * @param DOMElement $head The head tag, should be a <head> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <head> tag.
+     * @param \DOMElement $head The head tag, should be a <head> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <head> tag.
      * @return $this instance.
      */
     public function withHead($head)
@@ -276,7 +276,7 @@ class AMPContext
 
     /**
      * Gets the <head> tag.
-     * @return DOMElement $head The <head> tag.
+     * @return \DOMElement $head The <head> tag.
      */
     public function getHead()
     {
@@ -287,8 +287,8 @@ class AMPContext
      * Sets the <body> tag.
      * WARNING: by setting this, will overwrite the body from document, be sure to
      * have a valid AMP body while setting.
-     * @param DOMElement $body The body tag, should be a <body> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <body> tag.
+     * @param \DOMElement $body The body tag, should be a <body> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <body> tag.
      * @return $this instance.
      */
     public function withBody($body)
@@ -309,7 +309,7 @@ class AMPContext
 
     /**
      * Gets the <body> tag.
-     * @return DOMElement $body The <body> tag.
+     * @return \DOMElement $body The <body> tag.
      */
     public function getBody()
     {
@@ -320,8 +320,8 @@ class AMPContext
      * Sets the <article> tag.
      * WARNING: by setting this, will overwrite the article from document, be sure to
      * have a valid AMP article while setting.
-     * @param DOMElement $article The article tag, should be a <article> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <article> tag.
+     * @param \DOMElement $article The article tag, should be a <article> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <article> tag.
      * @return $this instance.
      */
     public function withArticle($article)
@@ -342,7 +342,7 @@ class AMPContext
 
     /**
      * Gets the <article> tag.
-     * @return DOMElement $article The <article> tag.
+     * @return \DOMElement $article The <article> tag.
      */
     public function getArticle()
     {
@@ -353,8 +353,8 @@ class AMPContext
      * Sets the <header> tag.
      * WARNING: by setting this, will overwrite the header from document, be sure to
      * have a valid AMP header while setting.
-     * @param DOMElement $header The header tag, should be a <header> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <header> tag.
+     * @param \DOMElement $header The header tag, should be a <header> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <header> tag.
      * @return $this instance.
      */
     public function withHeader($header)
@@ -375,7 +375,7 @@ class AMPContext
 
     /**
      * Gets the <header> tag.
-     * @return DOMElement $header The <header> tag.
+     * @return \DOMElement $header The <header> tag.
      */
     public function getHeader()
     {
@@ -386,8 +386,8 @@ class AMPContext
      * Sets the headerBar <div> tag.
      * WARNING: by setting this, will overwrite the headerBar from document, be sure to
      * have a valid AMP headerBar while setting.
-     * @param DOMElement $headerBar The headerBar tag, should be a <div> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <div> tag.
+     * @param \DOMElement $headerBar The headerBar tag, should be a <div> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <div> tag.
      * @return $this instance.
      */
     public function withHeaderBar($headerBar)
@@ -408,7 +408,7 @@ class AMPContext
 
     /**
      * Gets the <headerBar> tag.
-     * @return DOMElement $headerBar The <headerBar> tag.
+     * @return \DOMElement $headerBar The <headerBar> tag.
      */
     public function getHeaderBar()
     {
@@ -419,8 +419,8 @@ class AMPContext
      * Sets the headerBarLogo <div> tag.
      * WARNING: by setting this, will overwrite the headerBarLogo from document, be sure to
      * have a valid AMP headerBarLogo while setting.
-     * @param DOMElement $headerBarLogo The headerBarLogo tag, should be a <div> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <div> tag.
+     * @param \DOMElement $headerBarLogo The headerBarLogo tag, should be a <div> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <div> tag.
      * @return $this instance.
      */
     public function withHeaderBarLogo($headerBarLogo)
@@ -441,7 +441,7 @@ class AMPContext
 
     /**
      * Gets the <headerBarLogo> tag.
-     * @return DOMElement $headerBarLogo The <headerBarLogo> tag.
+     * @return \DOMElement $headerBarLogo The <headerBarLogo> tag.
      */
     public function getHeaderBarLogo()
     {
@@ -452,8 +452,8 @@ class AMPContext
      * Sets the <h1> title tag.
      * WARNING: by setting this, will overwrite the title from document, be sure to
      * have a valid AMP title while setting.
-     * @param DOMElement $h1 The title tag, should be a <h1> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <h1> tag.
+     * @param \DOMElement $h1 The title tag, should be a <h1> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <h1> tag.
      * @return $this instance.
      */
     public function withHeaderTitle($h1)
@@ -474,7 +474,7 @@ class AMPContext
 
     /**
      * Gets the <h1> title tag.
-     * @return DOMElement $headerTitle The <h1> title tag.
+     * @return \DOMElement $headerTitle The <h1> title tag.
      */
     public function getHeaderTitle()
     {
@@ -485,8 +485,8 @@ class AMPContext
      * Sets the <h3> author tag.
      * WARNING: by setting this, will overwrite the author from document, be sure to
      * have a valid AMP author while setting.
-     * @param DOMElement $h3 The author tag, should be a <h3> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <h3> tag.
+     * @param \DOMElement $h3 The author tag, should be a <h3> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <h3> tag.
      * @return $this instance.
      */
     public function withHeaderAuthor($h3)
@@ -507,7 +507,7 @@ class AMPContext
 
     /**
      * Gets the <h3> author tag.
-     * @return DOMElement $headerAuthor The <h3> tag.
+     * @return \DOMElement $headerAuthor The <h3> tag.
      */
     public function getHeaderAuthor()
     {
@@ -518,8 +518,8 @@ class AMPContext
      * Sets the <h2> kicker tag.
      * WARNING: by setting this, will overwrite the kicker from document, be sure to
      * have a valid AMP kicker while setting.
-     * @param DOMElement $h2 The kicker tag, should be a <h2> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <h2> tag.
+     * @param \DOMElement $h2 The kicker tag, should be a <h2> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <h2> tag.
      * @return $this instance.
      */
     public function withHeaderKicker($h2)
@@ -540,7 +540,7 @@ class AMPContext
 
     /**
      * Gets the <h2> kicker tag.
-     * @return DOMElement $headerKicker The <h2> kicker tag.
+     * @return \DOMElement $headerKicker The <h2> kicker tag.
      */
     public function getHeaderKicker()
     {
@@ -551,8 +551,8 @@ class AMPContext
      * Sets the <h3> date tag.
      * WARNING: by setting this, will overwrite the date from document, be sure to
      * have a valid AMP date while setting.
-     * @param DOMElement $h3 The date tag, should be a <h3> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <h3> tag.
+     * @param \DOMElement $h3 The date tag, should be a <h3> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <h3> tag.
      * @return $this instance.
      */
     public function withHeaderDate($h3)
@@ -573,7 +573,7 @@ class AMPContext
 
     /**
      * Gets the <h3> date tag.
-     * @return DOMElement $headerDate The <h3> tag.
+     * @return \DOMElement $headerDate The <h3> tag.
      */
     public function getHeaderDate()
     {
@@ -594,8 +594,8 @@ class AMPContext
      * Sets the <footer> tag.
      * WARNING: by setting this, will overwrite the footer from document, be sure to
      * have a valid AMP footer while setting.
-     * @param DOMElement $footer The footer tag, should be a <footer> tag.
-     * @throws InvalidArgumentException case not a DOMElement or not a <footer> tag.
+     * @param \DOMElement $footer The footer tag, should be a <footer> tag.
+     * @throws \InvalidArgumentException case not a DOMElement or not a <footer> tag.
      * @return $this instance.
      */
     public function withFooter($footer)
@@ -616,7 +616,7 @@ class AMPContext
 
     /**
      * Gets the <footer> tag.
-     * @return DOMElement $footer The <footer> tag.
+     * @return \DOMElement $footer The <footer> tag.
      */
     public function getFooter()
     {
@@ -627,7 +627,7 @@ class AMPContext
      * Use this method to add a new warning message to the context when something unexpected happened.
      * @param string $message The message warning.
      * @param mixed $contextObj an object to be stringified to better understand the context where this warning was generated.
-     * @param Exception $exception **optional** The exception that generated this warning.
+     * @param \Exception $exception **optional** The exception that generated this warning.
      */
     public function addWarning($message, $contextObj, $exception = null)
     {
