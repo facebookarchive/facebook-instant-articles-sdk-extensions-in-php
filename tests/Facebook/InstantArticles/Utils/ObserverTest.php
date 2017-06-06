@@ -44,7 +44,6 @@ class ObserverTest extends Framework\TestCase
         $observer = Observer::create();
         $observer->addFilter('name', function ($name) {
             return "$name-san";
-
         });
         $name = $observer->applyFilters('name', "Bob");
         $this->assertEquals('Bob-san', $name);
