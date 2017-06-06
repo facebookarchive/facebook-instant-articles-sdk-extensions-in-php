@@ -9,8 +9,9 @@
 namespace Facebook\InstantArticles\Utils;
 
 use Facebook\InstantArticles\Parser\Parser;
+use PHPUnit\Framework;
 
-class FileUtilsPHPUnitTestCase extends \PHPUnit_Framework_TestCase
+class FileUtilsPHPUnitTestCase extends Framework\TestCase
 {
     protected function setUp()
     {
