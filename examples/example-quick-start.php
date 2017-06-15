@@ -7,7 +7,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-require_once dirname(dirname(dirname(dirname(dirname(__DIR__))))).'/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Prevents the logger from dumping too much info, check the file for details
 include('quiet_logger.php');

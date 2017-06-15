@@ -22,7 +22,7 @@ After the installation, you can include the auto loader script in your source wi
 require_once('vendor/autoload.php');
 ```
 
-Also be sure to check [the quick start example](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/src/Facebook/InstantArticles/AMP/Examples/example-quick-start.php).
+Also be sure to check [the quick start example](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/examples/example-quick-start.php).
 
 ## Official Documentation
 
@@ -74,9 +74,9 @@ ___
 
 If you are encountering problems, the following tips may help in troubleshooting issues:
 
-- Set the `threshold` in the [configuration of the Logger](https://logging.apache.org/log4php/docs/configuration.html#PHP) to `DEBUG` to expose more details about the items processed by the Transformer, conversely, to make it more quiet set it to `INFO`, check [this script](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/src/Facebook/InstantArticles/AMP/Examples/quiet_logger.php) for details.
-- If your images are having dimension/aspect ratio problems, please check the [the quick start example](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/src/Facebook/InstantArticles/AMP/Examples/example-quick-start.php) for more information.
-- At the moment, we have no way to determine a video's width and height, you need to explicitly pass that information via properties, see how to do it  [here](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/src/Facebook/InstantArticles/AMP/Examples/example-quick-start.php).
+- Set the `threshold` in the [configuration of the Logger](https://logging.apache.org/log4php/docs/configuration.html#PHP) to `DEBUG` to expose more details about the items processed by the Transformer, conversely, to make it more quiet set it to `INFO`, check [this script](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/examples/quiet_logger.php) for details.
+- If your images are having dimension/aspect ratio problems, please check the [the quick start example](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/examples/example-quick-start.php) for more information.
+- At the moment, we have no way to determine a video's width and height, you need to explicitly pass that information via properties, see how to do it  [here](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php/blob/master/examples/example-quick-start.php).
 
 ### Filing an issue
 
