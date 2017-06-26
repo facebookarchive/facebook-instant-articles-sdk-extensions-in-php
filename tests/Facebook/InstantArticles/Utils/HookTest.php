@@ -9,8 +9,9 @@
 namespace Facebook\InstantArticles\Utils;
 
 use Facebook\InstantArticles\Validators\Type;
+use PHPUnit\Framework;
 
-class HookTest extends \PHPUnit_Framework_TestCase
+class HookTest extends Framework\TestCase
 {
     protected function setUp()
     {

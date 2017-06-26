@@ -10,10 +10,11 @@ namespace Facebook\InstantArticles\AMP;
 
 use Facebook\InstantArticles\Elements\InstantArticle;
 use Facebook\InstantArticles\Elements\Paragraph;
+use PHPUnit\Framework;
 
 
 
-class AMPContextTest extends \PHPUnit_Framework_TestCase
+class AMPContextTest extends Framework\TestCase
 {
     protected function setUp()
     {

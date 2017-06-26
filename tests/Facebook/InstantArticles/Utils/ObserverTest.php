@@ -8,8 +8,9 @@
  */
 namespace Facebook\InstantArticles\Utils;
 
+use PHPUnit\Framework;
 
-class ObserverTest extends \PHPUnit_Framework_TestCase
+class ObserverTest extends Framework\TestCase
 {
     protected function setUp()
     {
