@@ -10,7 +10,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // Prevents the logger from dumping too much info, check the file for details
-include('quiet_logger.php');
+include __DIR__ . '/quiet_logger.php';
 
 use Facebook\InstantArticles\AMP\AMPArticle;
 
