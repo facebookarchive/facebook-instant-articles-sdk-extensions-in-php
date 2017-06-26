@@ -5,4 +5,5 @@
     <arg name="colors" />
     <arg value="sn" />
     <rule ref="PSR2"  />
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax.Found" />
 </ruleset>
