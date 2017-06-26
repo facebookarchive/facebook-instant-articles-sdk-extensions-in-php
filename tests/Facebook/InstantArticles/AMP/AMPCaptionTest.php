@@ -82,7 +82,7 @@ class AMPCaptionTest extends Framework\TestCase
     {
         $context = AMPContext::create($document, $instantArticle);
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
         $enableDownloadForMediaSizing = false;
         $defaultWidth = 1000;

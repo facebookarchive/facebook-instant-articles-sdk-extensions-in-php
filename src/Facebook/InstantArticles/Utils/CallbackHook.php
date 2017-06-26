@@ -17,17 +17,17 @@ class CallbackHook implements \Iterator, \ArrayAccess
     /**
      * @var array Callback functions/instance->methods
      */
-    public $callbacks = array();
+    public $callbacks = [];
 
     /**
      * @var array The priority keys of actively running iterations of a hook.
      */
-    private $iterations = array();
+    private $iterations = [];
 
     /**
      * @var array The current priority of actively running iterations of a hook.
      */
-    private $currentPriority = array();
+    private $currentPriority = [];
 
     /**
      * @var int Number of levels this hook can be recursively called.
@@ -49,10 +49,10 @@ class CallbackHook implements \Iterator, \ArrayAccess
     {
         $priorityExisted = isset($this->callbacks[$priority]);
 
-        $this->callbacks[$priority][$idx] = array(
+        $this->callbacks[$priority][$idx] = [
             'function' => $functionToAdd,
             'accepted_args' => $acceptedArgs
-        );
+        ];
 
         // if we're adding a new priority to the list, put them back in sorted order
         if (!$priorityExisted && count($this->callbacks) > 1) {
@@ -208,7 +208,7 @@ class CallbackHook implements \Iterator, \ArrayAccess
         }
 
         if (false === $priority) {
-            $this->callbacks = array();
+            $this->callbacks = [];
         } else if (isset($this->callbacks[$priority])) {
             unset($this->callbacks[$priority]);
         }
@@ -244,7 +244,7 @@ class CallbackHook implements \Iterator, \ArrayAccess
 
                 // Avoid the array_slice if possible.
                 if ($callbackPriority['accepted_args'] == 0) {
-                    $value = call_user_func_array($callbackPriority['function'], array());
+                    $value = call_user_func_array($callbackPriority['function'], []);
                 } elseif ($callbackPriority['accepted_args'] >= $num_args) {
                     $value = call_user_func_array($callbackPriority['function'], $args);
                 } else {

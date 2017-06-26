@@ -23,16 +23,16 @@ namespace Facebook\InstantArticles\Utils;
 class Hook
 {
     /* Hooks to have overriden callable */
-    private $hooks = array();
-    private $params = array();
+    private $hooks = [];
+    private $params = [];
 
     /* Hooks to have before callable */
-    private $beforeHooks = array();
-    private $beforeParams = array();
+    private $beforeHooks = [];
+    private $beforeParams = [];
 
     /* Hooks to have after callable */
-    private $afterHooks = array();
-    private $afterParams = array();
+    private $afterHooks = [];
+    private $afterParams = [];
 
     /**
      * Private constructor to force factory method: Hook::create();
@@ -121,12 +121,12 @@ class Hook
      * @param string/array $callable The string method to be called or array with array('Namespace.ClassName', 'methodName')
      * @param array(mixed) The params to be used into your methodName from your callable.
      */
-    public function call($hookName, $callable, $params = array())
+    public function call($hookName, $callable, $params = [])
     {
         // Treats before hook is called. To set something to happen before any hook, just use setBeforeHook('hook_name', ...)
         if (array_key_exists($hookName, $this->beforeHooks) && isset($this->beforeHooks[$hookName])) {
             $beforeCallable = $this->beforeHooks[$hookName];
-            $beforeParams = array();
+            $beforeParams = [];
             if (array_key_exists($hookName, $this->beforeParams) && isset($this->beforeParams[$hookName])) {
                 $beforeParams = $this->beforeParams[$hookName];
             }
@@ -147,7 +147,7 @@ class Hook
         // Treats after hook is called. To set something to happen after any hook, just use setAfterHook('hook_name', ...)
         if (array_key_exists($hookName, $this->afterHooks) && isset($this->afterHooks[$hookName])) {
             $afterCallable = $this->afterHooks[$hookName];
-            $afterParams = array();
+            $afterParams = [];
             if (array_key_exists($hookName, $this->afterParams) && isset($this->afterParams[$hookName])) {
                 $afterParams = $this->afterParams[$hookName];
             }

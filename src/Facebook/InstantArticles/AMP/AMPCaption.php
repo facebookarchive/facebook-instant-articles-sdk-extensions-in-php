@@ -122,7 +122,7 @@ class AMPCaption
 
     private function applyStyleClasses()
     {
-        $ampCSSClasses = array();
+        $ampCSSClasses = [];
         $ampCSSClasses[] = $this->context->buildCssClass('figcaption');
 
         if ($this->caption->getFontSize()) {

@@ -181,8 +181,8 @@ class CSSBuilderTest extends Framework\TestCase
         $expected = $this->genArrayCSSFormatted('myprefix-');
 
         $cssBuilder = new CSSBuilder('myprefix-');
-        $cssBuilder->addToSelector(array('someClass1', 'someClass2'), 'width', '300px')
-                   ->addToSelector(array('someClass1', 'someClass2'), 'height', '400px')
+        $cssBuilder->addToSelector(['someClass1', 'someClass2'], 'width', '300px')
+                   ->addToSelector(['someClass1', 'someClass2'], 'height', '400px')
                    ->addToSelector('someClass1', 'color', '#fff');
         $result = $cssBuilder->build(true);
         $this->assertEquals($expected, $result);

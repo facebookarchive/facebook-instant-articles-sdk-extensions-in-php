@@ -110,11 +110,11 @@ class AMPHeader
             'amp-img',
             $ampImageContainer,
             null,
-            array(
+            [
                 'src' => $logo->url,
                 'width' => $logo->width,
                 'height' => $logo->height
-            )
+            ]
         );
     }
 

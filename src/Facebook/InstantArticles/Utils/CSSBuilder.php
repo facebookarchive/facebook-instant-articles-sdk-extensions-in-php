@@ -25,7 +25,7 @@ class CSSBuilder
     /**
      * @var array('string'=>array('string' => properties))
      */
-    private $selectors = array();
+    private $selectors = [];
 
     /**
      * @var string prefix for css selector classes
@@ -56,7 +56,7 @@ class CSSBuilder
         if (isset($this->selectors[$selector])) {
             $selectorProps = $this->selectors[$selector];
         } else {
-            $selectorProps = array();
+            $selectorProps = [];
         }
 
         $selectorProps[$property] = $value;
@@ -138,7 +138,7 @@ class CSSBuilder
     private function buildCssSelector($class)
     {
         if (is_array($class)) {
-            $selectors = array();
+            $selectors = [];
             foreach ($class as $singleClass) {
                 $selectors[] = $this->buildCssSelector($singleClass);
             }

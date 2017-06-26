@@ -16,10 +16,10 @@ include __DIR__ . '/quiet_logger.php';
 
  // Load instant article file into string
 $instant_article_string = file_get_contents(__DIR__.'/instant-article-example.html');
-$properties = array(
+$properties = [
   'lang' => 'en-US',                   // You can set the language your article have
   'styles-folder' => __DIR__.'/styles' // Where the styles are stored
-);
+];
 
 /*
   As the name of the style used within the Instant article refers to <code>"gray"</code>, the

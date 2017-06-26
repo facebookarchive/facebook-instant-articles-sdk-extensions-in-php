@@ -32,14 +32,14 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     {
         $customProperties = array_merge(
             $this->getWodExpertCustomProperties(),
-            array(
-                'media-sizes' => array(
-                    'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => array(
+            [
+                'media-sizes' => [
+                    'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => [
                         800,
                         454,
-                    ),
-                ),
-            )
+                    ],
+                ],
+            ]
         );
         $this->runIAtoAMPTest('test1', $customProperties);
     }
@@ -70,34 +70,34 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
 
     private function getWodExpertCustomProperties()
     {
-        return array(
-            AMPArticle::PUBLISHER_KEY => array(
+        return [
+            AMPArticle::PUBLISHER_KEY => [
                 '@type' => 'Organization',
                 'name' => 'WOD Expert',
-                'logo' => array(
+                'logo' => [
                     '@type' => 'ImageObject',
                     'url' => 'http://blog.wod.expert/wp-content/uploads/2017/04/wod-expert-amp-org-logo.png',
                     'width' => 600,
                     'height' => 60,
-                ),
-            )
-        );
+                ],
+            ]
+        ];
     }
 
     public function testTransformIAtoAMPTestTutorial()
     {
-        $this->runIAtoAMPTest('tutorial', array('google_maps_key'=>'123'));
+        $this->runIAtoAMPTest('tutorial', ['google_maps_key'=>'123']);
     }
 
     private function getRenderer($test, $customProperties = null)
     {
         $instantArticle = $this->loadInstantArticle(__DIR__ . '/articles/'.$test.'-instant-article.html');
 
-        $properties = array(
+        $properties = [
             'lang' => 'en-US',
             AMPArticle::STYLES_FOLDER_KEY => __DIR__,
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
-        );
+        ];
         if (!is_null($customProperties)) {
             $properties = array_merge($properties, $customProperties);
         }
@@ -224,37 +224,37 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
 
     public function testSchemaOrgAuthor()
     {
-        $expectedAuthor = array(
+        $expectedAuthor = [
             '@type' => 'Person',
             'name' => 'Éverton Rosário',
-        );
+        ];
 
         $this->verifySchemaOrgHasExpectedValue('author', $expectedAuthor);
     }
 
     public function testSchemaOrgImageNoCache()
     {
-        $expectedImage = array(
+        $expectedImage = [
             '@type' => 'ImageObject',
             'url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg',
             'width' => 380,
             'height' => 240,
-        );
+        ];
 
         $this->verifySchemaOrgHasExpectedValue('image', $expectedImage);
     }
 
     public function testSchemaOrgImageWithCache()
     {
-        $expectedImage = array(
+        $expectedImage = [
             '@type' => 'ImageObject',
             'url' => 'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg',
             'width' => 400,
             'height' => 227,
-        );
-        $customProperties = array(
+        ];
+        $customProperties = [
             AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
-        );
+        ];
 
         $this->verifySchemaOrgHasExpectedValue('image', $expectedImage, 'test1', $customProperties);
     }
@@ -267,23 +267,23 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     public function testSchemaOrgPublisherName()
     {
         $publisherName = 'The Publisher';
-        $customProperties = array(AMPArticle::PUBLISHER_KEY => $publisherName);
+        $customProperties = [AMPArticle::PUBLISHER_KEY => $publisherName];
 
-        $expectedPublisher = array(
+        $expectedPublisher = [
             '@type' => 'Organization',
             'name' => $publisherName,
-        );
+        ];
 
         $this->verifySchemaOrgHasExpectedValue('publisher', $expectedPublisher, 'test1', $customProperties);
     }
 
     public function testSchemaOrgPublisherArray()
     {
-        $publisher = array(
+        $publisher = [
             '@type' => 'Robot',
             'name' => 'The Robot',
-        );
-        $customProperties = array(AMPArticle::PUBLISHER_KEY => $publisher);
+        ];
+        $customProperties = [AMPArticle::PUBLISHER_KEY => $publisher];
 
         $this->verifySchemaOrgHasExpectedValue('publisher', $publisher, 'test1', $customProperties);
     }
@@ -336,9 +336,9 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     public function testCachedImageHeight()
     {
         $expectedHeight = 181;
-        $customProperties = array(
+        $customProperties = [
             AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
-        );
+        ];
 
         $coverImageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test2',
@@ -353,10 +353,10 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     public function testImageHeightDownloadDisabled()
     {
         $expectedHeight = 240;
-        $customProperties = array(
+        $customProperties = [
             AMPArticle::MEDIA_CACHE_FOLDER_KEY => __DIR__ . '/articles/media-cache',
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
-        );
+        ];
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
@@ -371,10 +371,10 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     public function testImageHeightDefaultProperty()
     {
         $expectedHeight = 120;
-        $customProperties = array(
+        $customProperties = [
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
             AMPArticle::DEFAULT_MEDIA_HEIGHT_KEY => $expectedHeight,
-        );
+        ];
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
@@ -389,12 +389,12 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     public function testImageHeightFromMediaSizes()
     {
         $expectedHeight = 253;
-        $customProperties = array(
+        $customProperties = [
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
-            AMPArticle::MEDIA_SIZES_KEY => array(
-                "http://blog.wod.expert/wp-content/uploads/2017/03/fail2.jpg" => array(90, 60),
-            ),
-        );
+            AMPArticle::MEDIA_SIZES_KEY => [
+                "http://blog.wod.expert/wp-content/uploads/2017/03/fail2.jpg" => [90, 60],
+            ],
+        ];
 
         $imageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
@@ -409,10 +409,10 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     public function testVideoHeightDefaultProperty()
     {
         $expectedHeight = 120;
-        $customProperties = array(
+        $customProperties = [
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
             AMPArticle::DEFAULT_MEDIA_HEIGHT_KEY => $expectedHeight,
-        );
+        ];
 
         $videoXPathQuery = $this->getRenderedMarkupXPathQuery(
             'tutorial',
@@ -480,14 +480,14 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
         $coverImageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
             '//amp-img[@class=\'ia2amp-header-cover-img\']',
-            array(
-                'media-sizes' => array(
-                    'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => array(
+            [
+                'media-sizes' => [
+                    'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => [
                         800,
                         454,
-                    ),
-                ),
-            )
+                    ],
+                ],
+            ]
         );
 
         $coverImageElement = $coverImageXPathQuery->item(0);
@@ -501,14 +501,14 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
         $coverImageXPathQuery = $this->getRenderedMarkupXPathQuery(
             'test1',
             '//amp-img[@class=\'ia2amp-header-cover-img\']',
-            array(
-                'media-sizes' => array(
-                    'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => array(
+            [
+                'media-sizes' => [
+                    'http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg' => [
                         800,
                         454,
-                    ),
-                ),
-            )
+                    ],
+                ],
+            ]
         );
 
         $coverImageElement = $coverImageXPathQuery->item(0);
@@ -527,14 +527,14 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
 
     public function testToRGBDataProvider()
     {
-        return array(
-            array('FFAABB', 'rgb(255,170,187)'),
-            array('#FFAABB', 'rgb(255,170,187)'),
-            array('#FFFFAABB', 'rgb(255,170,187)'),
-            array('EEFFAABB', 'rgba(255,170,187,0.93)'),
-            array('#EEFFAABB', 'rgba(255,170,187,0.93)'),
-            array('#00FFFFFF', 'rgba(255,255,255,0)'),
-        );
+        return [
+            ['FFAABB', 'rgb(255,170,187)'],
+            ['#FFAABB', 'rgb(255,170,187)'],
+            ['#FFFFAABB', 'rgb(255,170,187)'],
+            ['EEFFAABB', 'rgba(255,170,187,0.93)'],
+            ['#EEFFAABB', 'rgba(255,170,187,0.93)'],
+            ['#00FFFFFF', 'rgba(255,255,255,0)'],
+        ];
     }
 
     private function getDefaultStyles()
@@ -550,9 +550,9 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
         $defaultStyles = $this->getDefaultStyles();
         $defaultStyles['background_color'] = $hexColor;
 
-        $customProperties = array(
+        $customProperties = [
             AMPArticle::OVERRIDE_STYLES_KEY => $defaultStyles,
-        );
+        ];
 
         $renderer = $this->getRenderer('test1', $customProperties);
         $context = AMPContext::create(new \DOMDocument(), $renderer->getInstantArticle(), 'ia2amp-');
@@ -608,7 +608,7 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
      */
     private function getTextStylesTestData($styleName, $cssSelector)
     {
-        $testData = array();
+        $testData = [];
 
         // Font Family
         $testData = array_merge(
@@ -750,22 +750,22 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
         $cssProperty
     ) {
 
-        $testData = array();
+        $testData = [];
 
         // Get all test cases for the given Data Provider function
-        $dataProviderTestData = call_user_func_array(array($this, $dataProviderFunctionName), array());
+        $dataProviderTestData = call_user_func_array([$this, $dataProviderFunctionName], []);
 
         foreach ($dataProviderTestData as $dataProviderTestItem) {
             // Call the Validation Arguments Provider function using the values from the Data Provider
-            $styleAndCssValues = call_user_func_array(array($this, $validationArgumentsProviderFunctionName), $dataProviderTestItem);
+            $styleAndCssValues = call_user_func_array([$this, $validationArgumentsProviderFunctionName], $dataProviderTestItem);
             // Merge the known values with the mappings of style value to expected CSS value
             $testDataItem = array_merge(
-                array(
+                [
                     $styleName,
                     $secondLevelProperty,
                     $cssSelector,
                     $cssProperty,
-                ),
+                ],
                 $styleAndCssValues
             );
             // Add the merged values to the list of test items
@@ -784,7 +784,7 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
      */
     private function passThroughValuesProvider($stylePropertyName, $expectedCSSValue)
     {
-        return array($stylePropertyName, $expectedCSSValue);
+        return [$stylePropertyName, $expectedCSSValue];
     }
 
     /**
@@ -795,9 +795,9 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     private function randomDataProvider()
     {
         $randomValue = rand();
-        return array(
-            array($randomValue, $randomValue),
-        );
+        return [
+            [$randomValue, $randomValue],
+        ];
     }
 
     /**
@@ -810,9 +810,9 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
         $hexColor = AMPArticleTest::getRandomHexColor();
         // Escape parenthesis before using regex
         $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
-        return array(
-            array($hexColor, $expectedValue),
-        );
+        return [
+            [$hexColor, $expectedValue],
+        ];
     }
 
     /**
@@ -822,11 +822,11 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
      */
     private function textTransformDataProvider()
     {
-        return array(
-            array('ALL_CAPS', 'uppercase'),
-            array('NONE', 'none'),
-            array('ALL_LOWER_CASE', 'lowercase'),
-        );
+        return [
+            ['ALL_CAPS', 'uppercase'],
+            ['NONE', 'none'],
+            ['ALL_LOWER_CASE', 'lowercase'],
+        ];
     }
 
     /**
@@ -836,11 +836,11 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
      */
     public function textAlignmentDataProvider()
     {
-        return array(
-            array('LEFT', 'LEFT'),
-            array('CENTER', 'CENTER'),
-            array('RIGHT', 'RIGHT'),
-        );
+        return [
+            ['LEFT', 'LEFT'],
+            ['CENTER', 'CENTER'],
+            ['RIGHT', 'RIGHT'],
+        ];
     }
 
     /**
@@ -850,10 +850,10 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
      */
     public function displayDataProvider()
     {
-        return array(
-            array('INLINE', 'INLINE'),
-            array('BLOCK', 'BLOCK'),
-        );
+        return [
+            ['INLINE', 'INLINE'],
+            ['BLOCK', 'BLOCK'],
+        ];
     }
 
     /**
@@ -868,18 +868,18 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     public function spacingValuesProvider($size, $baseSpacingValue, $direction, $spacingFormat)
     {
         $scalingFactor = rand(0, 1000) / 1000 + 0.5;
-        $directionSpacing = array(
+        $directionSpacing = [
             'scaling_factor' => $scalingFactor,
             'size' => $size,
-        );
-        $spacingStyle = array(
+        ];
+        $spacingStyle = [
             $direction => $directionSpacing,
-        );
+        ];
 
         $expectedSpacing = $baseSpacingValue * $scalingFactor;
         $expectedValue  = sprintf($spacingFormat, $expectedSpacing);
 
-        return array($spacingStyle, $expectedValue);
+        return [$spacingStyle, $expectedValue];
     }
 
     /**
@@ -889,14 +889,14 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
      */
     private function marginDataProvider()
     {
-        return array(
+        return [
             // size, baseSpacingValue, direction, spacingFormat
-            array('DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'right', '0 %spx 0 0'),
-            array('DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'left', '0 0 0 %spx'),
+            ['DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'right', '0 %spx 0 0'],
+            ['DOCUMENT_MARGIN', AMPArticle::DEFAULT_MARGIN, 'left', '0 0 0 %spx'],
 
-            array('NONE', 0, 'right', '0 0 0 0'),
-            array('NONE', 0, 'left', '0 0 0 0'),
-        );
+            ['NONE', 0, 'right', '0 0 0 0'],
+            ['NONE', 0, 'left', '0 0 0 0'],
+        ];
     }
 
     /**
@@ -906,18 +906,18 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
      */
     private function paddingDataProvider()
     {
-        return array(
+        return [
             // size, baseSpacingValue, direction, spacingFormat
-            array('NONE', 0, 'top', '0 0 0 0'),
-            array('NONE', 0, 'right', '0 0 0 0'),
-            array('NONE', 0, 'bottom', '0 0 0 0'),
-            array('NONE', 0, 'left', '0 0 0 0'),
+            ['NONE', 0, 'top', '0 0 0 0'],
+            ['NONE', 0, 'right', '0 0 0 0'],
+            ['NONE', 0, 'bottom', '0 0 0 0'],
+            ['NONE', 0, 'left', '0 0 0 0'],
 
-            array('MEDIUM', 46, 'top', '%spx 0 0 0'),
-            array('MEDIUM', 46, 'right', '0 %spx 0 0'),
-            array('MEDIUM', 46, 'bottom', '0 0 %spx 0'),
-            array('MEDIUM', 46, 'left', '0 0 0 %spx'),
-        );
+            ['MEDIUM', 46, 'top', '%spx 0 0 0'],
+            ['MEDIUM', 46, 'right', '0 %spx 0 0'],
+            ['MEDIUM', 46, 'bottom', '0 0 %spx 0'],
+            ['MEDIUM', 46, 'left', '0 0 0 %spx'],
+        ];
     }
 
     /**
@@ -930,18 +930,18 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     {
         $width = rand(0, 100);
         $hexColor = AMPArticleTest::getRandomHexColor();
-        $directionBorder = array(
+        $directionBorder = [
             'color' => $hexColor,
             'width' => $width,
-        );
-        $borderStyle = array(
+        ];
+        $borderStyle = [
             $direction => $directionBorder,
-        );
+        ];
 
         // Escape parenthesis before using regex
         $expectedValue = str_replace(')', '\)', str_replace('(', '\(', AMPArticle::toRGB($hexColor)));
 
-        return array($borderStyle, $expectedValue);
+        return [$borderStyle, $expectedValue];
     }
 
     /**
@@ -951,12 +951,12 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
      */
     private function directionsDataProvider()
     {
-        return array(
-            array('top'),
-            array('right'),
-            array('bottom'),
-            array('left'),
-        );
+        return [
+            ['top'],
+            ['right'],
+            ['bottom'],
+            ['left'],
+        ];
     }
 
     /**
@@ -969,16 +969,16 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     public function borderWidthValuesProvider($direction, $borderFormat)
     {
         $width = rand(0, 100);
-        $directionBorder = array(
+        $directionBorder = [
             'color' => '#000000',
             'width' => $width,
-        );
-        $borderStyle = array(
+        ];
+        $borderStyle = [
             $direction => $directionBorder,
-        );
+        ];
 
         $expectedValue  = sprintf($borderFormat, $width !== 0 ? $width . 'px' : 0);
-        return array($borderStyle, $expectedValue);
+        return [$borderStyle, $expectedValue];
     }
 
     /**
@@ -988,12 +988,12 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
      */
     private function borderWidthDataProvider()
     {
-        return array(
-            array('top', '%s 0 0 0'),
-            array('right', '0 %s 0 0'),
-            array('bottom', '0 0 %s 0'),
-            array('left', '0 0 0 %s'),
-        );
+        return [
+            ['top', '%s 0 0 0'],
+            ['right', '0 %s 0 0'],
+            ['bottom', '0 0 %s 0'],
+            ['left', '0 0 0 %s'],
+        ];
     }
 
     /**
@@ -1014,10 +1014,10 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
         // Set the style property value that will be used to generate the expected CSS
         $testStyles[$firstLevelKey][$secondLevelKey] = $styleValue;
 
-        $customProperties = array(
+        $customProperties = [
             // Use the updated styles instead of the ones defined in the Instant Article document
             AMPArticle::OVERRIDE_STYLES_KEY => $testStyles,
-        );
+        ];
 
         $renderer = $this->getRenderer('test1', $customProperties);
         $context = AMPContext::create(new \DOMDocument(), $renderer->getInstantArticle(), 'ia2amp-');
@@ -1063,7 +1063,7 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
 
     public function testBuildAnalytics()
     {
-        $properties = array();
+        $properties = [];
         $properties['analytics'] = [
             '<amp-pixel src="https://foo.com/pixel?RANDOM"></amp-pixel>',
             '<amp-analytics><script type="application/json">{}</script></amp-analytics>'

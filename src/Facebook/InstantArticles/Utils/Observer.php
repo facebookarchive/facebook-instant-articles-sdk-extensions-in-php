@@ -27,7 +27,7 @@ class Observer
     private static $filterCount = 0;
 
     /* Filters configured. Mapped array: 'filter name' => CallbackHolder  */
-    private $callbacks = array();
+    private $callbacks = [];
 
     /**
      * Private constructor to force factory method: Hook::create();
@@ -144,7 +144,7 @@ class Observer
      */
     public function applyFilters($tag, $value/*, $var...*/)
     {
-        $args = array();
+        $args = [];
 
         // In case no filters configured for this hook, simply return informed value.
         if (!isset($this->callbacks[$tag])) {
@@ -238,7 +238,7 @@ class Observer
             return 'Closure' . self::$filterCount++;
         }
         if (is_object($function)) {
-            $function = array($function, '');
+            $function = [$function, ''];
         } else {
             $function = (array) $function;
         }

@@ -76,38 +76,38 @@ class HookTest extends Framework\TestCase
     public function testHookDefault()
     {
         $hook = Hook::create();
-        $result = $hook->call('hook_name', array($this, 'methodHook'));
+        $result = $hook->call('hook_name', [$this, 'methodHook']);
         $this->assertEquals('result', $result);
     }
 
     public function testHookReplacingDefault()
     {
         $hook = Hook::create();
-        $hook->setHook('hook_name', array($this, 'methodHookReplacing'));
-        $result = $hook->call('hook_name', array($this, 'methodHook'));
+        $hook->setHook('hook_name', [$this, 'methodHookReplacing']);
+        $result = $hook->call('hook_name', [$this, 'methodHook']);
         $this->assertEquals('REPLACED', $result);
     }
 
     public function testHookReplacingDefaultRemoved()
     {
         $hook = Hook::create();
-        $hook->setHook('hook_name', array($this, 'methodHookReplacing'));
-        $result = $hook->call('hook_name', array($this, 'methodHook'));
+        $hook->setHook('hook_name', [$this, 'methodHookReplacing']);
+        $result = $hook->call('hook_name', [$this, 'methodHook']);
         $this->assertEquals('REPLACED', $result);
 
         $hook->removeHook('hook_name');
-        $result = $hook->call('hook_name', array($this, 'methodHook'));
+        $result = $hook->call('hook_name', [$this, 'methodHook']);
         $this->assertEquals('result', $result);
     }
 
     public function testHookRemovingSomethingNeverAdded()
     {
         $hook = Hook::create();
-        $result = $hook->call('hook_name', array($this, 'methodHook'));
+        $result = $hook->call('hook_name', [$this, 'methodHook']);
         $this->assertEquals('result', $result);
 
         $hook->removeHook('hook_name');
-        $result = $hook->call('hook_name', array($this, 'methodHook'));
+        $result = $hook->call('hook_name', [$this, 'methodHook']);
         $this->assertEquals('result', $result);
     }
 
@@ -121,14 +121,14 @@ class HookTest extends Framework\TestCase
         // Calls method without overriding the value, so the return should be 1
         $objToChange->first = '1';
         $objToChange->second = '2';
-        $result = $hook->call('hook_name', array($this, 'methodHookTestingBefore'), array($objToChange));
+        $result = $hook->call('hook_name', [$this, 'methodHookTestingBefore'], [$objToChange]);
         $this->assertEquals('MAIN-WITH-BEFORE-1-2', $result);
 
         // Calls method overriding the value, so the return should be 1st
         $objToChange->first = '1';
         $objToChange->second = '2';
-        $hook->setBeforeHook('hook_name', array($this, 'methodHookBefore1'), array($objToChange));
-        $result = $hook->call('hook_name', array($this, 'methodHookTestingBefore'), array($objToChange));
+        $hook->setBeforeHook('hook_name', [$this, 'methodHookBefore1'], [$objToChange]);
+        $result = $hook->call('hook_name', [$this, 'methodHookTestingBefore'], [$objToChange]);
         $this->assertEquals('MAIN-WITH-BEFORE-1st-2', $result);
     }
 
@@ -142,14 +142,14 @@ class HookTest extends Framework\TestCase
         // Calls method without overriding the value, so the return should be 1
         $objToChange->first = '1';
         $objToChange->second = '2';
-        $result = $hook->call('hook_name', array($this, 'methodHookTestingAfter'), array($objToChange));
+        $result = $hook->call('hook_name', [$this, 'methodHookTestingAfter'], [$objToChange]);
         $this->assertEquals('MAIN-WITH-AFTER-1-2', $result);
 
         // Calls method overriding the value, so the return should be 2nd
         $objToChange->first = '1';
         $objToChange->second = '2';
-        $hook->setAfterHook('hook_name', array($this, 'methodHookAfter2'), array($objToChange));
-        $result = $hook->call('hook_name', array($this, 'methodHookTestingAfter'), array($objToChange));
+        $hook->setAfterHook('hook_name', [$this, 'methodHookAfter2'], [$objToChange]);
+        $result = $hook->call('hook_name', [$this, 'methodHookTestingAfter'], [$objToChange]);
         $this->assertEquals('MAIN-WITH-AFTER-1-2', $result);
         $this->assertEquals('2nd', $objToChange->second);
     }
@@ -164,21 +164,21 @@ class HookTest extends Framework\TestCase
         // Calls method without overriding the value, so the return should be 1
         $objToChange->first = '1';
         $objToChange->second = '2';
-        $result = $hook->call('hook_name', array($this, 'methodHookTestingBefore'), array($objToChange));
+        $result = $hook->call('hook_name', [$this, 'methodHookTestingBefore'], [$objToChange]);
         $this->assertEquals('MAIN-WITH-BEFORE-1-2', $result);
 
         // Calls method overriding the value, so the return should be 1st
         $objToChange->first = '1';
         $objToChange->second = '2';
-        $hook->setBeforeHook('hook_name', array($this, 'methodHookBefore1'), array($objToChange));
-        $result = $hook->call('hook_name', array($this, 'methodHookTestingBefore'), array($objToChange));
+        $hook->setBeforeHook('hook_name', [$this, 'methodHookBefore1'], [$objToChange]);
+        $result = $hook->call('hook_name', [$this, 'methodHookTestingBefore'], [$objToChange]);
         $this->assertEquals('MAIN-WITH-BEFORE-1st-2', $result);
 
         // Calls method overriding the value, so the return should be 2nd
         $objToChange->first = '1';
         $objToChange->second = '2';
-        $hook->setAfterHook('hook_name', array($this, 'methodHookAfter2'), array($objToChange));
-        $result = $hook->call('hook_name', array($this, 'methodHookTestingAfter'), array($objToChange));
+        $hook->setAfterHook('hook_name', [$this, 'methodHookAfter2'], [$objToChange]);
+        $result = $hook->call('hook_name', [$this, 'methodHookTestingAfter'], [$objToChange]);
         $this->assertEquals('MAIN-WITH-AFTER-1st-2', $result);
         $this->assertEquals('2nd', $objToChange->second);
     }
@@ -191,38 +191,38 @@ class HookTest extends Framework\TestCase
         // Calls method without overriding the value, so the return should be 1
         $objToChange->first = '1';
         $objToChange->second = '2';
-        $hook->setBeforeHook('hook_name', array($this, 'methodHookBefore1'), array($objToChange));
-        $hook->setAfterHook('hook_name', array($this, 'methodHookAfter2'), array($objToChange));
-        $result = $hook->call('hook_name', array($this, 'methodHookTestingAfter'), array($objToChange));
+        $hook->setBeforeHook('hook_name', [$this, 'methodHookBefore1'], [$objToChange]);
+        $hook->setAfterHook('hook_name', [$this, 'methodHookAfter2'], [$objToChange]);
+        $result = $hook->call('hook_name', [$this, 'methodHookTestingAfter'], [$objToChange]);
         $this->assertEquals('MAIN-WITH-AFTER-1st-2', $result);
         $this->assertEquals('2nd', $objToChange->second);
 
         $objToChange->first = '1';
         $objToChange->second = '2';
         $hook->clearHooks('hook_name');
-        $result = $hook->call('hook_name', array($this, 'methodHookTestingBefore'), array($objToChange));
+        $result = $hook->call('hook_name', [$this, 'methodHookTestingBefore'], [$objToChange]);
         $this->assertEquals('MAIN-WITH-BEFORE-1-2', $result);
     }
 
     public function testHookReplacingDefaultParams()
     {
         $hook = Hook::create();
-        $hook->setHook('hook_name', array($this, 'methodHookReplacing'), array('param1', 'param2'));
-        $result = $hook->call('hook_name', array($this, 'methodHook'));
+        $hook->setHook('hook_name', [$this, 'methodHookReplacing'], ['param1', 'param2']);
+        $result = $hook->call('hook_name', [$this, 'methodHook']);
         $this->assertEquals('REPLACED-param1-param2', $result);
     }
 
     public function testHookStaticMethod()
     {
         $hook = Hook::create();
-        $result = $hook->call('hook_name', array('Facebook\InstantArticles\Utils\HookTest', 'staticMethodHook'));
+        $result = $hook->call('hook_name', ['Facebook\InstantArticles\Utils\HookTest', 'staticMethodHook']);
         $this->assertEquals('STATIC', $result);
     }
 
     public function testHookStaticMethodParams()
     {
         $hook = Hook::create();
-        $result = $hook->call('hook_name', array('Facebook\InstantArticles\Utils\HookTest', 'staticMethodHookParams'), array('param1', 'param2'));
+        $result = $hook->call('hook_name', ['Facebook\InstantArticles\Utils\HookTest', 'staticMethodHookParams'], ['param1', 'param2']);
         $this->assertEquals('STATIC-with-params-param1-param2', $result);
     }
 
@@ -236,7 +236,7 @@ class HookTest extends Framework\TestCase
     public function testHookFunctionNoClassWithParam()
     {
         $hook = Hook::create();
-        $result = $hook->call('hook_name', 'Facebook\InstantArticles\Utils\functionOutsideClassWithParams', array('param1'));
+        $result = $hook->call('hook_name', 'Facebook\InstantArticles\Utils\functionOutsideClassWithParams', ['param1']);
         $this->assertEquals('OUTSIDER-with-param-param1', $result);
     }
 }

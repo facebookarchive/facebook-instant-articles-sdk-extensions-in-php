@@ -313,7 +313,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array('https://www.facebook.com/images/fb_icon_325x325.png' => array($expectedWidth, $expectedHeight));
+        $mediaSizes = ['https://www.facebook.com/images/fb_icon_325x325.png' => [$expectedWidth, $expectedHeight]];
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
         $enableDownloadForMediaSizing = true;
         $defaultWidth = 1000;
@@ -334,7 +334,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
         $enableDownloadForMediaSizing = true;
         $defaultWidth = 1000;
@@ -355,7 +355,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
         $enableDownloadForMediaSizing = false;
         $defaultWidth = 1000;
@@ -376,7 +376,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = null;
         $enableDownloadForMediaSizing = true;
         $defaultWidth = 1000;
@@ -394,7 +394,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = null;
         $enableDownloadForMediaSizing = false;
         $defaultWidth = 1000;
@@ -415,7 +415,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array('http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4' => array($expectedWidth, $expectedHeight));
+        $mediaSizes = ['http://ngm.nationalgeographic.com/2015/05/building-bees/v/timelapse-final-4x3.mp4' => [$expectedWidth, $expectedHeight]];
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
         $enableDownloadForMediaSizing = true;
         $defaultWidth = 1000;
@@ -433,7 +433,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
         $enableDownloadForMediaSizing = true;
         $defaultWidth = 1000;
@@ -451,7 +451,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
         $enableDownloadForMediaSizing = false;
         $defaultWidth = 1000;
@@ -469,7 +469,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = null;
         $enableDownloadForMediaSizing = true;
         $defaultWidth = 1000;
@@ -487,7 +487,7 @@ class AMPContextTest extends Framework\TestCase
         $document = new \DOMDocument();
         $context = AMPContext::create($document, InstantArticle::create());
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = null;
         $enableDownloadForMediaSizing = false;
         $defaultWidth = 1000;

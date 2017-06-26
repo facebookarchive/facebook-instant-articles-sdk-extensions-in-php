@@ -52,7 +52,7 @@ class ObserverTest extends Framework\TestCase
     public function testStaticFilter()
     {
         $observer = Observer::create();
-        $observer->addFilter('name', array("Facebook\InstantArticles\Utils\Greeting", "hello"));
+        $observer->addFilter('name', ["Facebook\InstantArticles\Utils\Greeting", "hello"]);
 
         $name = $observer->applyFilters('name', "Bob");
         $this->assertEquals('Hello Bob', $name);
@@ -64,8 +64,8 @@ class ObserverTest extends Framework\TestCase
         $hello = new Greeting("Hello");
 
         $observer = Observer::create();
-        $observer->addFilter('name', array(&$mr, "greet"));
-        $observer->addFilter('name', array(&$hello, "greet"));
+        $observer->addFilter('name', [&$mr, "greet"]);
+        $observer->addFilter('name', [&$hello, "greet"]);
 
         $name = $observer->applyFilters('name', "Bob");
         $this->assertEquals('Hello Mr. Bob', $name);
@@ -76,7 +76,7 @@ class ObserverTest extends Framework\TestCase
         $hello = new Greeting("Hello");
 
         $observer = Observer::create();
-        $observer->addFilter('name', array(&$hello, "greet"), 10, 4);
+        $observer->addFilter('name', [&$hello, "greet"], 10, 4);
 
         $name = $observer->applyFilters('name', "Spongebob", "Square", "Pants");
         $this->assertEquals('Hello Spongebob Square Pants', $name);
@@ -88,8 +88,8 @@ class ObserverTest extends Framework\TestCase
         $mr = new Greeting("Mr.");
 
         $observer = Observer::create();
-        $observer->addFilter('name', array(&$hello, "greet"), 11, 2);
-        $observer->addFilter('name', array(&$mr, "greet"), 10, 1);
+        $observer->addFilter('name', [&$hello, "greet"], 11, 2);
+        $observer->addFilter('name', [&$mr, "greet"], 10, 1);
 
         $name = $observer->applyFilters('name', "Bob", "Bobby");
         $this->assertEquals('Hello Mr. Bob Bobby', $name);
@@ -101,13 +101,13 @@ class ObserverTest extends Framework\TestCase
         $mr = new Greeting("Mr.");
 
         $observer = Observer::create();
-        $observer->addFilter('name', array(&$hello, "greet"), 11, 2);
-        $observer->addFilter('name', array(&$mr, "greet"), 10, 1);
+        $observer->addFilter('name', [&$hello, "greet"], 11, 2);
+        $observer->addFilter('name', [&$mr, "greet"], 10, 1);
 
         $name = $observer->applyFilters('name', "Bob", "Bobby");
         $this->assertEquals('Hello Mr. Bob Bobby', $name);
 
-        $observer->removeFilter('name', array(&$mr, "greet"), 10);
+        $observer->removeFilter('name', [&$mr, "greet"], 10);
 
         $name = $observer->applyFilters('name', "Bob", "Bobby");
         $this->assertEquals('Hello Bob Bobby', $name);
@@ -119,8 +119,8 @@ class ObserverTest extends Framework\TestCase
         $mr = new Greeting("Mr.");
 
         $observer = Observer::create();
-        $observer->addFilter('name', array(&$hello, "greet"), 11, 2);
-        $observer->addFilter('name', array(&$mr, "greet"), 10, 1);
+        $observer->addFilter('name', [&$hello, "greet"], 11, 2);
+        $observer->addFilter('name', [&$mr, "greet"], 10, 1);
 
         $name = $observer->applyFilters('name', "Bob", "Bobby");
         $this->assertEquals('Hello Mr. Bob Bobby', $name);
@@ -143,12 +143,12 @@ class ObserverTest extends Framework\TestCase
         $mrs = new Greeting("Mrs.");
 
         $observer = Observer::create();
-        $observer->addFilter('name', array(&$hello, "greet"), 11, 2);
-        $observer->addFilter('name', array(&$mr, "greet"), 10, 1);
+        $observer->addFilter('name', [&$hello, "greet"], 11, 2);
+        $observer->addFilter('name', [&$mr, "greet"], 10, 1);
 
-        $this->assertEquals(11, $observer->hasFilter('name', array(&$hello, "greet")));
-        $this->assertEquals(10, $observer->hasFilter('name', array(&$mr, "greet")));
-        $this->assertFalse($observer->hasFilter('name', array(&$mrs, "greet")));
+        $this->assertEquals(11, $observer->hasFilter('name', [&$hello, "greet"]));
+        $this->assertEquals(10, $observer->hasFilter('name', [&$mr, "greet"]));
+        $this->assertFalse($observer->hasFilter('name', [&$mrs, "greet"]));
         $this->assertTrue($observer->hasFilter('name'));
     }
 }

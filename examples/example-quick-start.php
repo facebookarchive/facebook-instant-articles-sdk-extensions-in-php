@@ -21,18 +21,18 @@ $instant_article_string = file_get_contents(__DIR__.'/instant-article-example.ht
 // it's markup but the AMP spec requires everything to have explicit sizing.
 
 // This will hold our custom properties
-$properties = array();
+$properties = [];
 
 // Videos require explicit sizing, if you fail to provide it, the default values
 // may distort your Videos
 $properties[AMPArticle::MEDIA_SIZES_KEY]
-  ['http://mydomain.com/path/to/video.mp4'] = array(320, 240);
+  ['http://mydomain.com/path/to/video.mp4'] = [320, 240];
 
 // Images can also be passed
 // IMPORTANT: The image will not have fixed-width, but it will respect the
 //            aspect ration provided here. They are using the responsive layout
 $properties[AMPArticle::MEDIA_SIZES_KEY]
-  ['http://mydomain.com/path/to/crazy.jpg'] = array(640, 480);
+  ['http://mydomain.com/path/to/crazy.jpg'] = [640, 480];
 
 // The SDK can automatically download the images and get their sizes if they are not
 // in the array above, if you enable the following option.
@@ -52,10 +52,10 @@ $properties[AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] = true;
 // See also the AMP specs for these tags:
 // - https://www.ampproject.org/docs/reference/components/amp-analytics
 // - https://www.ampproject.org/docs/reference/components/amp-pixel
-$properties[AMPArticle::ANALYTICS_KEY] = array(
+$properties[AMPArticle::ANALYTICS_KEY] = [
   '<amp-pixel src="http://mydomain.com/my_tracking_pixel.gif">',
   '<amp-analytics config="https://mydomain.com/analytics.config.json"></amp-analytics>'
-);
+];
 
 // Converts it into AMP
 $amp_string =

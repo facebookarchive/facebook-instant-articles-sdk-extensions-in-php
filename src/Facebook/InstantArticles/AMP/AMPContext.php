@@ -30,14 +30,14 @@ class AMPContext
     private $headerAuthor;
     private $headerKicker;
     private $headerDate;
-    private $articleItems = array();
+    private $articleItems = [];
     private $footer;
 
     private $cssPrefix;
     private $previousElementIdentifier;
     private $previousSpacing;
 
-    private $warnings = array();
+    private $warnings = [];
 
     private $cssBuilder;
 
@@ -145,7 +145,7 @@ class AMPContext
     {
         $element = $this->getDocument()->createElement($tagName);
         if (!isset($attributes) || !$attributes) {
-            $attributes = array();
+            $attributes = [];
         }
         if (!Type::isTextEmpty($cssClass)) {
             $attributes['class'] = $this->buildCssClass($cssClass);
@@ -685,7 +685,7 @@ class AMPContext
             }
         }
 
-        return array($this->defaultWidth, $this->defaultHeight);
+        return [$this->defaultWidth, $this->defaultHeight];
     }
 
     private function getMediaDimensionsFromCache($mediaURL)

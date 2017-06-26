@@ -26,11 +26,11 @@ class AMPHeaderTest extends FileUtilsPHPUnitTestCase
     private function getRenderer($test, $customProperties = null)
     {
         $instantArticle = $this->loadInstantArticle(__DIR__ . '/articles/'.$test.'-instant-article.html');
-        $properties = array(
+        $properties = [
             'lang' => 'en-US',
             AMPArticle::STYLES_FOLDER_KEY => __DIR__,
             AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY => false,
-        );
+        ];
         if (!is_null($customProperties)) {
             $properties = array_merge($properties, $customProperties);
         }
@@ -43,7 +43,7 @@ class AMPHeaderTest extends FileUtilsPHPUnitTestCase
         $renderer = $this->getRenderer('test1', null);
         $context = AMPContext::create(new \DOMDocument('1.0'), $renderer->getInstantArticle());
 
-        $mediaSizes = array();
+        $mediaSizes = [];
         $mediaCacheFolder = __DIR__ . '/articles/media-cache';
         $enableDownloadForMediaSizing = false;
         $defaultWidth = 1000;
@@ -91,14 +91,14 @@ class AMPHeaderTest extends FileUtilsPHPUnitTestCase
         //$this->assertEquals("May 10, 2016", $publicationDate);
         $this->assertEquals("By Éverton Rosário", $byLine);
 
-        $spaceNodes = array(
+        $spaceNodes = [
         '//div[@class="ia2amp-header-bar"][1]',
         '//h2[@class="ia2amp-spacing after-header-date"][1]',
         '//h2[@class="ia2amp-spacing after-header-author before-header-date"][1]',
         '//div[@class="ia2amp-spacing after-header-category before-header-h1"][1]',
         '//div[@class="ia2amp-spacing after-header-h1 before-header-author"]',
         '//div[@class="ia2amp-spacing after-header-bar before-header-category"]',
-        );
+        ];
 
         foreach ($spaceNodes as $currentNode) {
               $this->assertNotEmpty($testingHeader->query($currentNode));

@@ -76,7 +76,7 @@ class AMPArticle extends Element implements InstantArticleInterface
        'publisher' => array(),
        'analytics' => array(),
      */
-    private $properties = array();
+    private $properties = [];
 
     /**
      * @var Observer The instance for Observing and Hooking system for extensions
@@ -102,7 +102,7 @@ class AMPArticle extends Element implements InstantArticleInterface
      * @param array() $properties the configuration for the AMP conversion. @see https://developers.facebook.com/docs/instant-articles/other-formats
      * @param Observer $observer optional, will be created in case none informed. This is the hooking system for code level customizations.
      */
-    public static function create($instantArticle, $properties = array(), $observer = null)
+    public static function create($instantArticle, $properties = [], $observer = null)
     {
         // Treats if the informed content is string, parsing it into InstantArticle.
         if (Type::is($instantArticle, Type::STRING)) {
@@ -119,7 +119,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         Type::enforce($instantArticle, InstantArticle::getClassName());
 
         if ($properties === null) {
-            $properties = array();
+            $properties = [];
         }
 
         if ($observer == null) {
@@ -242,7 +242,7 @@ class AMPArticle extends Element implements InstantArticleInterface
     public function transformInstantArticle($context)
     {
         // Builds and appends head to the HTML document
-        $html = $context->createElement('html', null, null, array("amp" => ""));
+        $html = $context->createElement('html', null, null, ["amp" => ""]);
         if ($context->getInstantArticle()->isRTLEnabled()) {
             $html->setAttribute('dir', 'rtl');
         }
@@ -306,7 +306,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // Builds meta charset and append to head
         if ($context->getInstantArticle()->getCharset()) {
-            $context->createElement('meta', $head, null, array('charset' => $context->getInstantArticle()->getCharset()));
+            $context->createElement('meta', $head, null, ['charset' => $context->getInstantArticle()->getCharset()]);
         }
 
         // Builds meta viewport and append to head
@@ -314,28 +314,28 @@ class AMPArticle extends Element implements InstantArticleInterface
             'meta',
             $head,
             null,
-            array(
+            [
                 'name' => 'viewport',
                 'content' => 'width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no'
-            )
+            ]
         );
 
         // Builds ampjs script and append to head
-        $context->createElement('script', $head, null, array('src' => 'https://cdn.ampproject.org/v0.js', 'async' => ''));
+        $context->createElement('script', $head, null, ['src' => 'https://cdn.ampproject.org/v0.js', 'async' => '']);
 
         // Builds boilerplate css style and append to head
-        $boilerplate = $context->createElement('style', $head, null, array('amp-boilerplate' => ''));
+        $boilerplate = $context->createElement('style', $head, null, ['amp-boilerplate' => '']);
         $boilerplateContent = $context->getDocument()->createTextNode('body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}');
         $boilerplate->appendChild($boilerplateContent);
 
         // Builds noscript css style and append to head
         $noscript = $context->createElement('noscript', $head);
-        $noscriptBoilerplate = $context->createElement('style', $noscript, null, array('amp-boilerplate' => ''));
+        $noscriptBoilerplate = $context->createElement('style', $noscript, null, ['amp-boilerplate' => '']);
         $noscriptBoilerplateContent = $context->getDocument()->createTextNode('body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}');
         $noscriptBoilerplate->appendChild($noscriptBoilerplateContent);
 
         // Builds canonical link and append to head
-        $link = $context->createElement('link', $head, null, array('rel' => 'canonical', 'href' => $context->getInstantArticle()->getCanonicalURL()));
+        $link = $context->createElement('link', $head, null, ['rel' => 'canonical', 'href' => $context->getInstantArticle()->getCanonicalURL()]);
 
         // Builds custom css style and append to head
         $ampCustomCSS = $this->buildCustomCSS($context);
@@ -344,7 +344,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $this->customCSSElement = $ampCustomCSS;
 
         // Builds Schema.org metadata and appends to head
-        $discoveryScript = $context->createElement('script', $head, null, array('type' => 'application/ld+json'));
+        $discoveryScript = $context->createElement('script', $head, null, ['type' => 'application/ld+json']);
         $discoveryScriptContent = $this->buildSchemaOrgMetadata($context);
         $discoveryScript->appendChild($context->getDocument()->createTextNode($discoveryScriptContent));
 
@@ -716,7 +716,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $ampCaptionCredit->appendChild($ampCreditText);
         }
 
-        $ampCSSClasses = array();
+        $ampCSSClasses = [];
         $ampCSSClasses[] = $context->buildCssClass('figcaption');
 
         if ($caption->getFontSize()) {
@@ -938,7 +938,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             ? $this->properties[self::DEFAULT_MEDIA_HEIGHT_KEY]
             : self::DEFAULT_HEIGHT;
 
-        return array($width, $height);
+        return [$width, $height];
     }
 
     private function getMediaDimensionsFromCache($mediaURL)
@@ -990,17 +990,17 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         if (file_exists($stylesFolder . 'global.amp-custom.css')) {
             $globalCSSFile = file_get_contents($stylesFolder . 'global.amp-custom.css');
-            $globalCSSFile = str_replace(array("\r", "\n"), ' ', $globalCSSFile);
+            $globalCSSFile = str_replace(["\r", "\n"], ' ', $globalCSSFile);
         }
 
         if (file_exists($stylesFolder . $styleName . '.amp-custom.css')) {
             $customCSSFile = file_get_contents($stylesFolder . $styleName . '.amp-custom.css');
-            $customCSSFile = str_replace(array("\r", "\n"), ' ', $customCSSFile);
+            $customCSSFile = str_replace(["\r", "\n"], ' ', $customCSSFile);
         }
 
         if (!isset($globalCSSFile) && !isset($customCSSFile)) {
             $defaultCSSFile = file_get_contents(__DIR__ . '/configuration/global.amp.css');
-            $defaultCSSFile = str_replace(array("\r", "\n"), ' ', $defaultCSSFile);
+            $defaultCSSFile = str_replace(["\r", "\n"], ' ', $defaultCSSFile);
         }
 
         $this->articleColorsStyles($styles, $context);
@@ -1024,20 +1024,20 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function articleHeadStyles($styles, $context)
     {
-        $mappings = array(
+        $mappings = [
             $context->buildCssSelector('header-category') => 'kicker',
             $context->buildCssSelector('header-h1') => 'title',
             $context->buildCssSelector('header-h2') => 'subtitle',
             $context->buildCssSelector('header h3') => 'byline'
-        );
+        ];
 
-        $dateFormatMappings = array(
+        $dateFormatMappings = [
             'MONTH_AND_DAY' => 'F d',
             'MONTH_AND_YEAR' => 'F Y',
             'MONTH_DAY_YEAR' => 'F d, Y',
             'YEAR' => 'Y',
             'MONTH_DAY_YEAR_TIME' => 'F d, Y H:i A',
-        );
+        ];
         if (array_key_exists('date_style', $styles)) {
             $dateFormat = $styles['date_style'];
             if (array_key_exists($dateFormat, $dateFormatMappings)) {
@@ -1106,28 +1106,28 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private function articleBodyStyles($styles, $context)
     {
-        $mappings = array(
+        $mappings = [
             $context->buildCssSelector('h1') => 'primary_heading',
             $context->buildCssSelector('h2') => 'secondary_heading',
             $context->buildCssSelector('p') => 'body_text',
             $context->buildCssSelector('article a') => 'inline_link',
-        );
+        ];
         $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
     private function articleQuoteStyles($styles, $context)
     {
-        $mappings = array(
+        $mappings = [
             $context->buildCssSelector('blockquote') => 'block_quote',
             $context->buildCssSelector('pullquote') => 'pull_quote',
             $context->buildCssSelector('pullquote cite') => 'pull_quote_attribution',
-        );
+        ];
         $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
     private function articleCaptionStyles($styles, $context)
     {
-        $mappings = array(
+        $mappings = [
             '.ia2amp-op-small h1' => 'caption_title_small',
             '.ia2amp-op-small h2' => 'caption_description_small',
 
@@ -1141,32 +1141,32 @@ class AMPArticle extends Element implements InstantArticleInterface
             '.ia2amp-op-extra-large h2' => 'caption_description_extra_large',
 
             '.ia2amp-figcaption cite' => 'caption_credit',
-        );
+        ];
         $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
     private function articleFooterStyles($styles, $context)
     {
-        $mappings = array(
+        $mappings = [
             $context->buildCssSelector('footer') => 'footer',
-        );
+        ];
         $this->buildCSSRulesFromMappings($mappings, $styles, $context);
     }
 
     private function buildTextCSSDeclarationBlock($selector, $textStyles, $textType, $context)
     {
-        $mappings = array(
+        $mappings = [
             'font-family' => 'font',
             'text-align' => 'text_alignment',
             'display' => 'display',
-        );
+        ];
         $filteredMappings = AMPArticle::filterMappings($mappings, $textStyles);
 
-        $textTransformMappings = array(
+        $textTransformMappings = [
             'ALL_CAPS' => 'uppercase',
             'ALL_LOWER_CASE' => 'lowercase',
             'NONE' => 'none',
-        );
+        ];
         if (array_key_exists('capitalization', $textStyles)) {
             $filteredMappings['text-transform'] = $textTransformMappings[$textStyles['capitalization']];
         }
@@ -1183,7 +1183,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             $filteredMappings['color'] = AMPArticle::toRGB($textStyles['color']);
         }
 
-        $spacingMappings = array(
+        $spacingMappings = [
             'NONE' => 0,
             'DOCUMENT_MARGIN' => AMPArticle::DEFAULT_MARGIN,
             'EXTRA_SMALL' => 16,
@@ -1191,7 +1191,7 @@ class AMPArticle extends Element implements InstantArticleInterface
             'MEDIUM' => 46,
             'LARGE' => 64,
             'EXTRA_LARGE' => 96,
-        );
+        ];
         $marginMappings = AMPArticle::getSpacingDeclarationBlocks($spacingMappings, 'margin', $textStyles);
         $filteredMappings = array_merge($filteredMappings, $marginMappings);
         $paddingMappings = AMPArticle::getSpacingDeclarationBlocks($spacingMappings, 'padding', $textStyles);
@@ -1207,7 +1207,7 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private static function filterMappings($mappings, $styles)
     {
-        $result = array();
+        $result = [];
         foreach ($mappings as $cssKey => $styleKey) {
             if (array_key_exists($styleKey, $styles)) {
                 $result[$cssKey] = $styles[$styleKey];
@@ -1218,22 +1218,22 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private static function getSpacingDeclarationBlocks($spacingMappings, $spacingType, $textStyles)
     {
-        $directions = array(
+        $directions = [
             'top',
             'right',
             'bottom',
             'left',
-        );
+        ];
         if (!array_key_exists($spacingType, $textStyles)) {
-            return array();
+            return [];
         }
         $spacingStyles = $textStyles[$spacingType];
-        $spacings = array();
+        $spacings = [];
         foreach ($directions as $direction) {
             $spacing = AMPArticle::getDirectionSpacing($spacingMappings, $direction, $spacingStyles);
             $spacings[] = $spacing != 0 ? $spacing . 'px' : '0';
         }
-        return array($spacingType => implode(' ', $spacings));
+        return [$spacingType => implode(' ', $spacings)];
     }
 
     private function buildCSSRulesFromMappings($mappings, $styles, $context)
@@ -1261,18 +1261,18 @@ class AMPArticle extends Element implements InstantArticleInterface
 
     private static function getBorderDeclarationBlocks($textStyles)
     {
-        $directions = array(
+        $directions = [
             'top',
             'right',
             'bottom',
             'left',
-        );
+        ];
         if (!array_key_exists('border', $textStyles)) {
-            return array();
+            return [];
         }
         $borderStyles = $textStyles['border'];
-        $declarationBlocks = array();
-        $borderWidths = array();
+        $declarationBlocks = [];
+        $borderWidths = [];
         foreach ($directions as $direction) {
             if (array_key_exists($direction, $borderStyles)) {
                 $borderDirectionStyles = $borderStyles[$direction];
@@ -1351,14 +1351,14 @@ class AMPArticle extends Element implements InstantArticleInterface
         $published = $header->getPublished();
         $modified = $header->getModified();
 
-        $metadata = array(
+        $metadata = [
             '@context' => 'http://schema.org',
             '@type' => 'NewsArticle',
             'mainEntityOfPage' => $this->instantArticle->getCanonicalURL(),
             'headline' => $this->instantArticle->getHeader()->getTitle()->getPlainText(),
             'datePublished' => date_format($published->getDatetime(), 'c'),
             'description' => $this->instantArticle->getFirstParagraph()->getPlainText(),
-        );
+        ];
 
         if ($modified) {
             $metadata['dateModified'] = date_format($modified->getDatetime(), 'c');
@@ -1366,10 +1366,10 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         $authors = $header->getAuthors();
         foreach ($authors as $author) {
-            $metadata['author'] = array(
+            $metadata['author'] = [
                 '@type' => 'Person',
                 'name' => $author->getName(),
-            );
+            ];
             break;
         }
 
@@ -1393,10 +1393,10 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         if ($publisher && Type::is($publisher, Type::STRING)) {
             // String values will be treated as organization names
-            $publisher = array(
+            $publisher = [
                 '@type' => 'Organization',
                 'name' => $publisher,
-            );
+            ];
         }
 
         return $publisher;
@@ -1424,12 +1424,12 @@ class AMPArticle extends Element implements InstantArticleInterface
         if ($imageURL) {
             $imageDimensions = $this->getMediaDimensions($imageURL, AMPContext::MEDIA_TYPE_IMAGE);
 
-            return array(
+            return [
                 '@type' => 'ImageObject',
                 'url' => $imageURL,
                 'width' => $imageDimensions[0],
                 'height' => $imageDimensions[1],
-            );
+            ];
         }
 
         return null;
