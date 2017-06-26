@@ -60,7 +60,7 @@ class FileUtilsPHPUnitTestCase extends \PHPUnit_Framework_TestCase
     {
         libxml_use_internal_errors(true);
         $document = new \DOMDocument('1.0');
-        $document->loadHTML('<?xml encoding="${$encoding}" ?>'.$fileContent);
+        $document->loadHTML('<?xml encoding="' . $encoding. '"?>'.$fileContent);
         libxml_use_internal_errors(false);
         return $document;
     }
