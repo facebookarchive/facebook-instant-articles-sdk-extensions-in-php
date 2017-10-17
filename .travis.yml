@@ -27,5 +27,5 @@ install:
   - travis_retry composer install --no-interaction --prefer-dist
 
 script:
-  - vendor/bin/phpunit
   - if [[ "$WITH_CS" == "true" ]]; then vendor/bin/phpcs --standard=phpcs.xml -p; fi
+  - vendor/bin/phpunit
