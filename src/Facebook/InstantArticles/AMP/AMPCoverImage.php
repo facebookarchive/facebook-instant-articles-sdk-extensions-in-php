@@ -75,7 +75,6 @@ class AMPCoverImage
             ->addProperty("div.$containerCSSClass", 'width', AMPContext::DEFAULT_WIDTH.'px')
             ->addProperty("div.$containerCSSClass", 'height', AMPContext::DEFAULT_HEIGHT.'px')
             ->addProperty("div.$containerCSSClass", 'overflow', 'hidden');
-
     }
 
     public function build()

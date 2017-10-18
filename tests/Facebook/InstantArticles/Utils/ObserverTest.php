@@ -8,9 +8,9 @@
  */
 namespace Facebook\InstantArticles\Utils;
 
-use Facebook\InstantArticles\Validators\Type;
+use PHPUnit\Framework;
 
-class ObserverTest extends \PHPUnit_Framework_TestCase
+class ObserverTest extends Framework\TestCase
 {
     protected function setUp()
     {
@@ -44,7 +44,6 @@ class ObserverTest extends \PHPUnit_Framework_TestCase
         $observer = Observer::create();
         $observer->addFilter('name', function ($name) {
             return "$name-san";
-
         });
         $name = $observer->applyFilters('name', "Bob");
         $this->assertEquals('Bob-san', $name);

@@ -8,16 +8,15 @@
  */
 namespace Facebook\InstantArticles\AMP;
 
-use Facebook\InstantArticles\AMP\AMPContext;
-
 use Facebook\InstantArticles\Elements\InstantArticle;
 use Facebook\InstantArticles\Elements\Header;
 use Facebook\InstantArticles\Elements\Image;
 use Facebook\InstantArticles\Elements\Time;
 use Facebook\InstantArticles\Elements\Author;
 use Facebook\InstantArticles\Elements\Caption;
+use PHPUnit\Framework;
 
-class AMPCaptionTest extends \PHPUnit_Framework_TestCase
+class AMPCaptionTest extends Framework\TestCase
 {
 
     protected function setUp()

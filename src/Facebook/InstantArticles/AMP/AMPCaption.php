@@ -8,7 +8,6 @@
  */
 namespace Facebook\InstantArticles\AMP;
 
-use Facebook\InstantArticles\Validators\Type;
 use Facebook\InstantArticles\Elements\Caption;
 
 class AMPCaption

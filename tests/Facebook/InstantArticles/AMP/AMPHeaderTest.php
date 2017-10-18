@@ -8,9 +8,6 @@
  */
 namespace Facebook\InstantArticles\AMP;
 
-use Facebook\InstantArticles\AMP\AMPHeader;
-use Facebook\InstantArticles\AMP\AMPImage;
-use Facebook\InstantArticles\AMP\AMPArticle;
 use Facebook\InstantArticles\Utils\FileUtilsPHPUnitTestCase;
 
 class AMPHeaderTest extends FileUtilsPHPUnitTestCase

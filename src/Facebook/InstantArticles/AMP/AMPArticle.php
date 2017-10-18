@@ -27,7 +27,6 @@ use Facebook\InstantArticles\Elements\Interactive;
 use Facebook\InstantArticles\Elements\SocialEmbed;
 use Facebook\InstantArticles\Elements\Map;
 use Facebook\InstantArticles\Elements\RelatedArticles;
-use Facebook\InstantArticles\Elements\Container;
 use Facebook\InstantArticles\Elements\TextContainer;
 use Facebook\InstantArticles\Elements\InstantArticleInterface;
 use Facebook\InstantArticles\Elements\InstantArticle;
@@ -35,7 +34,6 @@ use Facebook\InstantArticles\Elements\InstantArticle;
 use Facebook\InstantArticles\Parser\Parser;
 use Facebook\InstantArticles\Validators\Type;
 use Facebook\InstantArticles\Utils\Observer;
-use Facebook\InstantArticles\Utils\Warning;
 
 class AMPArticle extends Element implements InstantArticleInterface
 {

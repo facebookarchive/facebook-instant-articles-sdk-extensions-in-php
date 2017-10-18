@@ -7,10 +7,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-require_once dirname(dirname(dirname(dirname(dirname(__DIR__))))).'/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Prevents the logger from dumping too much info, check the file for details
-include('quiet_logger.php');
+include __DIR__ . '/quiet_logger.php';
 
 use Facebook\InstantArticles\AMP\AMPArticle;
 
@@ -55,7 +55,7 @@ $properties[AMPArticle::ENABLE_DOWNLOAD_FOR_MEDIA_SIZING_KEY] = true;
 $properties[AMPArticle::ANALYTICS_KEY] = array(
   '<amp-pixel src="http://mydomain.com/my_tracking_pixel.gif">',
   '<amp-analytics config="https://mydomain.com/analytics.config.json"></amp-analytics>'
-)
+);
 
 // Converts it into AMP
 $amp_string =
