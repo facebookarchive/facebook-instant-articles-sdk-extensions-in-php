@@ -14,9 +14,9 @@ use Facebook\InstantArticles\Elements\Image;
 use Facebook\InstantArticles\Elements\Time;
 use Facebook\InstantArticles\Elements\Author;
 use Facebook\InstantArticles\Elements\Caption;
-use PHPUnit\Framework;
+use PHPUnit\Framework\TestCase;
 
-class AMPCoverImageTest extends Framework\TestCase
+class AMPCoverImageTest extends TestCase
 {
 
     protected function setUp()
