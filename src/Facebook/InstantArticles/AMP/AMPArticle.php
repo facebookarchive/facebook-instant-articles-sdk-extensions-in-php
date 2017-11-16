@@ -197,17 +197,10 @@ class AMPArticle extends Element implements InstantArticleInterface
      * The format of the $properties['analytics'] should be a list of strings
      * containing the raw markup of the analytics tags (either amp-analytics or amp-pixel).
      */
-    public function buildAnalytics($context = null)
+    public function buildAnalytics($context)
     {
         if (!isset($this->properties[self::ANALYTICS_KEY])) {
             return null;
-        }
-
-        if ($context === null) {
-            $context = $this->getContext();
-            if ($context === null) {
-                throw new Exception('No context found.');
-            }
         }
 
         $document = $context->getDocument();
@@ -278,7 +271,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         $this->ampHeader->genArticlePublishDate($this->dateFormat);
 
         // Add the analytics code
-        $analytics = $this->buildAnalytics();
+        $analytics = $this->buildAnalytics($context);
         if ($analytics !== null) {
             $head->appendChild($this->buildCustomElementScriptEntry('amp-analytics', 'https://cdn.ampproject.org/v0/amp-analytics-0.1.js', $context));
             $body->insertBefore($analytics, $body->firstChild);
@@ -427,7 +420,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                     $childElement->setAttribute('class', $context->buildCssClass('related-articles'));
                     // TODO RelatedArticles is not covered yet, since AMP didn't get a good structure for it up to date.
                 } else if (Type::is($child, Analytics::getClassName())) {
-                    if ($this->buildAnalytics() === null) {
+                    if ($this->buildAnalytics($context) === null) {
                         $context->addWarning(
                             'Your Instant Article has analytics code, and you didn\'t provide an AMP analytics json. Your data will not be tracked. See the documentation at https://www.ampproject.org/docs/reference/components/amp-analytics on how to build your analytics component for AMP.',
                             $child
