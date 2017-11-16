@@ -86,7 +86,7 @@ class AMPContext
         if (!isset($document) || $document === null) {
             $document = new \DOMDocument();
         }
-        Type::enforce($document, \DOMDocument::class);
+        Type::enforce($document, 'DOMDocument');
         $this->document = $document;
         return $this;
     }
@@ -203,7 +203,7 @@ class AMPContext
      */
     private function withInstantArticle($instantArticle)
     {
-        Type::enforce($instantArticle, InstantArticle::class);
+        Type::enforce($instantArticle, InstantArticle::getClassName());
         $this->instantArticle = $instantArticle;
         return $this;
     }
