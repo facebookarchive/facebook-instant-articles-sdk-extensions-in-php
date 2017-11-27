@@ -3,6 +3,9 @@ We want to make contributing to this project as easy and transparent as possible
 
 We accept contributions via pull requests on [GitHub](https://github.com/facebook/facebook-instant-articles-sdk-extensions-in-php).
 
+## Code of Conduct
+The code of conduct is described in [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)
+
 ## Pull Requests
 - **Sign the CLA** - In order to accept your pull request, we need you to submit a [Contributor License Agreement](https://code.facebook.com/cla). You only need to do this once to work on any of Facebook's open source projects.
 
