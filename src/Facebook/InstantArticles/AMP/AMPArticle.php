@@ -107,8 +107,19 @@ class AMPArticle extends Element implements InstantArticleInterface
         // Treats if the informed content is string, parsing it into InstantArticle.
         if (Type::is($instantArticle, Type::STRING)) {
             libxml_use_internal_errors(true);
-            $document = new \DOMDocument('1.0');
-            $document->loadHTML($instantArticle);
+            if (!empty($properties[encoding])) {
+                        $document = new \DOMDocument('1.0', $properties[encoding]);
+                        $document->loadHTML('<?xml encoding="'.$properties[encoding].'"?>'.$instantArticle);
+                        $document->encoding = $properties[encoding];
+
+                        //or alternatively we can convert the instantArticle HTML to UTF-8
+                        //$convertedPage = mb_convert_encoding($instantArticle, 'HTML-ENTITIES', "UTF-8");
+                        //$document->loadHTML($convertedPage);
+                }else{
+                      	$document = new \DOMDocument('1.0');
+                        $document->loadHTML($instantArticle);
+                }
+
             libxml_use_internal_errors(false);
 
             $parser = new Parser();
