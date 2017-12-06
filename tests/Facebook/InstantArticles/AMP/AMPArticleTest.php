@@ -182,7 +182,7 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     {
         $discoveryMetadata = $this->getDiscoveryMetadata($test);
 
-        $this->assertFalse(array_key_exists($key, $discoveryMetadata), "Found unexpected '$key' key in Schema.org metadata");
+        $this->assertArrayNotHasKey($key, $discoveryMetadata, "Found unexpected '$key' key in Schema.org metadata");
     }
 
     public function testSchemaOrgContext()
@@ -219,7 +219,7 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
     {
         $key = 'dateModified';
         $discoveryMetadata = $this->getDiscoveryMetadata('tutorial');
-        $this->assertTrue(array_key_exists($key, $discoveryMetadata), "Did not found expected '$key' key in Schema.org metadata");
+        $this->assertArrayHasKey($key, $discoveryMetadata, "Did not found expected '$key' key in Schema.org metadata");
     }
 
     public function testSchemaOrgAuthor()
