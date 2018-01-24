@@ -8,9 +8,9 @@
  */
 namespace Facebook\InstantArticles\Utils;
 
-use PHPUnit\Framework;
+use PHPUnit\Framework\TestCase;
 
-class CSSBuilderTest extends Framework\TestCase
+class CSSBuilderTest extends TestCase
 {
     protected function setUp()
     {
