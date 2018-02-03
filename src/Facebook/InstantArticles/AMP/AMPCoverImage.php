@@ -67,14 +67,12 @@ class AMPCoverImage
         $this->ampImgTag->setAttribute('src', $imageURL);
         $this->ampImgTag->setAttribute('width', (string) $imageWidth);
         $this->ampImgTag->setAttribute('height', (string) $imageHeight);
+        $this->ampImgTag->setAttribute('layout', 'responsive');
 
         $imageCSSClass = $this->ampImgTag->getAttribute('class');
         $containerCSSClass = $this->containerTag->getAttribute('class');
         $this->context->getCssBuilder()
-            ->addProperty("amp-img.$imageCSSClass", 'transform', "translate({$translateX}px, {$translateY}px)")
-            ->addProperty("div.$containerCSSClass", 'width', AMPContext::DEFAULT_WIDTH.'px')
-            ->addProperty("div.$containerCSSClass", 'height', AMPContext::DEFAULT_HEIGHT.'px')
-            ->addProperty("div.$containerCSSClass", 'overflow', 'hidden');
+            ->addProperty("amp-img.$imageCSSClass", 'transform', "translate({$translateX}px, {$translateY}px)");
     }
 
     public function build()
