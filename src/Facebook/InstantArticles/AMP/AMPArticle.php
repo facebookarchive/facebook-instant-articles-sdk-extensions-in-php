@@ -1356,13 +1356,18 @@ class AMPArticle extends Element implements InstantArticleInterface
             '@type' => 'NewsArticle',
             'mainEntityOfPage' => $this->instantArticle->getCanonicalURL(),
             'headline' => $this->instantArticle->getHeader()->getTitle()->getPlainText(),
-            'datePublished' => date_format($published->getDatetime(), 'c'),
-            'description' => $this->instantArticle->getFirstParagraph()->getPlainText(),
         );
+
+        if ($published) {
+            $metadata['datePublished'] = date_format($published->getDatetime(), 'c');
+        }
+
+        $metadata['description'] = $this->instantArticle->getFirstParagraph()->getPlainText();
 
         if ($modified) {
             $metadata['dateModified'] = date_format($modified->getDatetime(), 'c');
         }
+
 
         $authors = $header->getAuthors();
         foreach ($authors as $author) {
