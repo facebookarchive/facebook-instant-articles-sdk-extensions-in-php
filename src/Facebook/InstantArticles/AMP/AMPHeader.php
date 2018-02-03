@@ -120,10 +120,13 @@ class AMPHeader
 
     public function genArticlePublishDate($dateFormat)
     {
-        $datetime = $this->iaHeader()->getPublished()->getDatetime();
-        $this->publishDateElement->appendChild(
-            $this->context->getDocument()->createTextNode(date_format($datetime, $dateFormat))
-        );
+        $published = $this->iaHeader()->getPublished();
+        if ($published) {
+          $datetime = $published->getDatetime();
+          $this->publishDateElement->appendChild(
+              $this->context->getDocument()->createTextNode(date_format($datetime, $dateFormat))
+          );
+        }
     }
 
     public function build()
