@@ -13,26 +13,6 @@ use PHPUnit\Framework;
 
 class FileUtilsPHPUnitTestCase extends Framework\TestCase
 {
-    protected function setUp()
-    {
-        \Logger::configure(
-            [
-                'rootLogger' => [
-                    'appenders' => ['facebook-instantarticles-traverser']
-                ],
-                'appenders' => [
-                    'facebook-instantarticles-traverser' => [
-                        'class' => 'LoggerAppenderConsole',
-                        'threshold' => 'INFO',
-                        'layout' => [
-                            'class' => 'LoggerLayoutSimple'
-                        ]
-                    ]
-                ]
-            ]
-        );
-    }
-
     /**
      * Loads HTML file using by default file_get_contents
      */

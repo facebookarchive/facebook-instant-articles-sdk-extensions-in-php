@@ -11,9 +11,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Facebook\InstantArticles\AMP\AMPArticle;
 
-// Prevents the logger from dumping too much info, check the file for details
-include __DIR__ . '/quiet_logger.php';
-
  // Load instant article file into string
 $instant_article_string = file_get_contents(__DIR__.'/instant-article-example.html');
 $properties = array(
