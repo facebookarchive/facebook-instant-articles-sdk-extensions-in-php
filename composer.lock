@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "78ee302312fa5a0ab58a74793775cd97",
-    "content-hash": "1b838998b450b831e7fc207688efd41c",
+    "hash": "79828388cecaead60704f62250260925",
+    "content-hash": "73fa8771cfb121709659301b306e6b70",
     "packages": [
         {
             "name": "facebook/facebook-instant-articles-sdk-php",
@@ -1349,7 +1349,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^5.4 || ^7.0"
+        "php": "^5.6 || ^7.0"
     },
     "platform-dev": []
 }
