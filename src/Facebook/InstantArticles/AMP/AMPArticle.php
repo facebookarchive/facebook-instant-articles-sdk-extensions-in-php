@@ -139,10 +139,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $this->instantArticle;
     }
 
-    public function render($doctype = '<!doctype html>', $format = true)
+    public function render($doctype = '<!doctype html>', $format = true, $validate = true)
     {
         $doctype = is_null($doctype) ? '<!doctype html>' : $doctype;
-        $rendered = parent::render($doctype, $format);
+        $rendered = parent::render($doctype, $format, $validate);
 
         // Makes empty value attribute definition, since we use DOMDocument::saveXML()
         $rendered = str_replace('amp=""', 'amp', $rendered);
@@ -350,8 +350,10 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // Builds title and append to head
         $title = $context->createElement('title', $head);
-        $titleText = $context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument());
-        $title->appendChild($titleText);
+        if ($context->getInstantArticle() && $context->getInstantArticle()->getHeader() && $context->getInstantArticle()->getHeader()->getTitle()) {
+          $titleText = $context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument());
+          $title->appendChild($titleText);
+        }
 
         return $head;
     }
@@ -1350,19 +1352,26 @@ class AMPArticle extends Element implements InstantArticleInterface
         $header = $this->instantArticle->getHeader();
         $published = $header->getPublished();
         $modified = $header->getModified();
+        $title = $this->instantArticle->getHeader()->getTitle();
+        $description = $this->instantArticle->getFirstParagraph();
 
         $metadata = array(
             '@context' => 'http://schema.org',
             '@type' => 'NewsArticle',
             'mainEntityOfPage' => $this->instantArticle->getCanonicalURL(),
-            'headline' => $this->instantArticle->getHeader()->getTitle()->getPlainText(),
         );
+
+        if ($title) {
+            $metadata['headline'] = $this->instantArticle->getHeader()->getTitle();
+        }
 
         if ($published) {
             $metadata['datePublished'] = date_format($published->getDatetime(), 'c');
         }
 
-        $metadata['description'] = $this->instantArticle->getFirstParagraph()->getPlainText();
+        if ($description) {
+          $metadata['description'] = $description->getPlainText();
+        }
 
         if ($modified) {
             $metadata['dateModified'] = date_format($modified->getDatetime(), 'c');

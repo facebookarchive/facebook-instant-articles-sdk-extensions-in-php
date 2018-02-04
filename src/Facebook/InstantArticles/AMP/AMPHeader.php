@@ -38,13 +38,12 @@ class AMPHeader
 
     private function genTitle()
     {
-        $iaTitle = $this->iaHeader()
-                    ->getTitle()
-                    ->textToDOMDocumentFragment($this->context->getDocument());
-
-        $h1 = $this->context->createElement('h1', $this->header, 'header-h1');
-        $h1->appendChild($iaTitle);
-        $this->context->buildSpacingDiv($this->header);
+        $iaTitle = $this->iaHeader()->getTitle();
+        if ($iaTitle) {
+          $h1 = $this->context->createElement('h1', $this->header, 'header-h1');
+          $h1->appendChild($iaTitle->textToDOMDocumentFragment($this->context->getDocument()));
+          $this->context->buildSpacingDiv($this->header);
+        }
     }
 
     private function genHeaderBar()
