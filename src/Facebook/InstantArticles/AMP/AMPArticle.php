@@ -419,6 +419,8 @@ class AMPArticle extends Element implements InstantArticleInterface
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
                     }
                     $childElement = $this->observer->applyFilters('IA_INTERACTIVE', $this->buildIframe($child, $context, 'interactive', true), $child, $context);
+                } else if ((Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName()))) {
+                    $childElement = $article->ownerDocument->importNode($child->getHtml(), true);
                 } else if (Type::is($child, Map::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
