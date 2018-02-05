@@ -1364,7 +1364,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         );
 
         if ($title) {
-            $metadata['headline'] = $this->instantArticle->getHeader()->getTitle();
+            $metadata['headline'] = $title->getPlainText();
         }
 
         if ($published) {

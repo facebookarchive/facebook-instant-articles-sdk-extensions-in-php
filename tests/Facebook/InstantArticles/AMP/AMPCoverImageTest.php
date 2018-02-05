@@ -73,7 +73,7 @@ class AMPCoverImageTest extends Framework\TestCase
         $expected =
             '<div class="ia2amp-cover-image">'.
                 '<figure class="ia2amp-figure">'.
-                    '<amp-img class="ia2amp-header-cover-img" src="http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg" width="422" height="240"/>'.
+                    '<amp-img class="ia2amp-header-cover-img" src="http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg" width="422" height="240" layout="responsive"/>'.
                     '<figcaption class="ia2amp-figcaption ia2amp-op-small">Some caption to the image</figcaption>'.
                 '</figure>'.
             '</div>';
@@ -94,7 +94,7 @@ class AMPCoverImageTest extends Framework\TestCase
     {
         $expected =
             '<div class="ia2amp-cover-image">'.
-                '<amp-img class="ia2amp-header-cover-img" src="http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg" width="422" height="240"/>'.
+                '<amp-img class="ia2amp-header-cover-img" src="http://blog.wod.expert/wp-content/uploads/2017/03/fail1.jpg" width="422" height="240" layout="responsive"/>'.
             '</div>';
         $instantArticle = $this->genInstantArticle();
 
