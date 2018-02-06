@@ -351,8 +351,8 @@ class AMPArticle extends Element implements InstantArticleInterface
         // Builds title and append to head
         $title = $context->createElement('title', $head);
         if ($context->getInstantArticle() && $context->getInstantArticle()->getHeader() && $context->getInstantArticle()->getHeader()->getTitle()) {
-          $titleText = $context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument());
-          $title->appendChild($titleText);
+            $titleText = $context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument());
+            $title->appendChild($titleText);
         }
 
         return $head;
@@ -420,7 +420,7 @@ class AMPArticle extends Element implements InstantArticleInterface
                     }
                     $childElement = $this->observer->applyFilters('IA_INTERACTIVE', $this->buildIframe($child, $context, 'interactive', true), $child, $context);
                 } else if ((Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName()))) {
-                    $childElement = $article->ownerDocument->importNode($child->getHtml(), true);
+                    $childElement = $context->getDocument()->importNode($child->getHtml(), true);
                 } else if (Type::is($child, Map::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
@@ -1372,7 +1372,7 @@ class AMPArticle extends Element implements InstantArticleInterface
         }
 
         if ($description) {
-          $metadata['description'] = $description->getPlainText();
+            $metadata['description'] = $description->getPlainText();
         }
 
         if ($modified) {

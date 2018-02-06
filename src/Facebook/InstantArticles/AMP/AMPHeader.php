@@ -40,9 +40,9 @@ class AMPHeader
     {
         $iaTitle = $this->iaHeader()->getTitle();
         if ($iaTitle) {
-          $h1 = $this->context->createElement('h1', $this->header, 'header-h1');
-          $h1->appendChild($iaTitle->textToDOMDocumentFragment($this->context->getDocument()));
-          $this->context->buildSpacingDiv($this->header);
+            $h1 = $this->context->createElement('h1', $this->header, 'header-h1');
+            $h1->appendChild($iaTitle->textToDOMDocumentFragment($this->context->getDocument()));
+            $this->context->buildSpacingDiv($this->header);
         }
     }
 
@@ -121,10 +121,12 @@ class AMPHeader
     {
         $published = $this->iaHeader()->getPublished();
         if ($published) {
-          $datetime = $published->getDatetime();
-          $this->publishDateElement->appendChild(
-              $this->context->getDocument()->createTextNode(date_format($datetime, $dateFormat))
-          );
+            $datetime = $published->getDatetime();
+            $this->publishDateElement->appendChild(
+                $this->context->getDocument()->createTextNode(
+                    date_format($datetime, $dateFormat)
+                )
+            );
         }
     }
 
