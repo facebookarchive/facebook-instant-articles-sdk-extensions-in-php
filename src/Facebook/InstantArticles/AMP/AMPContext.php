@@ -585,8 +585,7 @@ class AMPContext
      */
     public function addItem($item)
     {
-        $element = new \DOMElement('dummy');
-        Type::enforce($item, get_class($element));
+        Type::enforce($item, 'DOMNode');
         $this->articleItems[] = $item;
     }
 

@@ -25,7 +25,7 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
         $instant_article->addMetaProperty('op:generator:transformer:version', '1.0.0');
         $result = $instant_article->render('', true)."\n";
 
-        $this->assertEquals($html_file, $result);
+        $this->assertEqualsHtml($html_file, $result);
     }
 
     public function testTransformIAtoAMPTest1()
@@ -131,7 +131,7 @@ class AMPArticleTest extends FileUtilsPHPUnitTestCase
         $ampExpectedNoStyles = $this->getMarkupWithoutStyles($ampExpected);
         $ampRenderedNoStyles = $this->getMarkupWithoutStyles($ampRendered);
 
-        $this->assertEquals($ampExpectedNoStyles, $ampRenderedNoStyles);
+        $this->assertEqualsHtml($ampExpectedNoStyles, $ampRenderedNoStyles);
     }
 
     public function runIAtoAMPTest($test, $customProperties = null)

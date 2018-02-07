@@ -139,10 +139,10 @@ class AMPArticle extends Element implements InstantArticleInterface
         return $this->instantArticle;
     }
 
-    public function render($doctype = '<!doctype html>', $format = true)
+    public function render($doctype = '<!doctype html>', $format = true, $validate = true)
     {
         $doctype = is_null($doctype) ? '<!doctype html>' : $doctype;
-        $rendered = parent::render($doctype, $format);
+        $rendered = parent::render($doctype, $format, $validate);
 
         // Makes empty value attribute definition, since we use DOMDocument::saveXML()
         $rendered = str_replace('amp=""', 'amp', $rendered);
@@ -350,8 +350,10 @@ class AMPArticle extends Element implements InstantArticleInterface
 
         // Builds title and append to head
         $title = $context->createElement('title', $head);
-        $titleText = $context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument());
-        $title->appendChild($titleText);
+        if ($context->getInstantArticle() && $context->getInstantArticle()->getHeader() && $context->getInstantArticle()->getHeader()->getTitle()) {
+            $titleText = $context->getInstantArticle()->getHeader()->getTitle()->textToDOMDocumentFragment($context->getDocument());
+            $title->appendChild($titleText);
+        }
 
         return $head;
     }
@@ -417,6 +419,8 @@ class AMPArticle extends Element implements InstantArticleInterface
                         $context->getHead()->appendChild($this->buildCustomElementScriptEntry('amp-iframe', 'https://cdn.ampproject.org/v0/amp-iframe-0.1.js', $context));
                     }
                     $childElement = $this->observer->applyFilters('IA_INTERACTIVE', $this->buildIframe($child, $context, 'interactive', true), $child, $context);
+                } else if ((Type::is($child, Interactive::getClassName()) || Type::is($child, SocialEmbed::getClassName()))) {
+                    $childElement = $context->getDocument()->importNode($child->getHtml(), true);
                 } else if (Type::is($child, Map::getClassName())) {
                     if (!$containsIframe) {
                         $containsIframe = true;
@@ -1350,19 +1354,31 @@ class AMPArticle extends Element implements InstantArticleInterface
         $header = $this->instantArticle->getHeader();
         $published = $header->getPublished();
         $modified = $header->getModified();
+        $title = $this->instantArticle->getHeader()->getTitle();
+        $description = $this->instantArticle->getFirstParagraph();
 
         $metadata = array(
             '@context' => 'http://schema.org',
             '@type' => 'NewsArticle',
             'mainEntityOfPage' => $this->instantArticle->getCanonicalURL(),
-            'headline' => $this->instantArticle->getHeader()->getTitle()->getPlainText(),
-            'datePublished' => date_format($published->getDatetime(), 'c'),
-            'description' => $this->instantArticle->getFirstParagraph()->getPlainText(),
         );
+
+        if ($title) {
+            $metadata['headline'] = $title->getPlainText();
+        }
+
+        if ($published) {
+            $metadata['datePublished'] = date_format($published->getDatetime(), 'c');
+        }
+
+        if ($description) {
+            $metadata['description'] = $description->getPlainText();
+        }
 
         if ($modified) {
             $metadata['dateModified'] = date_format($modified->getDatetime(), 'c');
         }
+
 
         $authors = $header->getAuthors();
         foreach ($authors as $author) {
