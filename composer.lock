@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e0427f669151c1610e0e3b4b58da1ea5",
-    "content-hash": "257b4b8b716080fc30d651d7feed914f",
+    "hash": "7c2a15e67bcb82fa8a8b2055b44a8da8",
+    "content-hash": "d80fb4b0c253e2833acc29e58baa5149",
     "packages": [
         {
             "name": "facebook/facebook-instant-articles-sdk-php",
-            "version": "v1.8.2",
+            "version": "v1.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/facebook-instant-articles-sdk-php.git",
-                "reference": "72cdc913a880bef6db2a09b2e9c4291ea33ba6e5"
+                "reference": "37439793352206aa2e600d3bb8c361442fb09b73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/facebook-instant-articles-sdk-php/zipball/72cdc913a880bef6db2a09b2e9c4291ea33ba6e5",
-                "reference": "72cdc913a880bef6db2a09b2e9c4291ea33ba6e5",
+                "url": "https://api.github.com/repos/facebook/facebook-instant-articles-sdk-php/zipball/37439793352206aa2e600d3bb8c361442fb09b73",
+                "reference": "37439793352206aa2e600d3bb8c361442fb09b73",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 "instant",
                 "sdk"
             ],
-            "time": "2018-01-30 15:09:17"
+            "time": "2018-02-04 23:12:58"
         },
         {
             "name": "facebook/graph-sdk",
@@ -174,32 +174,32 @@
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
-            "version": "1.0.5",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "8e884e78f9f0eb1329e445619e04456e64d8051d"
+                "reference": "185b8868aa9bf7159f5f953ed5afb2d7fcdc3bda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/8e884e78f9f0eb1329e445619e04456e64d8051d",
-                "reference": "8e884e78f9f0eb1329e445619e04456e64d8051d",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/185b8868aa9bf7159f5f953ed5afb2d7fcdc3bda",
+                "reference": "185b8868aa9bf7159f5f953ed5afb2d7fcdc3bda",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3,<8.0-DEV"
+                "php": "^7.1"
             },
             "require-dev": {
                 "athletic/athletic": "~0.1.8",
                 "ext-pdo": "*",
                 "ext-phar": "*",
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "~2.0"
+                "phpunit/phpunit": "^6.2.3",
+                "squizlabs/php_codesniffer": "^3.0.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -224,7 +224,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2015-06-14 21:17:01"
+            "time": "2017-07-22 11:58:36"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
