@@ -1,6 +1,5 @@
 {
     "name": "facebook/facebook-instant-articles-sdk-extensions-in-php",
-    "version": "0.2.0",
     "description": "Facebook Instant Articles SDK Extensions in PHP to transform Instant Articles markup file into AMP",
     "keywords": ["facebook", "sdk", "instant", "articles", "instantarticles", "amp", "extensions"],
     "type": "library",
